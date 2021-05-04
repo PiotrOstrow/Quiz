@@ -1,0 +1,39 @@
+CREATE TABLE users (
+    ID INTEGER PRIMARY KEY,
+    username VARCHAR UNIQUE,
+    password VARCHAR,
+    role INTEGER
+);
+
+CREATE TABLE quizzes (
+    ID INTEGER PRIMARY KEY,
+    title VARCHAR NOT NULL
+);
+
+CREATE TABLE quiz_questions (
+    ID INTEGER PRIMARY KEY,
+    quizID INTEGER,
+    question VARCHAR,
+    correct_answer VARCHAR,
+    answer1 VARCHAR,
+    answer2 VARCHAR,
+    answer3 VARCHAR,
+    answer4 VARCHAR,
+    FOREIGN KEY(quizID) REFERENCES quizzes(ID)
+);
+
+CREATE TABLE quiz_results (
+    ID INTEGER PRIMARY KEY,
+    userID INTEGER,
+    quizID INTEGER,
+    score INTEGER,
+    FOREIGN KEY(userID) REFERENCES users(ID)
+);
+
+CREATE TABLE failed_questions (
+    ID INTEGER PRIMARY KEY,
+    userID INTEGER,
+    questionID INTEGER,
+    FOREIGN KEY(userID) REFERENCES users(ID),
+    FOREIGN KEY(questionID) REFERENCES quiz_questions(ID)
+);
