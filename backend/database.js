@@ -10,7 +10,7 @@ const db = new sqlite3.Database(DB_FILE_NAME, err => {
     }
 
     console.log('Connected to database');
-    console.log('Creating table');
+    console.log('Creating tables...');
 
     const databaseStructureSQL = fs.readFileSync('./sql/data_structure.sql').toString();
     const databaseStructureQueries = databaseStructureSQL.split(';');
