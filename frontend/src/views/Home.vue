@@ -10,14 +10,14 @@
     </div>
 
     <div class="log-in-container">
-      <form id="log-in">
+      <form id="log-in" v-on:submit="login">
         <h2>Log in </h2>
-        <label>Username: </label> <input type="text"> <br>
-        <label>Password: </label> <input type="password"> <br>
+        <label>Username: </label> <input v-bind="username" type="text"> <br>
+        <label>Password: </label> <input v-bind="password" type="password"> <br>
         <button>Submit</button>
       </form>
 
-      <form id="sign-up">
+      <form id="sign-up" v-on:submit="register">
         <h2>Sign up</h2>
         <label>Username:</label> <input type="text"> <br>
         <label>Name: </label> <input type="text"> <br>
@@ -32,7 +32,45 @@
 <script>
 
 export default {
-  name: 'Home.vue'
+  name: 'Home.vue',
+  data: function() {
+    return {
+      username: "",
+      password: "",
+    }
+  },
+  methods: {
+    login() {
+      const details = {
+        'username': 'MyUsername',
+        'password': 'MyPassword'
+      }
+
+      var formBody = [];
+      for (var property in details) {
+        var encodedKey = encodeURIComponent(property);
+        var encodedValue = encodeURIComponent(details[property]);
+        formBody.push(encodedKey + "=" + encodedValue);
+      }
+      formBody = formBody.join("&");
+
+      this.request('/login', formBody)
+        .then(response => console.log(response));
+    },
+    register() {
+      console.log("Register function")
+    },
+    async request(url, body) {
+      return await fetch('http://' + window.location.hostname + ':3000' + url, {
+        method: 'POST',
+        credentials: 'include',
+        body: body,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+    }
+  }
 }
 </script>
 
