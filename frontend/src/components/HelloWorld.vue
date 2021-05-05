@@ -32,7 +32,7 @@
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'Make learning fun :)',
   props: {
     msg: String
   }
@@ -53,6 +53,6 @@ li {
   margin: 0 10px;
 }
 a {
-  color: #42b983;
+  color: #c26a08;
 }
 </style>
