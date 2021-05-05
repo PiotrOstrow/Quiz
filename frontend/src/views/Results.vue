@@ -19,7 +19,6 @@
     </article>
   </main>
 
-
 </div>
   </section>
 
@@ -30,12 +29,12 @@ export default {
   name: "Results.vue"
 }
 </script>
-
 <style scoped>
 
 body {
   background-color: lightgrey;
 }
+
 section {
   display: flex;
   grid-template-columns: 1fr 1fr;
@@ -43,8 +42,6 @@ section {
   grid-template-areas: "header" "navigation" "main-content" "footer";
   grid-gap: 50px;
 }
-
-
 
 section.grid-container {
   width: 600px;
@@ -57,8 +54,6 @@ main {
   grid-template-columns: 1fr;
   grid-gap: 20px;
 }
-
-
 
 .underlineTitle {
   font-size: 36px;

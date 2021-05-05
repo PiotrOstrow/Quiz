@@ -1,9 +1,11 @@
 <template>
   <div id="app">
+
     <header>
-      <img alt="Learn4Fun" src="./assets/logo.jpg">
+      <img class="picture" alt="Learn4Fun" src="./assets/logo.jpg">
       <h1>Learn for fun!</h1>
     </header>
+
     <nav>
       <ul class="nav-links">
         <li>
@@ -25,13 +27,12 @@
     </div>
 
     <footer>
-      <div class="wrapper">
+      <div class="wrapper"></div>
         <ul class="footerInfo">
           <li>
-            <p>CopyRight Learn for Fun! ©</p>
+            <p>CopyRight © Learn for Fun!</p>
           </li>
         </ul>
-      </div>
     </footer>
   </div>
 </template>
@@ -55,7 +56,16 @@ footer {
 }
 
 .wrapper {
-  padding-bottom: 10px;
+  padding-bottom: 5px;
+}
+
+.footerInfo {
+  font-weight: bold;
+}
+
+.picture{
+  border-radius:50%;
+  float: left;
 }
 
 #app {
@@ -73,7 +83,7 @@ footer {
 header {
   grid-area: header;
   display: flex;
-  justify-content: center;
+  /*justify-content: center;*/
   margin: 0;
   background-color: #F29544;
 }

@@ -9,7 +9,7 @@
       <p>Overview over your kids latest quiz results</p>
     </div>
 
-    <div class="log-in-container">
+    <div class="forms-container">
       <form id="log-in" v-on:submit="login">
         <h2>Log in </h2>
         <label>Username: </label> <input v-bind="username" type="text"> <br>
@@ -80,15 +80,20 @@ export default {
   display: flex;
   justify-content: center;
   max-width: 100%;
+  grid-template-columns: 50% 50%;
+  padding: 1% 5%;
 }
 
 .information-container {
-  max-width: 45%;
+  width: 100%;
   background-color: white;
+  border-radius: 20px;
 }
 
-.log-in-container {
-  max-width: 45%;
+.forms-container {
+  width: 100%;
+  background-color: white;
+  border-radius: 20px;
 }
 
 button {
