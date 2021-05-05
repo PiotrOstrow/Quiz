@@ -1,32 +1,70 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <header>
+      <img alt="Learn4Fun" src="./assets/logo.jpg">
+      <h1>Learn for fun!</h1>
+    </header>
+    <nav>
+      <ul class="nav-links">
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/profile">Profile</router-link></li>
+        <li><router-link to="/results">Results</router-link></li>
+        <li><router-link to="/quiz">Quiz</router-link></li>
+      </ul>
+    </nav>
     <router-view/>
   </div>
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Pangolin, sans-serif;
+  margin: 0;
+  background-color: #FFF5E8;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
+header {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  background-color: #F29544;
 }
 
-#nav a {
+header h1 {
+  color: white;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #00a2e8;
+  min-height: 2vh;
+}
+
+.nav-links{
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+}
+
+.nav-links a {
   font-weight: bold;
-  color: #2c3e50;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>

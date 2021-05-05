@@ -1,15 +1,14 @@
 <template>
-  <div class="home">
+  <div class="Profile">
+    <h1>This is the profile page</h1>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'Home.vue'
+  name: "Profile.vue"
 }
 </script>
-
 
 <style>
 

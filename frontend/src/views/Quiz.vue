@@ -1,16 +1,15 @@
 <template>
-  <div class="home">
-  </div>
+<div>
+  <h1>Quiz page</h1>
+</div>
 </template>
 
 <script>
-
 export default {
-  name: 'Home.vue'
+  name: "Quiz.vue"
 }
 </script>
 
-
-<style>
+<style scoped>
 
 </style>
