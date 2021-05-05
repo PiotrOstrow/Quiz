@@ -4,23 +4,27 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const expressSession = require('express-session');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
 const db = require('./database.js');
 
+const BCRYPT_SALT_ROUNDS = 10;
 const HTTP_PORT = 3000;
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        // User.findOne({ username: username }, function (err, user) {
-        //     if (err) { return done(err); }
-        //     if (!user) {
-        //         return done(null, false, { message: 'Incorrect username.' });
-        //     }
-        //     if (!user.validPassword(password)) {
-        //         return done(null, false, { message: 'Incorrect password.' });
-        //     }
-        //     return done(null, user);
-        // });
-        return done(null, { username: username });
+        db.get('SELECT * FROM users  WHERE username = ?', [username], (error, result) => {
+            console.log(result);
+            if(error || result == null) {
+                return done(null, false);
+            }
+            bcrypt.compare(password, result.password, function(err, result) {
+                if(result) {
+                    return done(null, { username: username });
+                } else {
+                    return done(null, false);
+                }
+            });
+        });
     }
 ));
 
@@ -70,3 +74,19 @@ app.get('/logout', (request, response) => {
     request.logout();
     response.status(200).json({msg:'Logged out'});
 });
+
+app.post('/register', (request, response) => {
+    bcrypt.hash(request.body.password, BCRYPT_SALT_ROUNDS, function(err, hash) {
+        const params = [request.body.username, hash, request.body.role];
+        db.run('INSERT INTO users(username, password, role) VALUES(?, ?, ?)', params, (error, result) => {
+            if(error) {
+                response.json({msg:error});
+            } else {
+                response.json({msg:'User added!'});
+            }
+        });
+    });
+});
+
+
+
