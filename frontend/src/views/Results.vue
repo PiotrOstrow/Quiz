@@ -1,7 +1,28 @@
 <template>
-<div class="Results">
-  <h1>You got 0 out of 10 on everything.</h1>
+  <section class="grid-container">
+<div class="results">
+  <h1 class="underlineTitle">Results</h1>
+  <main>
+    <article id="subjectMath">
+      <div class="underlineSubjectTitle">
+      <h2>Math</h2>
+      </div>
+      <!--      Example text, will implement so it gets the kids own results-->
+      <p>You got 0 out of 10 correct.</p>
+    </article>
+    <article id="subjectGeography">
+      <div class="underlineSubjectTitle">
+      <h2>Geography</h2>
+      </div>
+      <!--      Example text, will implement so it gets the kids own results-->
+      <p>You guessed wrong on Sweden's capital.</p>
+    </article>
+  </main>
+
+
 </div>
+  </section>
+
 </template>
 
 <script>
@@ -10,6 +31,45 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
+body {
+  background-color: lightgrey;
+}
+section {
+  display: flex;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto 50px;
+  grid-template-areas: "header" "navigation" "main-content" "footer";
+  grid-gap: 50px;
+}
+
+
+
+section.grid-container {
+  width: 600px;
+  margin: 15px auto;
+}
+
+main {
+  grid-area: main-content;
+  display: flex;
+  grid-template-columns: 1fr;
+  grid-gap: 20px;
+}
+
+
+
+.underlineTitle {
+  font-size: 36px;
+}
+
+.underlineSubjectTitle {
+  border-bottom: 2px solid #00a2e8;
+  margin-bottom: 20px;
+}
+
+#subjectMath, #subjectGeography{
+  background-color: white;
+}
 </style>

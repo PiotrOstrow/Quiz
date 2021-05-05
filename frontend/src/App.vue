@@ -6,18 +6,39 @@
     </header>
     <nav>
       <ul class="nav-links">
-        <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/profile">Profile</router-link></li>
-        <li><router-link to="/results">Results</router-link></li>
-        <li><router-link to="/quiz">Quiz</router-link></li>
+        <li>
+          <router-link to="/">Home</router-link>
+        </li>
+        <li>
+          <router-link to="/profile">Profile</router-link>
+        </li>
+        <li>
+          <router-link to="/results">Results</router-link>
+        </li>
+        <li>
+          <router-link to="/quiz">Quiz</router-link>
+        </li>
       </ul>
     </nav>
-    <router-view/>
+    <div class="main">
+      <router-view/>
+    </div>
+
+    <footer>
+      <div class="wrapper">
+        <ul class="footerInfo">
+          <li>
+            <p>CopyRight Learn for Fun! ©</p>
+          </li>
+        </ul>
+      </div>
+    </footer>
   </div>
 </template>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
+
 * {
   box-sizing: border-box;
 }
@@ -28,14 +49,29 @@ body {
   background-color: #FFF5E8;
 }
 
+footer {
+  background-color: #00a2e8;
+  grid-area: footer;
+}
+
+.wrapper {
+  padding-bottom: 10px;
+}
+
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: "header"
+            "nav"
+            "main"
+            "footer";
 }
 
 header {
+  grid-area: header;
   display: flex;
   justify-content: center;
   margin: 0;
@@ -47,6 +83,7 @@ header h1 {
 }
 
 nav {
+  grid-area: nav;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -54,7 +91,7 @@ nav {
   min-height: 2vh;
 }
 
-.nav-links{
+.nav-links {
   display: flex;
   padding-left: 0;
   list-style: none;
@@ -65,6 +102,22 @@ nav {
   color: white;
   text-decoration: none;
   padding: 10px;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.main {
+  grid-area: main;
+}
+
+footer {
+  grid-area: footer;
+  position: absolute;
+  bottom:0;
+  width: 100%;
+  text-align: center;
 }
 
 </style>
