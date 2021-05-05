@@ -2,8 +2,10 @@
   <div id="app">
 
     <header>
-      <img class="picture" alt="Learn4Fun" src="./assets/logo.jpg">
-      <h1>Learn for fun!</h1>
+      <img id="logo" alt="Learn4Fun" src="./assets/logo.jpg">
+      <div id="header-container">
+        <h1>Learn for fun!</h1>
+      </div>
     </header>
 
     <nav>
@@ -28,7 +30,7 @@
 
     <footer>
       <div class="wrapper"></div>
-        <ul class="footerInfo">
+        <ul class="footer-info">
           <li>
             <p>CopyRight © Learn for Fun!</p>
           </li>
@@ -53,19 +55,33 @@ body {
 footer {
   background-color: #00a2e8;
   grid-area: footer;
+  position: absolute;
+  bottom:0;
+  width: 100%;
+  text-align: center;
+}
+
+footer ul {
+  list-style: none;
 }
 
 .wrapper {
   padding-bottom: 5px;
 }
 
-.footerInfo {
+.footer-info {
   font-weight: bold;
+  color: white;
 }
 
-.picture{
+#logo {
   border-radius:50%;
   float: left;
+  position: relative;
+  left: 0;
+  margin: 10px 10px;
+  height: 100px;
+  width: auto;
 }
 
 #app {
@@ -81,15 +97,28 @@ footer {
 }
 
 header {
+  width: 100%;
   grid-area: header;
-  display: flex;
-  /*justify-content: center;*/
-  margin: 0;
+  margin: 0 auto;
   background-color: #F29544;
+  position: relative;
 }
 
-header h1 {
+#header-container {
+  height: 100%;
+  width: 100%;
   color: white;
+  margin: 0 auto;
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#header-container h1 {
+  width: auto;
+  display: inline-block;
 }
 
 nav {
@@ -120,14 +149,6 @@ nav {
 
 .main {
   grid-area: main;
-}
-
-footer {
-  grid-area: footer;
-  position: absolute;
-  bottom:0;
-  width: 100%;
-  text-align: center;
 }
 
 </style>

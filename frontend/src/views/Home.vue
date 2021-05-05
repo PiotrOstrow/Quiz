@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <div class="information-container">
+      <img src="../assets/HomepagePicture.jpg" >
       <h2>Make learning fun!</h2>
       <p>Welcome to learn for fun, a website made for children looking for a more fun way to learn online!</p>
       <h2>For teachers:</h2>
@@ -76,24 +77,35 @@ export default {
 
 
 <style scoped>
+
+h2 {
+ margin-top: 5px;
+}
 .home {
   display: flex;
   justify-content: center;
   max-width: 100%;
   grid-template-columns: 50% 50%;
   padding: 1% 5%;
+  gap: 15px;
+}
+
+img {
+  width: 100%;
 }
 
 .information-container {
   width: 100%;
   background-color: white;
   border-radius: 20px;
+  padding: 1%;
 }
 
 .forms-container {
   width: 100%;
   background-color: white;
   border-radius: 20px;
+  padding: 1%;
 }
 
 button {

@@ -1,5 +1,4 @@
 <template>
-  <section class= grid-container>
   <div class="profile">
     <h1>Profile</h1>
     <main>
@@ -11,7 +10,7 @@
       </article>
     </main>
   </div>
-  </section>
+
 
 
 </template>
@@ -31,7 +30,7 @@ section {
   grid-gap: 20px;
 }
 
-section.grid-container {
+.profile{
   width: 200px;
   margin: auto;
 }
