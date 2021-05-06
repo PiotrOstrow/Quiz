@@ -19,7 +19,7 @@ const db = new sqlite3.Database(DB_FILE_NAME, err => {
         if(databaseStructureQueries[i].trim() !== "") {
             db.run(databaseStructureQueries[i], error => {
                 if (error) {
-                    console.log(err.message);
+                    console.log(error.message);
                 } else {
                     console.log('Created table ' + databaseStructureQueries[i].match(/(?<=CREATE TABLE ).*\b/));
                 }
