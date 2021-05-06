@@ -3,20 +3,24 @@
 <div class="results">
   <h1 class="underlineTitle">Results</h1>
   <main>
-    <article id="subjectMath">
+    <div class="article-container">
+    <article>
       <div class="underlineSubjectTitle">
       <h2>Math</h2>
       </div>
-      <!--      Example text, will implement so it gets the kids own results-->
+      <!--      Example text-->
       <p>You got 0 out of 10 correct.</p>
     </article>
-    <article id="subjectGeography">
+    </div>
+    <div class="article-container">
+    <article>
       <div class="underlineSubjectTitle">
       <h2>Geography</h2>
       </div>
-      <!--      Example text, will implement so it gets the kids own results-->
+      <!--      Example text-->
       <p>You guessed wrong on Sweden's capital.</p>
     </article>
+    </div>
   </main>
 
 </div>
@@ -62,10 +66,15 @@ main {
 
 .underlineSubjectTitle {
   border-bottom: 2px solid #00a2e8;
-  margin-bottom: 20px;
+  margin: 10px;
+
 }
 
-#subjectMath, #subjectGeography{
+.article-container {
+  width: 100%;
+  border-radius: 20px;
+  padding: 1%;
   background-color: white;
 }
+
 </style>
