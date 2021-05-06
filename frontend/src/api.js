@@ -1,21 +1,13 @@
 const api = {
-    async logIn(username, password) {
+    logIn(username, password) {
         const details = {
             'username': username,
             'password': password
         }
 
-        let formBody = [];
-        for (let property in details) {
-            let encodedKey = encodeURIComponent(property);
-            let encodedValue = encodeURIComponent(details[property]);
-            formBody.push(encodedKey + "=" + encodedValue);
-        }
-        formBody = formBody.join("&");
-
-        return await this.request('/login', formBody);
+        return this.postForm('/login', details);
     },
-    async register(username, name,  password, email) {
+    register(username, name,  password, email) {
         const details = {
             'username': username,
             'password': password,
@@ -23,36 +15,36 @@ const api = {
             'email': email
         }
 
+        return this.postForm('/register', details);
+    },
+    checkLogin() {
+        return this.get('/');
+    },
+    logout() {
+        return this.get('/logout');
+    },
+    get(url) {
+        return fetch('http://' + window.location.hostname + ':3000' + url, {
+            method: 'GET',
+            credentials: 'include'
+        });
+    },
+    postForm(url, form) {
         let formBody = [];
-        for (let property in details) {
+        for (let property in form) {
             let encodedKey = encodeURIComponent(property);
-            let encodedValue = encodeURIComponent(details[property]);
+            let encodedValue = encodeURIComponent(form[property]);
             formBody.push(encodedKey + "=" + encodedValue);
         }
         formBody = formBody.join("&");
 
-        return await this.request('/register', formBody);
-    },
-    async request(url, body) {
-        return await fetch('http://' + window.location.hostname + ':3000' + url, {
+        return fetch('http://' + window.location.hostname + ':3000' + url, {
             method: 'POST',
             credentials: 'include',
-            body: body,
+            body: formBody,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
-        });
-    },
-    async checkLogin() {
-        return await fetch('http://' + window.location.hostname + ':3000/', {
-            method: 'GET',
-            credentials: 'include'
-        });
-    },
-    async logout() {
-        return await fetch('http://' + window.location.hostname + ':3000/logout', {
-            method: 'GET',
-            credentials: 'include'
         });
     }
 }

@@ -52,9 +52,9 @@ export default {
       loggedIn: false,
       user: {
         username: '',
-        name: 'testname',
-        email: 'a@b.com',
-        birthdate: '123'
+        name: '',
+        email: '',
+        birthdate: ''
       }
     }
   },
@@ -84,15 +84,32 @@ export default {
     }
   },
   mounted: function () {
-    console.log('Is logged in: ' + this.loggedIn);
-    this.$router.push('/');
+    // navigation guard, can't go to Home page if logged in, or anywhere but home when not logged in
+    // https://router.vuejs.org/guide/advanced/navigation-guards.html#global-resolve-guards
+    this.$router.beforeEach((to, from, next) => {
+      if(this.loggedIn && to.name !== 'Home')
+        next();
+      if(!this.loggedIn && to.name === 'Home')
+        next();
+    });
+
     api.checkLogin().then(response => {
       this.loggedIn = response.status === 200;
-      if(this.loggedIn)
-        this.$router.push('quiz');
-      return response.json();
-    }).then(json => {
-      this.user.username = json.user.username;
+      console.log('Logged in: ' + this.loggedIn);
+
+      if(this.loggedIn) {
+        // grab json data
+        response.json().then(json => this.user = json.user);
+
+        console.log('Current route: ');
+        console.log(this.$router.currentRoute);
+
+        // if the route is on login screen, change it
+        if(this.$router.currentRoute.name === 'Home')
+          this.$router.push('quiz');
+      } else {
+        this.$router.push('/');
+      }
     });
   }
 }
