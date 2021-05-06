@@ -199,6 +199,20 @@ nav {
   text-decoration: underline;
 }
 
+button {
+  font: 400 15px Pangolin;
+  background-color: #00a2e8;
+  color: white;
+  padding: 3px 6px;
+  border-style: none;
+  border-radius: 5px;
+}
+
+button:hover {
+  cursor: pointer;
+  background-color: #014055;
+}
+
 .main {
   grid-area: main;
 }

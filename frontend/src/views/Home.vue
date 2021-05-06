@@ -13,17 +13,39 @@
     <div class="forms-container" v-if="!loggedIn">
       <form id="log-in" v-on:submit="$emit('login', username, password)">
         <h2>Log in </h2>
-        <label>Username: </label> <input v-model="username" type="text" required="required"> <br>
-        <label>Password: </label> <input v-model="password" type="password" required="required"> <br>
+        <table>
+          <tr>
+            <td><label>Username: </label></td>
+            <td><input v-model="username" type="text" required="required"></td>
+          </tr>
+          <tr>
+            <td><label>Password: </label></td>
+            <td><input v-model="password" type="password" required="required"></td>
+          </tr>
+        </table>
         <button>Submit</button>
       </form>
 
       <form id="sign-up" >
         <h2>Sign up</h2>
-        <label>Username:</label> <input type="text"> <br>
-        <label>Name: </label> <input type="text"> <br>
-        <label>Password:</label> <input type="password"> <br>
-        <label>E-mail:</label> <input type="email"> <br>
+        <table>
+          <tr>
+            <td><label>Username:</label></td>
+            <td><input type="text"></td>
+          </tr>
+          <tr>
+            <td><label>Name: </label></td>
+            <td><input type="text"></td>
+          </tr>
+          <tr>
+            <td><label>Password:</label></td>
+            <td><input type="password"></td>
+          </tr>
+          <tr>
+            <td><label>E-mail:</label></td>
+            <td><input type="email"></td>
+          </tr>
+        </table>
         <button>Submit</button>
       </form>
     </div>
@@ -46,12 +68,12 @@ export default {
 }
 </script>
 
-
 <style scoped>
 
 h2 {
  margin-top: 5px;
 }
+
 .home {
   display: flex;
   justify-content: center;
@@ -77,20 +99,5 @@ img {
   background-color: white;
   border-radius: 20px;
   padding: 1%;
-}
-
-button {
-  font: 400 15px Pangolin;
-  background-color: #00a2e8;
-  color: white;
-  padding: 3px 6px;
-  border-style: none;
-  border-radius: 5px;
-}
-
-button:hover {
-  cursor: pointer;
-  background-color: #014055;
-
 }
 </style>
