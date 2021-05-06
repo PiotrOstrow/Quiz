@@ -78,11 +78,18 @@ app.get('/logout', checkAuthentication, (request, response) => {
 });
 
 app.post('/register', (request, response) => {
+    if(request.body.username.length < 4) {
+        // TODO: validate input
+        response.status(400).end();
+        return;
+    }
     bcrypt.hash(request.body.password, BCRYPT_SALT_ROUNDS, function(err, hash) {
-        const params = [request.body.username, hash, request.body.role];
-        db.run('INSERT INTO users(username, password, role) VALUES(?, ?, ?)', params, (error, result) => {
+        const params = [request.body.username, hash, request.body.name, request.body.email, 1];
+        db.run('INSERT INTO users(username, password, name, email, role) VALUES(?, ?, ?, ?, ?)', params, (error) => {
             if(error) {
-                response.json({msg:error});
+                console.log(error);
+                let columnName = error.message.match(/(?<=UNIQUE constraint failed: users.).*/);
+                response.status(409).json({msg:columnName + ' already in use'});
             } else {
                 response.json({msg:'User added!'});
             }

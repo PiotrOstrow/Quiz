@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="information-container">
-      <img src="../assets/HomepagePicture.jpg" >
+      <img src="../assets/HomepagePicture.jpg">
       <h2>Make learning fun!</h2>
       <p>Welcome to learn for fun, a website made for children looking for a more fun way to learn online!</p>
       <h2>For teachers:</h2>
@@ -25,25 +25,29 @@
         </table>
         <button>Submit</button>
       </form>
-
-      <form id="sign-up" >
+      <br>
+      <form id="sign-up" v-on:submit="submitRegister">
         <h2>Sign up</h2>
         <table>
           <tr>
             <td><label>Username:</label></td>
-            <td><input type="text"></td>
+            <td><input v-model="rUsername" type="text" required="required"></td>
           </tr>
           <tr>
             <td><label>Name: </label></td>
-            <td><input type="text"></td>
+            <td><input v-model="rName" type="text" required="required"></td>
           </tr>
           <tr>
             <td><label>Password:</label></td>
-            <td><input type="password"></td>
+            <td><input v-model="rPassword" type="password" required="required"></td>
+          </tr>
+          <tr>
+            <td><label>Verify Password:</label></td>
+            <td><input v-model="rRepeatPassword" type="password" required="required"></td>
           </tr>
           <tr>
             <td><label>E-mail:</label></td>
-            <td><input type="email"></td>
+            <td><input v-model="rEmail" type="email" required="required"></td>
           </tr>
         </table>
         <button>Submit</button>
@@ -60,10 +64,26 @@ export default {
     return {
       username: "",
       password: "",
+
+      // register form
+      rUsername: "",
+      rName: "",
+      rPassword: "",
+      rRepeatPassword: "",
+      rEmail: ""
     }
   },
   props: {
-    loggedIn: [String, Object, Boolean]
+    loggedIn: [Boolean]
+  },
+  methods: {
+    submitRegister() {
+      if (this.rPassword !== this.rRepeatPassword) {
+        alert('Passwords do not match');
+      } else {
+        this.$emit('register', this.rUsername, this.rName, this.rPassword, this.rEmail);
+      }
+    }
   }
 }
 </script>
@@ -71,7 +91,7 @@ export default {
 <style scoped>
 
 h2 {
- margin-top: 5px;
+  margin-top: 5px;
 }
 
 .home {

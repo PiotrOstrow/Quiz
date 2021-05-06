@@ -15,8 +15,23 @@ const api = {
 
         return await this.request('/login', formBody);
     },
-    register() {
-        console.log("Register function")
+    async register(username, name,  password, email) {
+        const details = {
+            'username': username,
+            'password': password,
+            'name': name,
+            'email': email
+        }
+
+        let formBody = [];
+        for (let property in details) {
+            let encodedKey = encodeURIComponent(property);
+            let encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+
+        return await this.request('/register', formBody);
     },
     async request(url, body) {
         return await fetch('http://' + window.location.hostname + ':3000' + url, {

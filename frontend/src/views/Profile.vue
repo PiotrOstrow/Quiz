@@ -6,7 +6,7 @@
         <p>Username: {{ user.username }}</p>
         <p>Name: {{ user.name }}</p>
         <p>E-mail: {{ user.email }}</p>
-        <p>Birthdate: {{ user.birthdate }}</p>
+        <button>Change password</button>
       </article>
     </main>
   </div>

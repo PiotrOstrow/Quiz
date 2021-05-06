@@ -28,7 +28,7 @@
       </ul>
     </nav>
     <div class="main">
-      <router-view :loggedIn="loggedIn" :user="user" v-on:login="login"/>
+      <router-view :loggedIn="loggedIn" :user="user" v-on:login="login" v-on:register="register"/>
     </div>
 
     <footer>
@@ -59,6 +59,16 @@ export default {
     }
   },
   methods: {
+    register(username, name, password, email) {
+      api.register(username, name,  password, email)
+        .then(response => {
+          if(response.status === 200) {
+            alert('Account registered!');
+          } else {
+            response.json().then(json => alert(json.msg));
+          }
+        });
+    },
     login(username, password) {
       api.logIn(username, password).then(response => {
           this.loggedIn = response.status === 200;
@@ -78,7 +88,8 @@ export default {
     this.$router.push('/');
     api.checkLogin().then(response => {
       this.loggedIn = response.status === 200;
-      this.$router.push('quiz');
+      if(this.loggedIn)
+        this.$router.push('quiz');
       return response.json();
     }).then(json => {
       this.user.username = json.user.username;

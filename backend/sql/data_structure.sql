@@ -2,6 +2,8 @@ CREATE TABLE users (
     ID INTEGER PRIMARY KEY,
     username VARCHAR UNIQUE,
     password VARCHAR,
+    name VARCHAR,
+    email VARCHAR UNIQUE,
     role INTEGER
 );
 
