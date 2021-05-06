@@ -13,7 +13,6 @@ const HTTP_PORT = 3000;
 passport.use(new LocalStrategy(
     function(username, password, done) {
         db.get('SELECT * FROM users  WHERE username = ?', [username], (error, result) => {
-            console.log(result);
             if(error || result == null) {
                 return done(null, false);
             }
@@ -28,18 +27,20 @@ passport.use(new LocalStrategy(
     }
 ));
 
-passport.serializeUser(function(user, done) {
-    done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-    done(null, user);
-});
+// more on serialization http://www.passportjs.org/docs/configure/#sessions
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(expressSession({secret: 'qwerty12345'}));
+
+app.use(expressSession({
+    secret: 'qwerty12345',
+    resave: false,
+    saveUninitialized: false
+}));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -62,7 +63,7 @@ const checkAuthentication = function(request, response, next){
 
 app.post('/login', passport.authenticate('local'), (request, response) => {
     // If this function gets called, authentication was successful.
-    // `req.user` contains the authenticated user.
+    // `request.user` contains the authenticated user.
     response.json({msg: 'Logged in!'});
 });
 
@@ -70,7 +71,7 @@ app.get('/', checkAuthentication, (request, response) => {
     response.json({msg:'Logged in as ' + request.user.username, userObject: request.user});
 });
 
-app.get('/logout', (request, response) => {
+app.get('/logout', checkAuthentication, (request, response) => {
     request.logout();
     response.status(200).json({msg:'Logged out'});
 });

@@ -17,10 +17,11 @@ const db = new sqlite3.Database(DB_FILE_NAME, err => {
 
     for(let i = 0; i < databaseStructureQueries.length; i++) {
         if(databaseStructureQueries[i].trim() !== "") {
-            db.run(databaseStructureQueries[i], err => {
-                if (err) {
-                    // table already created
+            db.run(databaseStructureQueries[i], error => {
+                if (error) {
                     console.log(err.message);
+                } else {
+                    console.log('Created table ' + databaseStructureQueries[i].match(/(?<=CREATE TABLE ).*\b/));
                 }
             });
         }
