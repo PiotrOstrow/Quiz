@@ -10,15 +10,15 @@
       <p>Overview over your kids latest quiz results</p>
     </div>
 
-    <div class="forms-container">
-      <form id="log-in" v-on:submit="login">
+    <div class="forms-container" v-if="!loggedIn">
+      <form id="log-in" v-on:submit="$emit('login', username, password)">
         <h2>Log in </h2>
-        <label>Username: </label> <input v-bind="username" type="text"> <br>
-        <label>Password: </label> <input v-bind="password" type="password"> <br>
+        <label>Username: </label> <input v-model="username" type="text" required="required"> <br>
+        <label>Password: </label> <input v-model="password" type="password" required="required"> <br>
         <button>Submit</button>
       </form>
 
-      <form id="sign-up" v-on:submit="register">
+      <form id="sign-up" >
         <h2>Sign up</h2>
         <label>Username:</label> <input type="text"> <br>
         <label>Name: </label> <input type="text"> <br>
@@ -34,43 +34,14 @@
 
 export default {
   name: 'Home.vue',
-  data: function() {
+  data: function () {
     return {
       username: "",
       password: "",
     }
   },
-  methods: {
-    login() {
-      const details = {
-        'username': 'MyUsername',
-        'password': 'MyPassword'
-      }
-
-      var formBody = [];
-      for (var property in details) {
-        var encodedKey = encodeURIComponent(property);
-        var encodedValue = encodeURIComponent(details[property]);
-        formBody.push(encodedKey + "=" + encodedValue);
-      }
-      formBody = formBody.join("&");
-
-      this.request('/login', formBody)
-        .then(response => console.log(response));
-    },
-    register() {
-      console.log("Register function")
-    },
-    async request(url, body) {
-      return await fetch('http://' + window.location.hostname + ':3000' + url, {
-        method: 'POST',
-        credentials: 'include',
-        body: body,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      });
-    }
+  props: {
+    loggedIn: [String, Object, Boolean]
   }
 }
 </script>

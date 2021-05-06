@@ -67,8 +67,9 @@ app.post('/login', passport.authenticate('local'), (request, response) => {
     response.json({msg: 'Logged in!'});
 });
 
+// This endpoint is used to check login status when vue app is loaded/mounted and get any data required for the app
 app.get('/', checkAuthentication, (request, response) => {
-    response.json({msg:'Logged in as ' + request.user.username, userObject: request.user});
+    response.json({user: {username: request.user.username}})
 });
 
 app.get('/logout', checkAuthentication, (request, response) => {

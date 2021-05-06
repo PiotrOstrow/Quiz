@@ -9,10 +9,10 @@
     </header>
 
     <nav>
-      <ul class="nav-links">
-        <li>
-          <router-link to="/">Home</router-link>
-        </li>
+      <ul v-if="loggedIn" class="nav-links">
+<!--        <li>-->
+<!--          <router-link to="/">Home</router-link>-->
+<!--        </li>-->
         <li>
           <router-link to="/profile">Profile</router-link>
         </li>
@@ -22,10 +22,13 @@
         <li>
           <router-link to="/quiz">Quiz</router-link>
         </li>
+        <li>
+          <a @click="logout">Log out</a>
+        </li>
       </ul>
     </nav>
     <div class="main">
-      <router-view/>
+      <router-view :loggedIn="loggedIn" :user="user" v-on:login="login"/>
     </div>
 
     <footer>
@@ -38,6 +41,51 @@
     </footer>
   </div>
 </template>
+
+<script>
+
+import api from './api.js';
+
+export default {
+  data: function() {
+    return {
+      loggedIn: false,
+      user: {
+        username: '',
+        name: 'testname',
+        email: 'a@b.com',
+        birthdate: '123'
+      }
+    }
+  },
+  methods: {
+    login(username, password) {
+      api.logIn(username, password).then(response => {
+          this.loggedIn = response.status === 200;
+          if(this.loggedIn) {
+            this.$router.push('quiz');
+          }
+      });
+    },
+    logout() {
+      this.loggedIn = false;
+      this.$router.push('/');
+      api.logout();
+    }
+  },
+  mounted: function () {
+    console.log('Is logged in: ' + this.loggedIn);
+    this.$router.push('/');
+    api.checkLogin().then(response => {
+      this.loggedIn = response.status === 200;
+      this.$router.push('quiz');
+      return response.json();
+    }).then(json => {
+      this.user.username = json.user.username;
+    });
+  }
+}
+</script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
@@ -63,6 +111,10 @@ footer {
 
 footer ul {
   list-style: none;
+}
+
+a {
+  cursor: pointer;
 }
 
 .wrapper {

@@ -29,6 +29,7 @@ export default {
   name: "Results.vue"
 }
 </script>
+
 <style scoped>
 
 body {

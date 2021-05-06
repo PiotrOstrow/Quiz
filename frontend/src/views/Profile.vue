@@ -3,10 +3,10 @@
     <h1>Profile</h1>
     <main>
       <article>
-        <p>Username:</p>
-        <p>Name:</p>
-        <p>E-mail:</p>
-        <p>Birthdate:</p>
+        <p>Username: {{ user.username }}</p>
+        <p>Name: {{ user.name }}</p>
+        <p>E-mail: {{ user.email }}</p>
+        <p>Birthdate: {{ user.birthdate }}</p>
       </article>
     </main>
   </div>
@@ -17,7 +17,10 @@
 
 <script>
 export default {
-  name: "Profile.vue"
+  name: "Profile.vue",
+  props: {
+    user: [Object]
+  }
 }
 </script>
 
