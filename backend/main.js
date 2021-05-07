@@ -16,9 +16,9 @@ passport.use(new LocalStrategy(
             if(error || result == null) {
                 return done(null, false);
             }
-            bcrypt.compare(password, result.password, function(err, result) {
-                if(result) {
-                    return done(null, { username: username });
+            bcrypt.compare(password, result.password, function(err, bcryptResult) {
+                if(bcryptResult) {
+                    return done(null, { username: username, email: result.email, name: result.name });
                 } else {
                     return done(null, false);
                 }
@@ -72,7 +72,7 @@ app.get('/', checkAuthentication, (request, response) => {
     db.all('SELECT * FROM quizzes', [], (error, result) => {
         if(error)
             console.log(error);
-        response.json({ user: { username: request.user.username }, quizList: result });
+        response.json({ user: request.user, quizList: result });
     });
 });
 
@@ -122,6 +122,3 @@ app.post('/register', (request, response) => {
         });
     });
 });
-
-
-

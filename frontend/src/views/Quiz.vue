@@ -5,24 +5,24 @@
       <h2>Question-questionNumber</h2>
       <div class="question-container" v-for="question in quiz.questions" v-bind:key="question.ID">
         <p class="question-paragraph"> {{ question.question }} </p>
-        <form id="choose-answer" v-on:submit="registerAnswer">
+        <form id="choose-answer">
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer1'" name="quiz-name" value="answer1-value">
+            <input type="radio" v-bind:id="question.ID + '_answer1'" name="quiz-name" value="1" v-on:click="selected($event, question.ID)">
             <label v-bind:for="question.ID + '_answer1'"> {{ question.answer1 }} </label><br>
           </div>
 
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer2'" name="quiz-name" value="answer2-value">
+            <input type="radio" v-bind:id="question.ID + '_answer2'" name="quiz-name" value="2" v-on:click="selected($event, question.ID)">
             <label v-bind:for="question.ID + '_answer2'"> {{ question.answer2 }} </label><br>
           </div>
 
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer3'" name="quiz-name" value="answer3-value">
+            <input type="radio" v-bind:id="question.ID + '_answer3'" name="quiz-name" value="3" v-on:click="selected($event, question.ID)">
             <label v-bind:for="question.ID + '_answer3'"> {{ question.answer3 }}</label><br>
           </div>
 
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer4'" name="quiz-name" value="answer4-value">
+            <input type="radio" v-bind:id="question.ID + '_answer4'" name="quiz-name" value="4" v-on:click="selected($event, question.ID)">
             <label v-bind:for="question.ID + '_answer4'"> {{ question.answer4 }} </label><br>
           </div>
 <!--          <button>Previous Question</button> <button>Next Question</button>-->
@@ -30,7 +30,7 @@
 <!--        <button class="quit-button">Quit</button>-->
 
       </div>
-      <button id="submit-button">Submit</button>
+      <button id="submit-button" @click="submit">Submit</button>
     </main>
   </div>
 </template>
@@ -43,13 +43,16 @@ export default {
   name: "Quiz.vue",
   data: function() {
     return {
-      quiz: {}
+      quiz: {},
+      answers: new Map()
     }
   },
   methods: {
-    registerAnswer(event) {
-      let optionText = event.target.value;
-      console.log(optionText);
+    submit() {
+
+    },
+    selected(event, index) {
+      this.answers.set(index, event.target.value);
     }
   },
   mounted() {
@@ -79,7 +82,6 @@ h1{
   border-radius: 20px;
   padding: 10%;
   margin: 10px;
-
 }
 
 .radio-input-container {
