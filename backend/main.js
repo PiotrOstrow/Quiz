@@ -69,7 +69,11 @@ app.post('/login', passport.authenticate('local'), (request, response) => {
 
 // This endpoint is used to check login status when vue app is loaded/mounted and get any data required for the app
 app.get('/', checkAuthentication, (request, response) => {
-    response.json({user: {username: request.user.username}})
+    db.all('SELECT * FROM quizzes', [], (error, result) => {
+        if(error)
+            console.log(error);
+        response.json({ user: { username: request.user.username }, quizList: result });
+    });
 });
 
 app.get('/logout', checkAuthentication, (request, response) => {

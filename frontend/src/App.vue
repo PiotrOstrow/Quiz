@@ -10,25 +10,25 @@
 
     <nav>
       <ul v-if="loggedIn" class="nav-links">
-<!--        <li>-->
-<!--          <router-link to="/">Home</router-link>-->
-<!--        </li>-->
+        <li>
+          <router-link to="/home-student">Home</router-link>
+        </li>
         <li>
           <router-link to="/profile">Profile</router-link>
         </li>
         <li>
           <router-link to="/results">Results</router-link>
         </li>
-        <li>
-          <router-link to="/quiz">Quiz</router-link>
-        </li>
+<!--        <li>-->
+<!--          <router-link to="/quiz">Quiz</router-link>-->
+<!--        </li>-->
         <li>
           <a @click="logout">Log out</a>
         </li>
       </ul>
     </nav>
     <div class="main">
-      <router-view :loggedIn="loggedIn" :user="user" v-on:login="login" v-on:register="register"/>
+      <router-view :loggedIn="loggedIn" :user="user" v-on:login="login" v-on:register="register" :quizList="quizList"/>
     </div>
 
     <footer>
@@ -55,7 +55,8 @@ export default {
         name: '',
         email: '',
         birthdate: ''
-      }
+      },
+      quizList: []
     }
   },
   methods: {
@@ -73,7 +74,7 @@ export default {
       api.logIn(username, password).then(response => {
           this.loggedIn = response.status === 200;
           if(this.loggedIn) {
-            this.$router.push('quiz');
+            this.$router.push('Home-student');
           }
       });
     },
@@ -95,18 +96,17 @@ export default {
 
     api.checkLogin().then(response => {
       this.loggedIn = response.status === 200;
-      console.log('Logged in: ' + this.loggedIn);
 
       if(this.loggedIn) {
         // grab json data
-        response.json().then(json => this.user = json.user);
-
-        console.log('Current route: ');
-        console.log(this.$router.currentRoute);
+        response.json().then(json => {
+          this.user = json.user;
+          this.quizList = json.quizList;
+        });
 
         // if the route is on login screen, change it
         if(this.$router.currentRoute.name === 'Home')
-          this.$router.push('quiz');
+          this.$router.push('Home-student');
       } else {
         this.$router.push('/');
       }
@@ -137,7 +137,7 @@ footer {
   text-align: center;
 }
 
-footer ul {
+ul {
   list-style: none;
 }
 

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Profile from '../views/Profile.vue'
 import Results from '../views/Results.vue'
+import HomeStudent from '../views/Home-student.vue'
 import Quiz from '../views/Quiz.vue'
 
 Vue.use(VueRouter)
@@ -30,9 +31,15 @@ const routes = [
         props: true
     },
     {
+        path: '/home-student',
+        name: 'Home-student',
+        component: HomeStudent,
+        props: true
+    },
+    {
         path: '/quiz',
         name: 'Quiz',
-        component: Quiz,
+        component: Quiz ,
         props: true
     }
 
