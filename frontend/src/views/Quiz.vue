@@ -1,32 +1,23 @@
 <template>
 <div class="quiz">
   <main>
-    <h1>Quiz-Name</h1>
-    <h2>Question-questionNumber</h2>
-    <div class="information-container ">
-      <p>Choose the correct answer for XXXXXX: </p>
-        <form id="choose-answer" v-on:submit="register-answer">
-          <input type="radio" id="answer1" name="answer1" value="answer1-value">
-          <label for="answer1">answer1-value</label><br>
-          <input type="radio" id="answer2" name="answer2" value="answer2-value">
-          <label for="answer2">answer2-value</label><br>
-          <input type="radio" id="answer3" name="answer3" value="answer3-value">
-          <label for="answer3">answer3-value</label><br>
-          <input type="radio" id="answer4" name="answer4" value="answer4-value">
-          <label for="answer4">answer4-value</label><br>
-          <button>Previous Question</button> <button>Next Question</button>
-        </form>
-
-        <button class="quit-button">Quit</button>
-
-    </div>
+    <h1>My Quizzes</h1>
+    <ol class="information-container ">
+      <li>quiz1-title</li>
+      <li>quiz2-title</li>
+      <button>Home</button>
+    </ol>
   </main>
 </div>
 </template>
 
 <script>
 export default {
-  name: "Quiz.vue"
+  name: "Quiz.vue",
+  methods: {
+
+  }
+
 }
 </script>
 
@@ -39,12 +30,6 @@ export default {
     border-style: none;
     border-radius: 5px;
     margin:10px
-  }
-
-  .quit-button{
-    margin: fill;
-    position: center;
-    width: 100px;
   }
 
   h1{
