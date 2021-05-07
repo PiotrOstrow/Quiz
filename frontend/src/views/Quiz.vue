@@ -1,69 +1,127 @@
 <template>
   <div class="quiz-navigation">
     <main>
-      <h1>Quiz-Name</h1>
+      <h1>{{ quiz.title }}</h1>
       <h2>Question-questionNumber</h2>
-      <div class="information-container ">
-        <p>Choose the correct answer for XXXXXX: </p>
+      <div class="question-container" v-for="question in quiz.questions" v-bind:key="question.ID">
+        <p class="question-paragraph"> {{ question.question }} </p>
         <form id="choose-answer" v-on:submit="registerAnswer">
-          <input type="radio" id="answer1" name="answer1" value="answer1-value">
-          <label for="answer1">answer1-value</label><br>
-          <input type="radio" id="answer2" name="answer2" value="answer2-value">
-          <label for="answer2">answer2-value</label><br>
-          <input type="radio" id="answer3" name="answer3" value="answer3-value">
-          <label for="answer3">answer3-value</label><br>
-          <input type="radio" id="answer4" name="answer4" value="answer4-value">
-          <label for="answer4">answer4-value</label><br>
-          <button>Previous Question</button> <button>Next Question</button>
-        </form>
+          <div class="radio-input-container">
+            <input type="radio" v-bind:id="question.ID + '_answer1'" name="quiz-name" value="answer1-value">
+            <label v-bind:for="question.ID + '_answer1'"> {{ question.answer1 }} </label><br>
+          </div>
 
-        <button class="quit-button">Quit</button>
+          <div class="radio-input-container">
+            <input type="radio" v-bind:id="question.ID + '_answer2'" name="quiz-name" value="answer2-value">
+            <label v-bind:for="question.ID + '_answer2'"> {{ question.answer2 }} </label><br>
+          </div>
+
+          <div class="radio-input-container">
+            <input type="radio" v-bind:id="question.ID + '_answer3'" name="quiz-name" value="answer3-value">
+            <label v-bind:for="question.ID + '_answer3'"> {{ question.answer3 }}</label><br>
+          </div>
+
+          <div class="radio-input-container">
+            <input type="radio" v-bind:id="question.ID + '_answer4'" name="quiz-name" value="answer4-value">
+            <label v-bind:for="question.ID + '_answer4'"> {{ question.answer4 }} </label><br>
+          </div>
+<!--          <button>Previous Question</button> <button>Next Question</button>-->
+        </form>
+<!--        <button class="quit-button">Quit</button>-->
 
       </div>
+      <button id="submit-button">Submit</button>
     </main>
   </div>
 </template>
 
 <script>
+
+import api from '../api.js';
+
 export default {
   name: "Quiz.vue",
+  data: function() {
+    return {
+      quiz: {}
+    }
+  },
   methods: {
     registerAnswer(event) {
-      var optionText = event.target.value;
+      let optionText = event.target.value;
       console.log(optionText);
     }
+  },
+  mounted() {
+    api.getQuiz(this.$route.params.id)
+      .then(response => {
+        return response.json();
+      }).then(json => {
+        this.quiz = json;
+    });
   }
 
 }
 </script>
 
 <style scoped>
-button {
-  font: 400 15px Pangolin;
-  background-color: #00a2e8;
-  color: white;
-  padding: 3px 6px;
-  border-style: none;
-  border-radius: 5px;
-  margin:10px
-}
-
-.quit-button{
-  margin: fill;
-  position: center;
-  width: 100px;
-}
-
 h1{
   font-size: 40px;
 }
 
-.information-container {
+.question-paragraph {
+  text-align: center;
+}
+
+.question-container {
   width: available;
   background-color: white;
   border-radius: 20px;
   padding: 10%;
+  margin: 10px;
+
 }
+
+.radio-input-container {
+  margin: 5px auto;
+}
+
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+
+.radio input container {
+  /*margin: 10px;*/
+
+}
+
+input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.question-container label {
+
+  display: inline-block;
+  background-color: rgba(0, 162, 232, 0.8);
+  font: 400 15px Pangolin;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.question-container label:hover {
+  background-color: rgba(0, 162, 232, 1);
+  transform: scale(1.05);
+}
+
+input[type="radio"]:checked + label {
+  background-color: #014055;
+}
+
 
 .quiz-navigation{
   width: 400px;
@@ -77,5 +135,14 @@ section {
   grid-gap: 20px;
 
 }
+
+#submit-button {
+  margin: 20px auto;
+  display:block;
+  width: 200px;
+  height: 50px;
+  font-size: 24px;
+}
+
 </style>
 

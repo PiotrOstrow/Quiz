@@ -84,6 +84,12 @@ app.get('/quiz/:id', (request, response) => {
             response.status(500).end();
             return;
         }
+
+        if(result == null){
+            response.status(404).end();
+            return;
+        }
+
         data = result;
         db.all('SELECT ID, question, answer1, answer2, answer3, answer4 FROM quiz_questions WHERE quizID = ?', [request.params.id], (error, result) => {
             data.questions = result;

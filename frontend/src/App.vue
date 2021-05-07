@@ -131,8 +131,6 @@ body {
 footer {
   background-color: #00a2e8;
   grid-area: footer;
-  position: absolute;
-  bottom:0;
   width: 100%;
   text-align: center;
 }

@@ -17,6 +17,9 @@ const api = {
 
         return this.postForm('/register', details);
     },
+    getQuiz(id) {
+        return this.get('/quiz/' + id);
+    },
     checkLogin() {
         return this.get('/');
     },

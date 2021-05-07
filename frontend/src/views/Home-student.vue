@@ -2,12 +2,11 @@
   <div class="quiz">
     <main>
       <h1>My Quizzes</h1>
-      <quizzes>
-        <li v-for="quiz in quizList"
-            v-bind:key="quiz.id">
-          <router-link to="/Quiz">{{ quiz.title }}</router-link>
-        </li>
-      </quizzes>
+      <div class="quizzes-container">
+        <router-link v-for="quiz in quizList" :to="{ name: 'Quiz', params: { id: quiz.ID }}" class="quiz-element"
+            v-bind:key="quiz.ID"
+        >{{ quiz.title }}</router-link>
+      </div>
     </main>
   </div>
 </template>
@@ -26,31 +25,53 @@ export default {
 
 h1 {
   font-size: 40px;
+  text-align: center;
 }
 
 .quizzes-container {
-  width: available;
+  /*width: available;*/
   background-color: white;
   border-radius: 20px;
   padding: 10%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .quiz {
-  width: 400px;
+  /*width: 200px;*/
+  width: 850px;
+  display: block;
   margin: auto;
 }
 
-ul {
+.quiz-element {
   list-style: none;
+  text-align: center;
+  margin: 10px;
+  width: 200px;
+  height: 100px;
+  font: 400 15px Pangolin;
+  background-color: rgba(0, 162, 232, 0.8);
+  color: white;
+  padding: 3px 6px;
+  border: 2px solid #014055;
+  border-radius: 5px;
+  transition: transform .2s;
+
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quiz-element:hover {
+  background-color: rgba(0, 162, 232, 1);
+  transform: scale(1.05);
 }
 
 a {
-  font: 400 15px Pangolin;
-  background-color: #00a2e8;
+  text-decoration: none;
   color: white;
-  padding: 3px 6px;
-  border-style: none;
-  border-radius: 5px;
+
 }
 
 
