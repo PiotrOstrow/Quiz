@@ -76,6 +76,22 @@ app.get('/', checkAuthentication, (request, response) => {
     });
 });
 
+app.get('/quiz/:id', (request, response) => {
+    let data = {};
+    db.get('SELECT * FROM quizzes WHERE ID = ?', [request.params.id], (error, result) => {
+        if(error) {
+            console.log(error);
+            response.status(500).end();
+            return;
+        }
+        data = result;
+        db.all('SELECT ID, question, answer1, answer2, answer3, answer4 FROM quiz_questions WHERE quizID = ?', [request.params.id], (error, result) => {
+            data.questions = result;
+            response.json(data);
+        });
+    })
+});
+
 app.get('/logout', checkAuthentication, (request, response) => {
     request.logout();
     response.status(200).json({msg:'Logged out'});
