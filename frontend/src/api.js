@@ -49,6 +49,16 @@ const api = {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
+    },
+    postJson(url, data) {
+        return fetch('http://' + window.location.hostname + ':3000' + url, {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
 }
 

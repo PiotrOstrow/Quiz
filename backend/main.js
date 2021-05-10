@@ -18,7 +18,7 @@ passport.use(new LocalStrategy(
             }
             bcrypt.compare(password, result.password, function(err, bcryptResult) {
                 if(bcryptResult) {
-                    return done(null, { username: username, email: result.email, name: result.name });
+                    return done(null, { ID: result.ID ,username: username, email: result.email, name: result.name });
                 } else {
                     return done(null, false);
                 }
@@ -119,6 +119,43 @@ app.post('/register', (request, response) => {
             } else {
                 response.json({msg:'User added!'});
             }
+        });
+    });
+});
+
+app.post('/submit', checkAuthentication, (request, response) => {
+    // console.log('Submitted answers:');
+    // console.log(request.body.answers);
+    db.all('SELECT ID, correct_answer FROM quiz_questions WHERE quizID = ?', [request.body.id], (error, result) => {
+        if(error)
+            console.log(error);
+
+        if(result == null) {
+            response.status(400).end();
+            return;
+        }
+
+        // console.log('correct answers:');
+        // console.log(result)
+
+        let correctAnswerCount = 0;
+
+        for(let i = 0; i < result.length; i++) {
+            console.log(result[i].ID + ': ' + result[i].correct_answer);
+            let questionID = result[i].ID;
+            let givenAnswer = request.body.answers[questionID];
+            let correctAnswer = result[i].correct_answer;
+
+            if(givenAnswer === correctAnswer)
+                correctAnswerCount++;
+        }
+
+        // console.log('Correct answers: ' + correctAnswerCount + '/' + result.length);
+
+        let parameters = [request.user.ID, request.body.id, correctAnswerCount];
+        db.run('INSERT INTO quiz_results (userID, quizID, score) VALUES(?, ?, ?)', parameters, (error, result) => {
+            if(error)
+                console.log(error);
         });
     });
 });

@@ -7,22 +7,22 @@
         <p class="question-paragraph"> {{ question.question }} </p>
         <form id="choose-answer">
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer1'" name="quiz-name" value="1" v-on:click="selected($event, question.ID)">
+            <input type="radio" v-bind:id="question.ID + '_answer1'" name="quiz-name" v-bind:value="question.answer1" v-on:click="selected($event, question.ID)">
             <label v-bind:for="question.ID + '_answer1'"> {{ question.answer1 }} </label><br>
           </div>
 
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer2'" name="quiz-name" value="2" v-on:click="selected($event, question.ID)">
+            <input type="radio" v-bind:id="question.ID + '_answer2'" name="quiz-name" v-bind:value="question.answer2" v-on:click="selected($event, question.ID)">
             <label v-bind:for="question.ID + '_answer2'"> {{ question.answer2 }} </label><br>
           </div>
 
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer3'" name="quiz-name" value="3" v-on:click="selected($event, question.ID)">
+            <input type="radio" v-bind:id="question.ID + '_answer3'" name="quiz-name" v-bind:value="question.answer3" v-on:click="selected($event, question.ID)">
             <label v-bind:for="question.ID + '_answer3'"> {{ question.answer3 }}</label><br>
           </div>
 
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer4'" name="quiz-name" value="4" v-on:click="selected($event, question.ID)">
+            <input type="radio" v-bind:id="question.ID + '_answer4'" name="quiz-name" v-bind:value="question.answer4" v-on:click="selected($event, question.ID)">
             <label v-bind:for="question.ID + '_answer4'"> {{ question.answer4 }} </label><br>
           </div>
 <!--          <button>Previous Question</button> <button>Next Question</button>-->
@@ -49,7 +49,20 @@ export default {
   },
   methods: {
     submit() {
+      console.log(this.answers);
 
+      let data = {
+        id: this.quiz.ID,
+        answers: {}
+      };
+
+      for (let [key, value] of this.answers) {
+        console.log(value);
+        data.answers[key] = value;
+        // data.push({[key]: "svar x"});
+      }
+
+      api.postJson('/submit', data);
     },
     selected(event, index) {
       this.answers.set(index, event.target.value);
