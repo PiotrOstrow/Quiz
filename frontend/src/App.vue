@@ -75,6 +75,12 @@ export default {
           this.loggedIn = response.status === 200;
           if(this.loggedIn) {
             this.$router.push('Home-student');
+
+            response.json().then(json => {
+              this.user = json.user;
+              this.quizList = json.quizList;
+            });
+
           } else if(response.status === 401) {
             alert('Wrong username and/or password')
           } else {

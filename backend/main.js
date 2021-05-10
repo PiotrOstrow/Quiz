@@ -64,7 +64,11 @@ const checkAuthentication = function(request, response, next){
 app.post('/login', passport.authenticate('local'), (request, response) => {
     // If this function gets called, authentication was successful.
     // `request.user` contains the authenticated user.
-    response.json({msg: 'Logged in!'});
+    db.all('SELECT * FROM quizzes', [], (error, result) => {
+        if(error)
+            console.log(error);
+        response.json({ user: request.user, quizList: result });
+    });
 });
 
 // This endpoint is used to check login status when vue app is loaded/mounted and get any data required for the app
