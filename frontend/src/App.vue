@@ -75,6 +75,10 @@ export default {
           this.loggedIn = response.status === 200;
           if(this.loggedIn) {
             this.$router.push('Home-student');
+          } else if(response.status === 401) {
+            alert('Wrong username and/or password')
+          } else {
+            alert('Unable to login');
           }
       });
     },
