@@ -60,11 +60,8 @@ export default {
         answers: {}
       };
 
-      for (let [key, value] of this.answers) {
-        console.log(value);
+      for (let [key, value] of this.answers)
         data.answers[key] = value;
-        // data.push({[key]: "svar x"});
-      }
 
       api.postJson('/submit', data)
         .then(response => response.json())

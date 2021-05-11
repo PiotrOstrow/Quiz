@@ -141,7 +141,6 @@ app.post('/submit', checkAuthentication, (request, response) => {
         let answers = [];
 
         for (let i = 0; i < result.length; i++) {
-            console.log(result[i].ID + ': ' + result[i].correct_answer);
             let questionID = result[i].ID;
             let givenAnswer = request.body.answers[questionID];
             let correctAnswer = result[i].correct_answer;

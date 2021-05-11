@@ -19,9 +19,9 @@
         <li>
           <router-link to="/results">Results</router-link>
         </li>
-<!--        <li>-->
-<!--          <router-link to="/quiz">Quiz</router-link>-->
-<!--        </li>-->
+        <li>
+          <router-link to="/create">Create Quiz</router-link>
+        </li>
         <li>
           <a @click="logout">Log out</a>
         </li>

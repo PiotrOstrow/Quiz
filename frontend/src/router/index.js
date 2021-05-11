@@ -6,6 +6,7 @@ import Results from '../views/Results.vue'
 import HomeStudent from '../views/Home-student.vue'
 import Quiz from '../views/Quiz.vue'
 import QuizSubmit from "@/views/QuizSubmit";
+import CreateQuiz from '../views/Create-quiz.vue'
 
 Vue.use(VueRouter)
 
@@ -48,8 +49,13 @@ const routes = [
         name: 'QuizSubmit',
         component: QuizSubmit,
         props: true
+    },
+    {
+        path: '/create',
+        name: 'Create',
+        component: CreateQuiz,
+        props: true
     }
-
 ]
 
 const router = new VueRouter({

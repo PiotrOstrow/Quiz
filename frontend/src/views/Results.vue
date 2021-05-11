@@ -30,12 +30,9 @@ export default {
     quizList: [Array, Object]
   },
   mounted() {
-    api.getResults().then(response => {
-      return response.json();
-    }).then(json => {
-      this.quizResults = json;
-      console.log(this.quizResults);
-    });
+    api.getResults()
+        .then(response => response.json())
+        .then(json => this.quizResults = json);
   }
 }
 </script>
