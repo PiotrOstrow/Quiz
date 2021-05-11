@@ -24,12 +24,12 @@ export default {
 
 <style scoped>
 
-section {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto auto auto 50px;
-  grid-gap: 20px;
-}
+/*section {*/
+/*  display: grid;*/
+/*  grid-template-columns: 1fr;*/
+/*  grid-template-rows: auto auto auto 50px;*/
+/*  grid-gap: 20px;*/
+/*}*/
 
 .profile{
   width: 200px;

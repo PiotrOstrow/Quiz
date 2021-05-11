@@ -20,6 +20,9 @@ const api = {
     getQuiz(id) {
         return this.get('/quiz/' + id);
     },
+    getResults() {
+        return this.get('/results');
+    },
     checkLogin() {
         return this.get('/');
     },

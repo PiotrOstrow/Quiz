@@ -1,52 +1,63 @@
 <template>
   <section class="grid-container">
-<div class="results">
-  <h1 class="underlineTitle">Results</h1>
-  <main>
-    <div class="article-container">
-    <article>
-      <div class="underlineSubjectTitle">
-      <h2>Math</h2>
-      </div>
-      <!--      Example text-->
-      <p>You got 0 out of 10 correct.</p>
-    </article>
+    <div class="results">
+      <h1>Results</h1>
+      <main>
+        <div v-for="quiz in quizResults"
+             v-bind:key="quiz.quizID" class="results-container">
+          <h3>{{ quiz.title }}</h3>
+          <p>{{quiz.score}} out of 5 questions correct</p>
+        </div>
+      </main>
     </div>
-    <div class="article-container">
-    <article>
-      <div class="underlineSubjectTitle">
-      <h2>Geography</h2>
-      </div>
-      <!--      Example text-->
-      <p>You guessed wrong on Sweden's capital.</p>
-    </article>
-    </div>
-  </main>
-
-</div>
   </section>
 
 </template>
 
 <script>
+import api from '../api.js';
 export default {
-  name: "Results.vue"
+  name: "Results.vue",
+  data() {
+    return {
+      quizResults: '',
+    }
+  },
+  methods: {
+
+  },
+  props: {
+    quizList: [Array, Object]
+  },
+  mounted() {
+    api.getResults().then(response => {
+      return response.json();
+    }).then(json => {
+      this.quizResults = json;
+      console.log(this.quizResults);
+    });
+  }
 }
 </script>
 
 <style scoped>
 
 body {
-  background-color: lightgrey;
+  background-color: white;
 }
 
-section {
-  display: flex;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto auto 50px;
-  grid-template-areas: "header" "navigation" "main-content" "footer";
-  grid-gap: 50px;
+h1 {
+  font-size: 40px;
+  text-align: center;
 }
+
+/*section {*/
+/*  display: flex;*/
+/*  grid-template-columns: 1fr 1fr;*/
+/*  grid-template-rows: auto auto auto 50px;*/
+/*  grid-template-areas: "header" "navigation" "main-content" "footer";*/
+/*  grid-gap: 50px;*/
+/*}*/
 
 section.grid-container {
   width: 600px;
@@ -60,21 +71,18 @@ main {
   grid-gap: 20px;
 }
 
-.underlineTitle {
-  font-size: 36px;
-}
-
 .underlineSubjectTitle {
   border-bottom: 2px solid #00a2e8;
   margin: 10px;
 
 }
 
-.article-container {
+.results-container {
   width: 100%;
-  border-radius: 20px;
-  padding: 1%;
   background-color: white;
+  border-radius: 20px;
+  padding: 10%;
+  margin: 10px;
 }
 
 </style>

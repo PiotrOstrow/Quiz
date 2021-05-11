@@ -17,7 +17,7 @@ export default {
   methods: {},
   props: {
     quizList: [Array, Object]
-  }
+  },
 }
 </script>
 

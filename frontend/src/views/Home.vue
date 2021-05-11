@@ -107,6 +107,20 @@ img {
   width: 100%;
 }
 
+
+form td {
+  width: 50%;
+  text-align: left;
+}
+
+form tr {
+  text-align: left;
+}
+
+form input {
+  width: 100%;
+}
+
 .information-container {
   width: 100%;
   background-color: white;
