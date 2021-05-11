@@ -8,8 +8,8 @@
       </div>
     </header>
 
-    <nav>
-      <ul v-if="loggedIn" class="nav-links">
+    <nav v-if="loggedIn">
+      <ul class="nav-links">
         <li>
           <router-link to="/home-student">Home</router-link>
         </li>
@@ -27,6 +27,7 @@
         </li>
       </ul>
     </nav>
+    <nav v-else id="empty_nav"></nav>
     <div class="main">
       <router-view
           :loggedIn="loggedIn"
@@ -40,12 +41,11 @@
     </div>
 
     <footer>
-      <div class="wrapper"></div>
-        <ul class="footer-info">
-          <li>
-            <p>CopyRight © Learn for Fun!</p>
-          </li>
-        </ul>
+      <ul class="footer-info">
+        <li>
+          <p>CopyRight © Learn for Fun!</p>
+        </li>
+      </ul>
     </footer>
   </div>
 </template>
@@ -141,6 +141,10 @@ export default {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
 
+:root {
+  --footer-height: 52px;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -156,6 +160,16 @@ footer {
   grid-area: footer;
   width: 100%;
   text-align: center;
+  height: var(--footer-height);
+  position: absolute;
+  bottom: 0;
+}
+
+footer ul {
+  /* ul element in footer had a left padding of 40px which made the text off center*/
+  /* was most likely due to list style but same thing happens even with list-style: none*/
+  padding: 0;
+  /*list-style: none;*/
 }
 
 ul {
@@ -164,10 +178,6 @@ ul {
 
 a {
   cursor: pointer;
-}
-
-.wrapper {
-  padding-bottom: 5px;
 }
 
 .footer-info {
@@ -189,16 +199,19 @@ a {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-areas: "header"
-            "nav"
-            "main"
-            "footer";
+  /*display: grid;*/
+  /*grid-template-columns: 1fr;*/
+  /*grid-template-areas: "header"*/
+  /*          "nav"*/
+  /*          "main"*/
+  /*          "footer";*/
+  min-height: 100vh;
+  position: relative;
 }
 
 header {
   width: 100%;
+  height: 120px;
   grid-area: header;
   margin: 0 auto;
   background-color: #F29544;
@@ -228,7 +241,12 @@ nav {
   justify-content: space-around;
   align-items: center;
   background-color: #00a2e8;
-  min-height: 2vh;
+  /*min-height: 2vh;*/
+  height: 52px;
+}
+
+#empty_nav {
+  height: 20px;
 }
 
 .nav-links {
@@ -255,6 +273,7 @@ button {
   padding: 3px 6px;
   border-style: none;
   border-radius: 5px;
+  transition: transform .2s;
 }
 
 button:disabled {
@@ -274,6 +293,7 @@ button:hover {
 
 .main {
   grid-area: main;
+  padding-bottom: var(--footer-height); /* offsets the footer */
 }
 
 </style>

@@ -32,14 +32,15 @@ h1 {
   /*width: available;*/
   /*background-color: white;*/
   /*border-radius: 20px;*/
-  padding: 10%;
+  padding: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 20px;
 }
 
 .quiz {
   /*width: 200px;*/
-  width: 850px;
+  width: min-content;
   display: block;
   margin: auto;
 }
@@ -47,13 +48,13 @@ h1 {
 .quiz-element {
   list-style: none;
   text-align: center;
-  margin: 10px;
+  /*margin: 10px;*/
   width: 200px;
   height: 100px;
   font: 400 15px Pangolin;
   background-color: rgba(0, 162, 232, 0.8);
   color: white;
-  padding: 3px 6px;
+  /*padding: 3px 6px;*/
   border: 2px solid #014055;
   border-radius: 5px;
   transition: transform .2s;

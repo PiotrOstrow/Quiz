@@ -141,6 +141,14 @@ input[type="radio"] {
   width: 0;
 }
 
+.question-container h2 {
+  margin: 0;
+}
+
+.question-container h3 {
+  margin: 5px;
+}
+
 .question-container label {
   display: inline-block;
   background-color: rgba(0, 162, 232, 0.8);
@@ -148,6 +156,7 @@ input[type="radio"] {
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
+  transition: transform .2s;
 }
 
 .question-container label:hover {

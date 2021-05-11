@@ -53,12 +53,10 @@
       </div>
 
       <div v-if="question.type === 'truefalse'">
-        <input type="radio" id="test1">
+        <input type="radio" id="test1" name="tf">
         <label for="test1">True</label>
-      </div>
-      <div v-if="question.type === 'truefalse'">
-        <input type="radio" id="test1">
-        <label for="test1">True</label>
+        <input type="radio" id="test1" name="tf">
+        <label for="test1">False</label>
       </div>
 
       <div>
