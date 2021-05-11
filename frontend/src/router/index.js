@@ -5,6 +5,7 @@ import Profile from '../views/Profile.vue'
 import Results from '../views/Results.vue'
 import HomeStudent from '../views/Home-student.vue'
 import Quiz from '../views/Quiz.vue'
+import QuizSubmit from "@/views/QuizSubmit";
 
 Vue.use(VueRouter)
 
@@ -40,6 +41,12 @@ const routes = [
         path: '/quiz/:id',
         name: 'Quiz',
         component: Quiz ,
+        props: true
+    },
+    {
+        path: '/single-result',
+        name: 'QuizSubmit',
+        component: QuizSubmit,
         props: true
     }
 

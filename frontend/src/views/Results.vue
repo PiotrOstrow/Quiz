@@ -1,12 +1,12 @@
 <template>
   <section class="grid-container">
-    <div class="results">
-      <h1>Results</h1>
+    <h1>Results</h1>
+    <div class="results-container">
       <main>
         <div v-for="quiz in quizResults"
-             v-bind:key="quiz.quizID" class="results-container">
+             v-bind:key="quiz.quizID">
           <h3>{{ quiz.title }}</h3>
-          <p>{{quiz.score}} out of 5 questions correct</p>
+          <p>{{quiz.score}} out of {{ quiz.question_count }} questions correct</p>
         </div>
       </main>
     </div>
@@ -42,10 +42,6 @@ export default {
 
 <style scoped>
 
-body {
-  background-color: white;
-}
-
 h1 {
   font-size: 40px;
   text-align: center;
@@ -66,16 +62,13 @@ section.grid-container {
 
 main {
   grid-area: main-content;
-  display: flex;
   grid-template-columns: 1fr;
-  grid-gap: 20px;
 }
 
-.underlineSubjectTitle {
-  border-bottom: 2px solid #00a2e8;
-  margin: 10px;
-
-}
+/*.underlineSubjectTitle {*/
+/*  border-bottom: 2px solid #00a2e8;*/
+/*  margin: 10px;*/
+/*}*/
 
 .results-container {
   width: 100%;

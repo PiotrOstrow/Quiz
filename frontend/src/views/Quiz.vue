@@ -2,9 +2,9 @@
   <div class="quiz-navigation">
     <main>
       <h1>{{ quiz.title }}</h1>
-      <h2>Question-questionNumber</h2>
-      <div class="question-container" v-for="question in quiz.questions" v-bind:key="question.ID">
-        <p class="question-paragraph"> {{ question.question }} </p>
+      <div class="question-container" v-for="(question, index) in quiz.questions" v-bind:key="question.ID">
+        <h2>Question {{index+1}}</h2>
+        <h3 class="question-paragraph"> {{ question.question }} </h3>
         <form id="choose-answer">
           <div class="radio-input-container">
             <input type="radio" v-bind:id="question.ID + '_answer1'" name="quiz-name" v-bind:value="question.answer1" v-on:click="selected($event, question.ID)">
@@ -30,7 +30,7 @@
 <!--        <button class="quit-button">Quit</button>-->
 
       </div>
-      <button id="submit-button" @click="submit">Submit</button>
+      <button id="submit-button" @click="submit" :disabled="!submitEnabled">Submit</button>
     </main>
   </div>
 </template>
@@ -44,12 +44,16 @@ export default {
   data: function() {
     return {
       quiz: {},
-      answers: new Map()
+      answers: new Map(),
+      submitEnabled: false
     }
   },
   methods: {
     submit() {
-      console.log(this.answers);
+      if(this.answers.size < this.quiz.questions.length) {
+        alert('Not all questions answered');
+        return;
+      }
 
       let data = {
         id: this.quiz.ID,
@@ -62,10 +66,21 @@ export default {
         // data.push({[key]: "svar x"});
       }
 
-      api.postJson('/submit', data);
+      api.postJson('/submit', data)
+        .then(response => response.json())
+        .then(json => {
+          let resultData = {
+            score: json.score,
+            questionCount: this.quiz.questions.length,
+            title: this.quiz.title
+          };
+          this.$emit('showSingleResult', resultData);
+        });
     },
-    selected(event, index) {
-      this.answers.set(index, event.target.value);
+    selected(event, id) {
+      this.answers.set(id, event.target.value);
+
+      this.submitEnabled = this.answers.size === this.quiz.questions.length;
     }
   },
   mounted() {
@@ -83,6 +98,7 @@ export default {
 <style scoped>
 h1{
   font-size: 40px;
+  text-align: center;
 }
 
 .question-paragraph {
@@ -90,20 +106,28 @@ h1{
 }
 
 .question-container {
-  width: available;
+  width: max-content;
   background-color: white;
   border-radius: 20px;
-  padding: 10%;
-  margin: 10px;
+  padding: 20px;
+  margin: 10px auto;
+  border: solid 3px black;
 }
 
 .radio-input-container {
   margin: 5px auto;
 }
 
+.radio-input-container label{
+  width: 140px;
+  text-align: center;
+  border: solid 2px black;
+}
+
 form {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 10px;
 }
 
 
@@ -119,7 +143,6 @@ input[type="radio"] {
 }
 
 .question-container label {
-
   display: inline-block;
   background-color: rgba(0, 162, 232, 0.8);
   font: 400 15px Pangolin;
@@ -139,7 +162,7 @@ input[type="radio"]:checked + label {
 
 
 .quiz-navigation{
-  width: 400px;
+  /*width: 400px;*/
   margin: auto;
 }
 
@@ -157,6 +180,7 @@ section {
   width: 200px;
   height: 50px;
   font-size: 24px;
+  border: solid 2px black;
 }
 
 </style>

@@ -160,16 +160,17 @@ app.post('/submit', checkAuthentication, (request, response) => {
         db.run('INSERT INTO quiz_results (userID, quizID, score) VALUES(?, ?, ?)', parameters, (error, result) => {
             if (error)
                 console.log(error);
+
+            response.json({score: correctAnswerCount});
         });
     });
 });
 
 app.get('/results', checkAuthentication, (request, response) => {
-    db.all('SELECT quizID, title, max(score) as score ' +
+    db.all('SELECT quizID, title, max(score) as score, (SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quizID = quiz_results.quizID) as question_count ' +
         'FROM quiz_results inner join quizzes on quizID = quizzes.ID ' +
         'where userID = ? ' +
         'group by quizID, title', [request.user.ID], (error, result) => {
-        let data = {};
 
         // handling of error
         if (error) {
