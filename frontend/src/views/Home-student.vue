@@ -30,8 +30,8 @@ h1 {
 
 .quizzes-container {
   /*width: available;*/
-  background-color: white;
-  border-radius: 20px;
+  /*background-color: white;*/
+  /*border-radius: 20px;*/
   padding: 10%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

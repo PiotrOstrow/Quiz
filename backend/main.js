@@ -128,8 +128,6 @@ app.post('/register', (request, response) => {
 });
 
 app.post('/submit', checkAuthentication, (request, response) => {
-    // console.log('Submitted answers:');
-    // console.log(request.body.answers);
     db.all('SELECT ID, correct_answer FROM quiz_questions WHERE quizID = ?', [request.body.id], (error, result) => {
         if (error)
             console.log(error);
@@ -139,10 +137,8 @@ app.post('/submit', checkAuthentication, (request, response) => {
             return;
         }
 
-        // console.log('correct answers:');
-        // console.log(result)
-
         let correctAnswerCount = 0;
+        let answers = [];
 
         for (let i = 0; i < result.length; i++) {
             console.log(result[i].ID + ': ' + result[i].correct_answer);
@@ -150,18 +146,17 @@ app.post('/submit', checkAuthentication, (request, response) => {
             let givenAnswer = request.body.answers[questionID];
             let correctAnswer = result[i].correct_answer;
 
-            if (givenAnswer === correctAnswer)
+            answers[i] = givenAnswer === correctAnswer;
+            if (answers[i])
                 correctAnswerCount++;
         }
-
-        // console.log('Correct answers: ' + correctAnswerCount + '/' + result.length);
 
         let parameters = [request.user.ID, request.body.id, correctAnswerCount];
         db.run('INSERT INTO quiz_results (userID, quizID, score) VALUES(?, ?, ?)', parameters, (error, result) => {
             if (error)
                 console.log(error);
 
-            response.json({score: correctAnswerCount});
+            response.json({score: correctAnswerCount, answers: answers});
         });
     });
 });

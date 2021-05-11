@@ -72,7 +72,9 @@ export default {
           let resultData = {
             score: json.score,
             questionCount: this.quiz.questions.length,
-            title: this.quiz.title
+            title: this.quiz.title,
+            questions: this.quiz.questions,
+            answers: json.answers
           };
           this.$emit('showSingleResult', resultData);
         });
