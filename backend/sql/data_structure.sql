@@ -4,7 +4,7 @@ CREATE TABLE users (
     password VARCHAR,
     name VARCHAR,
     email VARCHAR UNIQUE,
-    role INTEGER
+    role varchar DEFAULT 'student'
 );
 
 CREATE TABLE quizzes (
