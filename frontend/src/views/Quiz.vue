@@ -71,7 +71,8 @@ export default {
             questionCount: this.quiz.questions.length,
             title: this.quiz.title,
             questions: this.quiz.questions,
-            answers: json.answers
+            answers: json.answers,
+            givenAnswers: json.givenAnswers,
           };
           this.$emit('showSingleResult', resultData);
         });

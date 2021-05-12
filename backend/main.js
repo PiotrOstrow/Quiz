@@ -139,11 +139,14 @@ app.post('/submit', checkAuthentication, (request, response) => {
 
         let correctAnswerCount = 0;
         let answers = [];
+        let givenAnswers = [];
 
         for (let i = 0; i < result.length; i++) {
             let questionID = result[i].ID;
             let givenAnswer = request.body.answers[questionID];
             let correctAnswer = result[i].correct_answer;
+
+            givenAnswers.push(givenAnswer);
 
             answers[i] = givenAnswer === correctAnswer;
             if (answers[i])
@@ -155,7 +158,7 @@ app.post('/submit', checkAuthentication, (request, response) => {
             if (error)
                 console.log(error);
 
-            response.json({score: correctAnswerCount, answers: answers});
+            response.json({score: correctAnswerCount, answers: answers, givenAnswers: givenAnswers});
         });
     });
 });
