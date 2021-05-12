@@ -6,6 +6,7 @@ const expressSession = require('express-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const db = require('./database.js');
+const Role = require('./roles.js');
 
 const BCRYPT_SALT_ROUNDS = 10;
 const HTTP_PORT = 3000;
@@ -18,7 +19,14 @@ passport.use(new LocalStrategy(
             }
             bcrypt.compare(password, result.password, function (err, bcryptResult) {
                 if (bcryptResult) {
-                    return done(null, {ID: result.ID, username: username, email: result.email, name: result.name});
+                    let user = {
+                        ID: result.ID,
+                        username: username,
+                        email: result.email,
+                        name: result.name,
+                        role: result.role
+                    };
+                    return done(null, user);
                 } else {
                     return done(null, false);
                 }
@@ -53,11 +61,16 @@ app.listen(HTTP_PORT, () => {
     console.log('Server running on port ' + HTTP_PORT);
 });
 
-const checkAuthentication = function (request, response, next) {
-    if (request.isAuthenticated()) {
-        next();
-    } else {
-        response.status(401).json({msg: 'Not authenticated'});
+function checkAuthentication(roles) {
+    if (typeof roles === 'string')
+        roles = [roles];
+
+    return (request, response, next) => {
+        if (request.isAuthenticated() && roles.includes(request.user.role)) {
+            next();
+        } else {
+            response.status(401).json({msg: 'Not authenticated'});
+        }
     }
 }
 
@@ -72,7 +85,7 @@ app.post('/login', passport.authenticate('local'), (request, response) => {
 });
 
 // This endpoint is used to check login status when vue app is loaded/mounted and get any data required for the app
-app.get('/', checkAuthentication, (request, response) => {
+app.get('/', checkAuthentication(Role.Student), (request, response) => {
     db.all('SELECT * FROM quizzes', [], (error, result) => {
         if (error)
             console.log(error);
@@ -80,7 +93,7 @@ app.get('/', checkAuthentication, (request, response) => {
     });
 });
 
-app.get('/quiz/:id', (request, response) => {
+app.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
     let data = {};
     db.get('SELECT * FROM quizzes WHERE ID = ?', [request.params.id], (error, result) => {
         if (error) {
@@ -102,7 +115,7 @@ app.get('/quiz/:id', (request, response) => {
     })
 });
 
-app.get('/logout', checkAuthentication, (request, response) => {
+app.get('/logout', checkAuthentication([Role.Student, Role.Teacher]), (request, response) => {
     request.logout();
     response.status(200).json({msg: 'Logged out'});
 });
@@ -114,8 +127,8 @@ app.post('/register', (request, response) => {
         return;
     }
     bcrypt.hash(request.body.password, BCRYPT_SALT_ROUNDS, function (err, hash) {
-        const params = [request.body.username, hash, request.body.name, request.body.email, 1];
-        db.run('INSERT INTO users(username, password, name, email, role) VALUES(?, ?, ?, ?, ?)', params, (error) => {
+        const params = [request.body.username, hash, request.body.name, request.body.email];
+        db.run('INSERT INTO users(username, password, name, email) VALUES(?, ?, ?, ?)', params, (error) => {
             if (error) {
                 console.log(error);
                 let columnName = error.message.match(/(?<=UNIQUE constraint failed: users.).*/);
@@ -127,7 +140,7 @@ app.post('/register', (request, response) => {
     });
 });
 
-app.post('/submit', checkAuthentication, (request, response) => {
+app.post('/submit', checkAuthentication(Role.Student), (request, response) => {
     db.all('SELECT ID, correct_answer FROM quiz_questions WHERE quizID = ?', [request.body.id], (error, result) => {
         if (error)
             console.log(error);
@@ -160,7 +173,7 @@ app.post('/submit', checkAuthentication, (request, response) => {
     });
 });
 
-app.get('/results', checkAuthentication, (request, response) => {
+app.get('/results', checkAuthentication(Role.Student), (request, response) => {
     db.all('SELECT quizID, title, max(score) as score, (SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quizID = quiz_results.quizID) as question_count ' +
         'FROM quiz_results inner join quizzes on quizID = quizzes.ID ' +
         'where userID = ? ' +
@@ -178,5 +191,8 @@ app.get('/results', checkAuthentication, (request, response) => {
         // handling of result
         response.json(result);
     });
-
 });
+
+app.get('/teacher', checkAuthentication(Role.Teacher), (request, response) => {
+    response.json({msg:'You are a teacher!'});
+})
