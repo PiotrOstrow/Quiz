@@ -4,7 +4,7 @@
     <h2>Score: {{ scoreData.score }}/{{ scoreData.questionCount }}</h2>
     <div class="column-container">
 
-      <div class="column-left">
+      <div class="column">
         <h3>Quiz questions</h3>
         <div v-for="(answer, index) in scoreData.answers" v-bind:key="index">
           {{ scoreData.questions[index].question }}
@@ -12,7 +12,7 @@
       </div>
 
 
-      <div class="column-middle">
+      <div class="column">
         <h3>Your answers</h3>
         <div v-for="(givenAnswer, index) in scoreData.givenAnswers" v-bind:key="index">
           {{ givenAnswer }}
@@ -20,9 +20,9 @@
       </div>
 
 
-      <div class="column-right">
+      <div class="column">
         <h3>Result:</h3>
-        <div v-for="(answer, index) in scoreData.answers" v-bind:key="index">
+        <div v-for="(answer, index) in scoreData.answers" v-bind:key="index" v-bind:class="{correct: answer, incorrect: !answer}">
           {{ answer ? 'Correct' : 'Incorrect' }}
         </div>
       </div>
@@ -55,7 +55,7 @@ export default {
   gap: 20px;
 }
 
-.column-left {
+.column {
   display: flex;
   width: max-content;
   flex-direction: column;
@@ -63,22 +63,16 @@ export default {
   justify-content: space-around;
 }
 
-.column-right {
-  display: flex;
-  width: max-content;
-  flex-direction: column;
-  text-align: center;
-  justify-content: space-around;
+.column > div {
+  margin: 5px auto;
 }
 
-.column-middle {
-  display: flex;
-  width: max-content;
-  flex-direction: column;
-  text-align: center;
-  justify-content: space-around;
+.incorrect {
+  color: #ff0000;
 }
 
-
+.correct {
+  color: #0f8e00;
+}
 
 </style>

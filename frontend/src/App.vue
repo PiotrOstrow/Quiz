@@ -10,18 +10,24 @@
 
     <nav v-if="loggedIn">
       <ul class="nav-links">
-        <li>
+        <li v-if="user.role === 'student'">
           <router-link to="/home-student">Home</router-link>
         </li>
-        <li>
+        <li v-if="user.role === 'student'">
           <router-link to="/profile">Profile</router-link>
         </li>
-        <li>
+        <li v-if="user.role === 'student'">
           <router-link to="/results">Results</router-link>
         </li>
-        <li>
+
+        <li v-if="user.role === 'teacher'">
+          <router-link to="/home-teacher">Home</router-link>
+        </li>
+        <li v-if="user.role === 'teacher'">
           <router-link to="/create">Create Quiz</router-link>
         </li>
+
+
         <li>
           <a @click="logout">Log out</a>
         </li>
@@ -53,6 +59,7 @@
 <script>
 
 import api from './api.js';
+import Role from './roles.js'
 
 export default {
   data: function() {
@@ -62,7 +69,8 @@ export default {
         username: '',
         name: '',
         email: '',
-        birthdate: ''
+        birthdate: '',
+        role: ''
       },
       quizList: [],
       singleQuizScore: {}
@@ -79,16 +87,22 @@ export default {
           }
         });
     },
+    onLoggedIn(json) {
+      this.user = json.user;
+      this.quizList = json.quizList;
+
+      if(this.user.role === Role.Student) {
+        this.$router.push('/home-student');
+      } else {
+        this.$router.push('/home-teacher');
+      }
+    },
     login(username, password) {
       api.logIn(username, password).then(response => {
           this.loggedIn = response.status === 200;
-          if(this.loggedIn) {
-            this.$router.push('Home-student');
 
-            response.json().then(json => {
-              this.user = json.user;
-              this.quizList = json.quizList;
-            });
+          if(this.loggedIn) {
+            response.json().then(json => this.onLoggedIn(json));
 
           } else if(response.status === 401) {
             alert('Wrong username and/or password')
@@ -105,31 +119,31 @@ export default {
     showSingleResult(data) {
       this.singleQuizScore = data;
       this.$router.push('/single-result');
+    },
+    beforeEach(to, from, next) {
+      const { authorize } = to.meta;
+      if (authorize) {
+        if(!this.loggedIn)
+          return next(false);
+
+        if(authorize.length > 0 && !authorize.includes(this.user.role))
+          return next(false);
+      }
+      next();
     }
   },
   mounted: function () {
     // navigation guard, can't go to Home page if logged in, or anywhere but home when not logged in
     // https://router.vuejs.org/guide/advanced/navigation-guards.html#global-resolve-guards
-    this.$router.beforeEach((to, from, next) => {
-      if(this.loggedIn && to.name !== 'Home')
-        next();
-      if(!this.loggedIn && to.name === 'Home')
-        next();
-    });
+    this.$router.beforeEach(this.beforeEach);
 
     api.checkLogin().then(response => {
       this.loggedIn = response.status === 200;
 
       if(this.loggedIn) {
         // grab json data
-        response.json().then(json => {
-          this.user = json.user;
-          this.quizList = json.quizList;
-        });
+        response.json().then(json => this.onLoggedIn(json));
 
-        // if the route is on login screen, change it
-        if(this.$router.currentRoute.name === 'Home')
-          this.$router.push('/Home-student');
       } else {
         this.$router.push('/');
       }
