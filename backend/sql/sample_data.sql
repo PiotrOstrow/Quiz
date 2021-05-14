@@ -11,7 +11,7 @@ INSERT INTO quiz_questions (quizID, question, correct_answer, answer1, answer2, 
             (1, 'What’s 11+13?', 24, 17, 13, 24, 20),
             (1, 'What’s 9+9?', 18, 19, 17, 16, 18),
             (1, 'What’s 20+21?', 41, 31, 41, 51, 40),
-            (1, 'What’s 10+9?', 19, 18, 20, 21, 22),
+            (1, 'What’s 10+9?', 19, 19, 20, 21, 22),
 
             (2, 'What’s 16-11?', 5, 6, 4, 7, 5),
             (2, 'What’s 20-14?', 6, 5, 7, 6, 4),

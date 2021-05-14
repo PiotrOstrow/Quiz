@@ -60,6 +60,7 @@
 
 import api from './api.js';
 import Role from './roles.js'
+import fetchIntercept from 'fetch-intercept';
 
 export default {
   data: function() {
@@ -78,6 +79,7 @@ export default {
   },
   methods: {
     register(username, name, password, email) {
+
       api.register(username, name,  password, email)
         .then(response => {
           if(response.status === 200) {
@@ -88,13 +90,21 @@ export default {
         });
     },
     onLoggedIn(json) {
+      // This method is called when the user logs in, or when the page is mounted and the fetch to check login status
+      // and get data returns 200. Changes the route if necessary
+
       this.user = json.user;
       this.quizList = json.quizList;
 
-      if(this.user.role === Role.Student) {
-        this.$router.push('/home-student');
-      } else {
-        this.$router.push('/home-teacher');
+      const currentRoute = this.$router.currentRoute;
+      const { authorize } = currentRoute.meta
+
+      if(currentRoute.fullPath === '/' || (authorize.length > 0 && !authorize.includes(this.user.role))) {
+        if (this.user.role === Role.Student) {
+          this.$router.push('/home-student');
+        } else {
+          this.$router.push('/home-teacher');
+        }
       }
     },
     login(username, password) {
@@ -121,32 +131,52 @@ export default {
       this.$router.push('/single-result');
     },
     beforeEach(to, from, next) {
+      // redirect to home page (path === '/') if not logged in
+      if(!this.loggedIn) {
+        if(to.fullPath === '/')
+          return next();
+        else
+          return next('/');
+      }
+
+      // otherwise if logged in, going to home is blocked ...
+      if(/*this.loggedIn && */to.fullPath === '/')
+        return next(false);
+
+      // ... as well as any other path that doesn't allow the role equivalent of the users
       const { authorize } = to.meta;
       if (authorize) {
-        if(!this.loggedIn)
-          return next(false);
-
         if(authorize.length > 0 && !authorize.includes(this.user.role))
           return next(false);
       }
+
       next();
     }
   },
   mounted: function () {
-    // navigation guard, can't go to Home page if logged in, or anywhere but home when not logged in
+    // navigation guard, Home page (path === '/') only accessible if not logged in
     // https://router.vuejs.org/guide/advanced/navigation-guards.html#global-resolve-guards
     this.$router.beforeEach(this.beforeEach);
+
+    // intercepts every fetch
+    // if status code is 401 then session is assumed to be expired and user is returned to login page
+    fetchIntercept.register({
+      response: (response) => {
+        if(response.status === 401) {
+          this.loggedIn = false;
+          if(this.$router.currentRoute.fullPath !== '/')
+            this.$router.push('/');
+        }
+        return response;
+      }
+    });
 
     api.checkLogin().then(response => {
       this.loggedIn = response.status === 200;
 
-      if(this.loggedIn) {
-        // grab json data
-        response.json().then(json => this.onLoggedIn(json));
-
-      } else {
-        this.$router.push('/');
-      }
+      // grab json data
+      if(this.loggedIn)
+        response.json().then(this.onLoggedIn);
     });
   }
 }

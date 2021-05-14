@@ -72,16 +72,16 @@ const routes = [
         meta: {authorize: [Role.Teacher]},
         props: true
     }
+    // {
+    //     path: '/:pathMatch(.*)*',
+    //     name: 'NotFound',
+    //     component: NotFound
+    // }
 ];
 
 
 const router = new VueRouter({
     routes
-})
+});
 
-// eslint-disable-next-line no-unused-vars
-// router.beforeEach((to, from, next) => {
-//     next();
-// });
-
-export default router
+export default router;

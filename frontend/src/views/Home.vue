@@ -10,7 +10,7 @@
       <p>Overview over your kids latest quiz results</p>
     </div>
 
-    <div class="forms-container" v-if="!loggedIn">
+    <div class="forms-container">
       <form id="log-in" v-on:submit="$emit('login', username, password)">
         <h2>Log in </h2>
         <table>
@@ -72,9 +72,6 @@ export default {
       rRepeatPassword: "",
       rEmail: ""
     }
-  },
-  props: {
-    loggedIn: [Boolean]
   },
   methods: {
     submitRegister() {
