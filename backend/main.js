@@ -115,6 +115,41 @@ app.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
     })
 });
 
+app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
+    // needs to be a regular function instead of an arrow function in order for this.lastID to work
+    db.run('INSERT INTO quizzes(title) VALUES(?)', [request.body.title], function(error) {
+        if(error) {
+            console.log(error);
+            response.status(500).end();
+            return;
+        }
+
+        // TODO: validate input
+
+        // construct a query to insert all of the questions at once
+        let placeholders = request.body.questions.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ');
+        let query = 'INSERT INTO quiz_questions(quizID, question, correct_answer, answer1, answer2, answer3, answer4) VALUES ' + placeholders;
+
+        // create a 2 dimensional array of arrays of parameters
+        let params = [];
+        for(const q of request.body.questions)
+            params.push([this.lastID, q.question, q.correctAnswer, q.incorrectAnswers[0], q.incorrectAnswers[1], q.incorrectAnswers[2], q.correctAnswer]);
+
+        // flatten the array to one dimension because sqlite
+        let flatParams = [];
+        params.forEach((arr) => arr.forEach((item) =>  flatParams.push(item)));
+
+        db.run(query, flatParams, (error) => {
+            if(error){
+                console.log(error);
+                response.status(500).end();
+            } else {
+                response.status(200).end();
+            }
+        });
+    });
+})
+
 app.get('/logout', checkAuthentication([Role.Student, Role.Teacher]), (request, response) => {
     request.logout();
     response.status(200).json({msg: 'Logged out'});

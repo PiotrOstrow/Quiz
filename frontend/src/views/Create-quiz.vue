@@ -88,13 +88,16 @@ export default {
     }
   },
   methods: {
+    r: function () {
+      return Math.floor(Math.random() * 100) + 1;
+    },
     addQuestion() {
       this.quiz.questions.push(
           {
-            question: '',
+            question: 'Question #' + this.r(),
             type: 'multichoice',
-            correctAnswer: '',
-            incorrectAnswers: ['', '', '']
+            correctAnswer: '' + this.r(),
+            incorrectAnswers: ['' + this.r(), '' + this.r(), '' + this.r()]
           });
     },
     submit() {
@@ -133,7 +136,15 @@ export default {
       }
 
       // submit, same path different http method, no param
-      api.postJson('/quiz', this.questions);
+      api.postJson('/quiz', this.quiz)
+        .then(response => {
+          if(response.status === 200) {
+            alert('Quiz created!');
+            this.$router.push('/home-teacher')
+          } else {
+            alert('Error!');
+          }
+        });
     }
   }
 }
