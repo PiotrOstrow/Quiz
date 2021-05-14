@@ -20,7 +20,6 @@ CREATE TABLE quiz_questions (
     answer1 VARCHAR,
     answer2 VARCHAR,
     answer3 VARCHAR,
-    answer4 VARCHAR,
     FOREIGN KEY(quizID) REFERENCES quizzes(ID)
 );
 

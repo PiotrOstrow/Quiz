@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const db = require('./database.js');
 const Role = require('./roles.js');
+const util = require('./util.js');
 
 const BCRYPT_SALT_ROUNDS = 10;
 const HTTP_PORT = 3000;
@@ -94,7 +95,6 @@ app.get('/', checkAuthentication([Role.Student, Role.Teacher]), (request, respon
 });
 
 app.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
-    let data = {};
     db.get('SELECT * FROM quizzes WHERE ID = ?', [request.params.id], (error, result) => {
         if (error) {
             console.log(error);
@@ -107,9 +107,27 @@ app.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
             return;
         }
 
-        data = result;
-        db.all('SELECT ID, question, answer1, answer2, answer3, answer4 FROM quiz_questions WHERE quizID = ?', [request.params.id], (error, result) => {
-            data.questions = result;
+        let data = {
+            ID: result.ID,
+            title: result.title,
+            questions: []
+        };
+
+        db.all('SELECT ID, question, answer1, answer2, answer3, correct_answer as answer4 FROM quiz_questions WHERE quizID = ?', [request.params.id], (error, result) => {
+            if(error)
+                console.log(error);
+
+            for(const row of result) {
+                let answers = [row.answer1, row.answer2, row.answer3, row.answer4];
+                answers = util.shuffle(answers);
+
+                data.questions.push({
+                    ID: row.ID,
+                    question: row.question,
+                    answers: answers
+                });
+            }
+
             response.json(data);
         });
     })
@@ -127,13 +145,13 @@ app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
         // TODO: validate input
 
         // construct a query to insert all of the questions at once
-        let placeholders = request.body.questions.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ');
-        let query = 'INSERT INTO quiz_questions(quizID, question, correct_answer, answer1, answer2, answer3, answer4) VALUES ' + placeholders;
+        let placeholders = request.body.questions.map(() => '(?, ?, ?, ?, ?, ?)').join(', ');
+        let query = 'INSERT INTO quiz_questions(quizID, question, correct_answer, answer1, answer2, answer3) VALUES ' + placeholders;
 
         // create a 2 dimensional array of arrays of parameters
         let params = [];
         for(const q of request.body.questions)
-            params.push([this.lastID, q.question, q.correctAnswer, q.incorrectAnswers[0], q.incorrectAnswers[1], q.incorrectAnswers[2], q.correctAnswer]);
+            params.push([this.lastID, q.question, q.correctAnswer, q.incorrectAnswers[0], q.incorrectAnswers[1], q.incorrectAnswers[2]]);
 
         // flatten the array to one dimension because sqlite
         let flatParams = [];

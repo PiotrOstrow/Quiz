@@ -7,23 +7,23 @@
         <h3 class="question-paragraph"> {{ question.question }} </h3>
         <form id="choose-answer">
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer1'" name="quiz-name" v-bind:value="question.answer1" v-on:click="selected($event, question.ID)">
-            <label v-bind:for="question.ID + '_answer1'"> {{ question.answer1 }} </label><br>
+            <input type="radio" v-bind:id="question.ID + '_answer1'" name="quiz-name" v-bind:value="question.answers[0]" v-on:click="selected($event, question.ID)">
+            <label v-bind:for="question.ID + '_answer1'"> {{ question.answers[0] }} </label><br>
           </div>
 
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer2'" name="quiz-name" v-bind:value="question.answer2" v-on:click="selected($event, question.ID)">
-            <label v-bind:for="question.ID + '_answer2'"> {{ question.answer2 }} </label><br>
+            <input type="radio" v-bind:id="question.ID + '_answer2'" name="quiz-name" v-bind:value="question.answers[1]" v-on:click="selected($event, question.ID)">
+            <label v-bind:for="question.ID + '_answer2'"> {{ question.answers[1] }} </label><br>
           </div>
 
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer3'" name="quiz-name" v-bind:value="question.answer3" v-on:click="selected($event, question.ID)">
-            <label v-bind:for="question.ID + '_answer3'"> {{ question.answer3 }}</label><br>
+            <input type="radio" v-bind:id="question.ID + '_answer3'" name="quiz-name" v-bind:value="question.answers[2]" v-on:click="selected($event, question.ID)">
+            <label v-bind:for="question.ID + '_answer3'"> {{ question.answers[2] }}</label><br>
           </div>
 
           <div class="radio-input-container">
-            <input type="radio" v-bind:id="question.ID + '_answer4'" name="quiz-name" v-bind:value="question.answer4" v-on:click="selected($event, question.ID)">
-            <label v-bind:for="question.ID + '_answer4'"> {{ question.answer4 }} </label><br>
+            <input type="radio" v-bind:id="question.ID + '_answer4'" name="quiz-name" v-bind:value="question.answers[3]" v-on:click="selected($event, question.ID)">
+            <label v-bind:for="question.ID + '_answer4'"> {{ question.answers[3] }} </label><br>
           </div>
 <!--          <button>Previous Question</button> <button>Next Question</button>-->
         </form>
