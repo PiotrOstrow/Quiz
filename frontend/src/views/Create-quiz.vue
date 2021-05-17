@@ -94,10 +94,10 @@ export default {
     addQuestion() {
       this.quiz.questions.push(
           {
-            question: 'Question #' + this.r(),
+            question: '',
             type: 'multichoice',
-            correctAnswer: '' + this.r(),
-            incorrectAnswers: ['' + this.r(), '' + this.r(), '' + this.r()]
+            correctAnswer: '',
+            incorrectAnswers: ['', '', '']
           });
     },
     submit() {
@@ -140,7 +140,10 @@ export default {
         .then(response => {
           if(response.status === 200) {
             alert('Quiz created!');
-            this.$router.push('/home-teacher')
+            this.$router.push('/home-teacher');
+
+            // refreshes the page, so the updated data for quiz list is fetched from the server
+            this.$router.go();
           } else {
             alert('Error!');
           }

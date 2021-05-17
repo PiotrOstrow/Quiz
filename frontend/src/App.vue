@@ -39,6 +39,7 @@
           :loggedIn="loggedIn"
           :user="user"
           :quizList="quizList"
+          :users="users"
           :scoreData="singleQuizScore"
           v-on:login="login"
           v-on:register="register"
@@ -74,6 +75,7 @@ export default {
         role: ''
       },
       quizList: [],
+      users: [],
       singleQuizScore: {}
     }
   },
@@ -95,6 +97,7 @@ export default {
 
       this.user = json.user;
       this.quizList = json.quizList;
+      this.users = json.users;
 
       const currentRoute = this.$router.currentRoute;
       const { authorize } = currentRoute.meta

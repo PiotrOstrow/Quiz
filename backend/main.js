@@ -75,24 +75,33 @@ function checkAuthentication(roles) {
     }
 }
 
-app.post('/login', passport.authenticate('local'), (request, response) => {
-    // If this function gets called, authentication was successful.
-    // `request.user` contains the authenticated user.
-    db.all('SELECT * FROM quizzes', [], (error, result) => {
+function getData(request, response) {
+    db.all('SELECT ID, title, (SELECT COUNT(*) FROM quiz_questions WHERE quizID = quizzes.ID) as questionCount FROM quizzes', [], (error, result) => {
         if (error)
             console.log(error);
-        response.json({user: request.user, quizList: result});
+
+        let data = {
+            user: request.user,
+            quizList: result
+        };
+
+        if(request.user.role === Role.Teacher) {
+            db.all('SELECT username, name, email FROM users WHERE role = ?', [Role.Student], (error, result) => {
+                data.users = result;
+                response.json(data);
+            });
+        } else {
+            response.json(data);
+        }
     });
-});
+}
+
+// If the second function gets called, authentication was successful.
+// `request.user` contains the authenticated user.
+app.post('/login', passport.authenticate('local'), getData);
 
 // This endpoint is used to check login status when vue app is loaded/mounted and get any data required for the app
-app.get('/', checkAuthentication([Role.Student, Role.Teacher]), (request, response) => {
-    db.all('SELECT * FROM quizzes', [], (error, result) => {
-        if (error)
-            console.log(error);
-        response.json({user: request.user, quizList: result});
-    });
-});
+app.get('/', checkAuthentication([Role.Student, Role.Teacher]), getData);
 
 app.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
     db.get('SELECT * FROM quizzes WHERE ID = ?', [request.params.id], (error, result) => {
@@ -176,7 +185,7 @@ app.get('/logout', checkAuthentication([Role.Student, Role.Teacher]), (request, 
 app.post('/register', (request, response) => {
     if (request.body.username.length < 4) {
         // TODO: validate input
-        response.status(400).end();
+        response.status(400).json({msg:'username too short'}).end();
         return;
     }
     bcrypt.hash(request.body.password, BCRYPT_SALT_ROUNDS, function (err, hash) {
