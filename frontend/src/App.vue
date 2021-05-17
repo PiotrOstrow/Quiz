@@ -49,7 +49,7 @@
     <footer>
       <ul class="footer-info">
         <li>
-          <p>CopyRight © Learn for Fun!</p>
+          <p>Copyright © Learn for Fun!</p>
         </li>
       </ul>
     </footer>
@@ -199,6 +199,10 @@ body {
   background-color: #FFF5E8;
 }
 
+input {
+  font-family: Pangolin, sans-serif;
+}
+
 footer {
   background-color: #00a2e8;
   grid-area: footer;
@@ -230,7 +234,7 @@ a {
 }
 
 #logo {
-  border-radius:50%;
+  border-radius: 6em / 7em;
   float: left;
   position: relative;
   left: 0;
@@ -272,6 +276,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 36px;
 }
 
 #header-container h1 {
@@ -290,7 +295,7 @@ nav {
 }
 
 #empty_nav {
-  height: 20px;
+  height: 30px;
 }
 
 .nav-links {

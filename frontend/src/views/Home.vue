@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="information-container">
-      <img src="../assets/HomepagePicture.jpg">
+      <img id="homepage-picture" src="../assets/HomepagePicture.jpg" alt="Learn for fun homepage picture">
       <h2>Make learning fun!</h2>
       <p>Welcome to learn for fun, a website made for children looking for a more fun way to learn online!</p>
       <h2>For teachers:</h2>
@@ -104,7 +104,6 @@ img {
   width: 100%;
 }
 
-
 form td {
   width: 50%;
   text-align: left;
@@ -116,6 +115,7 @@ form tr {
 
 form input {
   width: 100%;
+  /*padding: 5px;*/
 }
 
 .information-container {
@@ -131,4 +131,5 @@ form input {
   border-radius: 20px;
   padding: 1%;
 }
+
 </style>
