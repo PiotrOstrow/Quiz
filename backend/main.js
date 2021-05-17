@@ -180,15 +180,18 @@ app.post('/register', (request, response) => {
         return;
     }
     bcrypt.hash(request.body.password, BCRYPT_SALT_ROUNDS, function (err, hash) {
-        const params = [request.body.username, hash, request.body.name, request.body.email];
-        db.run('INSERT INTO users(username, password, name, email) VALUES(?, ?, ?, ?)', params, (error) => {
-            if (error) {
-                console.log(error);
-                let columnName = error.message.match(/(?<=UNIQUE constraint failed: users.).*/);
-                response.status(409).json({msg: columnName + ' already in use'});
-            } else {
-                response.json({msg: 'User added!'});
-            }
+        db.get('SELECT COUNT(*) as userCount FROM users', [], (error, result) => {
+            const params = [request.body.username, hash, request.body.name, request.body.email];
+            params.push(result.userCount === 0 ? Role.Teacher : Role.Student); // first user is teacher
+            db.run('INSERT INTO users(username, password, name, email, role) VALUES(?, ?, ?, ?, ?)', params, (error) => {
+                if (error) {
+                    console.log(error);
+                    let columnName = error.message.match(/(?<=UNIQUE constraint failed: users.).*/);
+                    response.status(409).json({msg: columnName + ' already in use'});
+                } else {
+                    response.json({msg: 'User added!'});
+                }
+            });
         });
     });
 });
