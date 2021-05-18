@@ -3,9 +3,14 @@
     <main>
       <h1>My Quizzes</h1>
       <div class="quizzes-container">
-        <router-link v-for="quiz in quizList" :to="{ name: 'Quiz', params: { id: quiz.ID }}" class="quiz-element"
-            v-bind:key="quiz.ID"
-        >{{ quiz.title }}</router-link>
+        <div v-for="quiz in quizList" v-bind:key="quiz.ID"  class="quiz-element">
+          {{ quiz.title }}
+          <div class="button-container">
+            <router-link class="button-router" :to="{ name: 'Quiz', params: { id: quiz.ID }}">Start quiz</router-link>
+            <router-link class="button-router" :to="{ name: 'Quiz', params: { id: quiz.ID }}">Scores</router-link>
+          </div>
+
+        </div>
       </div>
     </main>
   </div>
@@ -29,9 +34,6 @@ h1 {
 }
 
 .quizzes-container {
-  /*width: available;*/
-  /*background-color: white;*/
-  /*border-radius: 20px;*/
   padding: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -39,41 +41,61 @@ h1 {
 }
 
 .quiz {
-  /*width: 200px;*/
   width: min-content;
   display: block;
   margin: auto;
 }
 
 .quiz-element {
+  flex-direction: column;
   list-style: none;
   text-align: center;
-  /*margin: 10px;*/
-  width: 200px;
-  height: 100px;
-  font: 400 15px Pangolin;
-  background-color: rgba(0, 162, 232, 0.8);
-  color: white;
-  /*padding: 3px 6px;*/
-  border: 2px solid #014055;
-  border-radius: 5px;
+  width: 250px;
+  height: 150px;
+  background-color: white;
+  border: solid 2px black;
+  border-radius: 20px;
   transition: transform .2s;
-
-  display:flex;
-  justify-content: center;
+  display: flex;
+  justify-content: space-evenly;
   align-items: center;
 }
 
 .quiz-element:hover {
-  background-color: rgba(0, 162, 232, 1);
-  transform: scale(1.05);
+  background-color: #00a2e8;
+  color: white;
 }
 
-a {
+.button-container {
+  display: flex;
+  justify-content: space-around;
+  width: 200px;
+}
+
+.quiz-element a {
   text-decoration: none;
   color: white;
-
 }
 
+.quiz-element:hover .button-router {
+  color: white;
+  cursor: pointer;
+  background-color: rgba(0, 162, 232, 1);
+  border: solid 2px black;
+}
+
+.button-router {
+  font: 400 15px Pangolin;
+  background-color: rgba(0, 162, 232, 0.8);
+  color: white;
+  padding: 3px 6px;
+  border-style: none;
+  border-radius: 5px;
+  transition: transform .2s;
+}
+
+.button-router:hover {
+  transform: scale(1.05);
+}
 
 </style>
