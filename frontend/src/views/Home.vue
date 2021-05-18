@@ -23,7 +23,7 @@
             <td><input v-model="password" type="password" required="required"></td>
           </tr>
         </table>
-        <button>Submit</button>
+        <button class="confirm-btn">Submit</button>
       </form>
       <br>
       <form id="sign-up" v-on:submit="submitRegister">
@@ -50,7 +50,7 @@
             <td><input v-model="rEmail" type="email" required="required"></td>
           </tr>
         </table>
-        <button>Submit</button>
+        <button class="confirm-btn" >Submit</button>
       </form>
     </div>
   </div>
@@ -58,8 +58,10 @@
 
 <script>
 
+
 export default {
   name: 'Home.vue',
+
   data: function () {
     return {
       username: "",
@@ -74,14 +76,32 @@ export default {
     }
   },
   methods: {
+    // async doConfirmLogin() {
+    //   console.log(this.$refs);
+    //
+    //   const ok = await this.$refs.confirmModal.show({
+    //     title: 'You have entered wrong Username/Password',
+    //         message: 'Please try again, be wary of cApS-sEnSiTiVe',
+    //         okButton: 'OK I understand',
+    //   })
+    //   if (ok) {
+    //     // No alert here to avoid double-popups
+    //   } else {
+    //     alert('Something wen\'t terribly wrong. Reload the website')
+    //   }
+    // },
     submitRegister() {
       if (this.rPassword !== this.rRepeatPassword) {
-        alert('Passwords do not match');
+        this.$emit('showConfirmModal', {
+          title: 'Passwords do not match',
+          message: 'Please make sure that the passwords match',
+          okButton: 'OK I understand',
+        });
       } else {
         this.$emit('register', this.rUsername, this.rName, this.rPassword, this.rEmail);
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

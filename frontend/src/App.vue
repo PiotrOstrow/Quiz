@@ -43,9 +43,12 @@
           :scoreData="singleQuizScore"
           v-on:login="login"
           v-on:register="register"
+          v-on:showConfirmModal="showConfirmModal"
           v-on:showSingleResult="showSingleResult"
           />
     </div>
+
+    <confirm-modal ref="confirmModal"></confirm-modal>
 
     <footer>
       <ul class="footer-info">
@@ -63,7 +66,10 @@ import api from './api.js';
 import Role from './roles.js'
 import fetchIntercept from 'fetch-intercept';
 
+import ConfirmModal from "@/components/ConfirmModal";
+
 export default {
+  components: {ConfirmModal},
   data: function() {
     return {
       loggedIn: false,
@@ -80,14 +86,38 @@ export default {
     }
   },
   methods: {
-    register(username, name, password, email) {
+    async register(username, name, password, email) {
+
+      // console.log(this.$refs);
+      //
+      // const ok = await this.$refs.confirmModal.show({
+      //   title: 'You have entered wrong details when registering a new user.',
+      //   message: 'Please try again, be wary of duplicate usernames',
+      //   okButton: 'OK I understand',
+      // })
+      // if (ok) {
+      //   // No alert here to avoid double-popups
+      // } else {
+      //   alert('Something wen\'t terribly wrong. Reload the website')
+      // }
 
       api.register(username, name,  password, email)
         .then(response => {
           if(response.status === 200) {
-            alert('Account registered!');
+            this.$refs.confirmModal.show({
+              title: 'Account created!',
+              message: 'Log in with your username and password.',
+              okButton: 'OK',
+            })
           } else {
-            response.json().then(json => alert(json.msg));
+            response.json().then(json => {
+              console.log(json);
+              this.$refs.confirmModal.show({
+                title: 'You have entered wrong details when registering a new user.',
+                message: 'Please try again, be wary of duplicate usernames',
+                okButton: 'OK I understand',
+              })
+            });
           }
         });
     },
@@ -118,9 +148,17 @@ export default {
             response.json().then(json => this.onLoggedIn(json));
 
           } else if(response.status === 401) {
-            alert('Wrong username and/or password')
+            this.$refs.confirmModal.show({
+              title: 'Could not log in.',
+              message: 'Incorrect username or password, please try again',
+              okButton: 'OK I understand',
+            })
           } else {
-            alert('Unable to login');
+            this.$refs.confirmModal.show({
+              title: 'Could not log in.',
+              message: 'Please try again',
+              okButton: 'OK I understand',
+            })
           }
       });
     },
@@ -154,6 +192,9 @@ export default {
       }
 
       next();
+    },
+    showConfirmModal(options) {
+      this.$refs.confirmModal.show(options);
     }
   },
   mounted: function () {
