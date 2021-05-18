@@ -348,4 +348,50 @@ button:hover {
   padding-bottom: var(--footer-height); /* offsets the footer */
 }
 
+
+.blue-table {
+  margin: 25px auto;
+  border-collapse: collapse;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  width: 500px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.blue-table thead tr {
+  background-color: #00a2e8;
+  color: #ffffff;
+  text-align: left;
+}
+
+.blue-table th,
+.blue-table td {
+  padding: 12px 15px;
+  font-family: Pangolin, sans-serif;
+  text-align: center;
+}
+
+.blue-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+  cursor: pointer;
+}
+
+.blue-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.blue-table tbody tr:last-of-type {
+  border-bottom: 2px solid #00a2e8;
+}
+
+.blue-table tbody tr:hover {
+  background-color: #00a2e8;
+  color: white;
+}
+
+.blue-table tbody tr.active-row {
+  font-weight: bold;
+  color: #00a2e8;
+}
+
 </style>

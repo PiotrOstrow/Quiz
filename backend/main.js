@@ -261,6 +261,56 @@ app.get('/results', checkAuthentication(Role.Student), (request, response) => {
     });
 });
 
+app.get('/teacher/quiz-overview/:id', checkAuthentication(Role.Teacher), (request, response) => {
+    let data = {
+        quiz: {},
+        students: {}
+    };
+
+    db.get('SELECT ID, title, (SELECT COUNT(*) from quiz_questions WHERE quiz_questions.quizID = quizzes.ID) as numberOfQuestions FROM quizzes WHERE ID = ?'
+        , [request.params.id], (error, result) => {
+        if(error) {
+            console.log(error);
+            response.status(500).end();
+            return;
+        }
+
+        data.quiz = result;
+
+        let sql =
+            `SELECT name, MAX(quiz_results.score) as 'maxScore', COUNT(quiz_results.ID) as 'attempts'
+             FROM users
+                      INNER JOIN quiz_results ON users.ID = quiz_results.userID
+             WHERE quiz_results.quiziD = ?
+             GROUP BY users.ID, users.name`;
+
+        db.all(sql, [request.params.id], (error, result) => {
+            if(error) {
+                console.log(error);
+                response.status(500).end();
+                return;
+            }
+
+            data.students = result;
+            response.json(data);
+        });
+    });
+
+    // let data = {
+    //     quiz: {numberOfQuestions: 7},
+    //     students: [
+    //         {name: 'Bob', attempts: 5, maxScore: '5'},
+    //         {name: 'Bob', attempts: 5, maxScore: '5'},
+    //         {name: 'Bob', attempts: 5, maxScore: '5'},
+    //         {name: 'Bob', attempts: 5, maxScore: '5'},
+    //         {name: 'Bob', attempts: 5, maxScore: '7'},
+    //         {name: 'Bob', attempts: 5, maxScore: '5'}
+    //     ]
+    // }
+
+
+});
+
 app.get('/teacher', checkAuthentication(Role.Teacher), (request, response) => {
     response.json({msg:'You are a teacher!'});
 })

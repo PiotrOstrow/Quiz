@@ -8,6 +8,8 @@ import Quiz from '../views/Quiz.vue'
 import QuizSubmit from "@/views/QuizSubmit";
 import CreateQuiz from '../views/Create-quiz.vue'
 import HomeTeacher from '../views/Home-teacher.vue'
+import QuizOverview from '../views/teacher/Quiz-overview.vue';
+
 import Role from '../roles.js'
 
 Vue.use(VueRouter)
@@ -69,6 +71,13 @@ const routes = [
         path: '/home-teacher',
         name: 'Home-Teacher',
         component: HomeTeacher,
+        meta: {authorize: [Role.Teacher]},
+        props: true
+    },
+    {
+        path: '/quiz-overview/:id',
+        name: 'Quiz-overview',
+        component: QuizOverview,
         meta: {authorize: [Role.Teacher]},
         props: true
     }
