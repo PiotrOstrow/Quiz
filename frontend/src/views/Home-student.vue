@@ -3,13 +3,12 @@
     <main>
       <h1>My Quizzes</h1>
       <div class="quizzes-container">
-        <div v-for="quiz in quizList" v-bind:key="quiz.ID"  class="quiz-element">
-          {{ quiz.title }}
+        <div v-for="quiz in quizList" v-bind:key="quiz.ID" class="quiz-element">
+          <h3>{{ quiz.title }}</h3>
           <div class="button-container">
             <router-link class="button-router" :to="{ name: 'Quiz', params: { id: quiz.ID }}">Start quiz</router-link>
-            <router-link class="button-router" :to="{ name: 'Quiz', params: { id: quiz.ID }}">Scores</router-link>
+            <router-link class="button-router" :to="{ name: 'AllResults', params: { id: quiz.ID }}">Scores</router-link>
           </div>
-
         </div>
       </div>
     </main>
@@ -33,11 +32,8 @@ h1 {
   text-align: center;
 }
 
-.quizzes-container {
-  padding: 20px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 20px;
+h3 {
+  margin: 5px;
 }
 
 .quiz {
@@ -46,24 +42,24 @@ h1 {
   margin: auto;
 }
 
+.quizzes-container {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 20px;
+}
+
 .quiz-element {
   flex-direction: column;
-  list-style: none;
   text-align: center;
   width: 250px;
   height: 150px;
   background-color: white;
   border: solid 2px black;
   border-radius: 20px;
-  transition: transform .2s;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-}
-
-.quiz-element:hover {
-  background-color: #00a2e8;
-  color: white;
 }
 
 .button-container {
@@ -72,30 +68,30 @@ h1 {
   width: 200px;
 }
 
-.quiz-element a {
-  text-decoration: none;
-  color: white;
-}
+/*.quiz-element a {*/
+/*  text-decoration: none;*/
+/*  color: white;*/
+/*}*/
 
-.quiz-element:hover .button-router {
-  color: white;
-  cursor: pointer;
-  background-color: rgba(0, 162, 232, 1);
-  border: solid 2px black;
-}
+/*.quiz-element:hover .button-router {*/
+/*  color: white;*/
+/*  cursor: pointer;*/
+/*}*/
 
 .button-router {
-  font: 400 15px Pangolin;
-  background-color: rgba(0, 162, 232, 0.8);
+  text-decoration: none;
   color: white;
+  background-color: rgba(0, 162, 232, 0.8);
   padding: 3px 6px;
-  border-style: none;
   border-radius: 5px;
+  border: solid 2px black;
   transition: transform .2s;
+
 }
 
 .button-router:hover {
   transform: scale(1.05);
+  background-color: rgba(0, 162, 232, 1);
 }
 
 </style>
