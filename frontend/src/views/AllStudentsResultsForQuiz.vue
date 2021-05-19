@@ -29,8 +29,7 @@ export default {
   data: function () {
     return {
       quiz: {},
-      students: [],
-      sortedScores: []
+      students: []
     }
   },
   mounted() {

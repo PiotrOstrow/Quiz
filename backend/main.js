@@ -86,7 +86,7 @@ function getData(request, response) {
         };
 
         if (request.user.role === Role.Teacher) {
-            db.all('SELECT username, name, email FROM users WHERE role = ?', [Role.Student], (error, result) => {
+            db.all('SELECT ID, username, name, email FROM users WHERE role = ?', [Role.Student], (error, result) => {
                 data.users = result;
                 response.json(data);
             });
@@ -144,15 +144,15 @@ app.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
 
 app.delete('/quiz/:id', checkAuthentication(Role.Teacher), (request, response) => {
     // regular function instead of an arrow function to access this.changes
-    db.run('DELETE FROM quizzes WHERE ID = ?', [request.params.id], function(error) {
-        if(error) {
+    db.run('DELETE FROM quizzes WHERE ID = ?', [request.params.id], function (error) {
+        if (error) {
             console.log(error);
             response.status(500).end();
             return;
         }
 
         // this.changes is the number of rows deleted
-        if(this.changes === 0) {
+        if (this.changes === 0) {
             response.status(404).end();
             return;
         }
@@ -324,8 +324,41 @@ app.post('/submit', checkAuthentication(Role.Student), (request, response) => {
     });
 });
 
+
+app.get('/student-results/:id', checkAuthentication(Role.Teacher), (request, response) => {
+    let data = {
+        student: '',
+        quizResults: ''
+    }
+
+    db.get('SELECT ID, username, name, email FROM users where ID = ?', [request.params.id], (error, result) => {
+        data.student = result;
+
+        let sql = `SELECT quizID, title, max(score) as maxScore, 
+                    (SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quizID = quiz_results.quizID) as question_count, 
+                    COUNT(quiz_results.ID) as attempts
+                FROM quiz_results
+                inner join quizzes on quizID = quizzes.ID 
+                where userID = ?
+                group by quizID, title`;
+        db.all(sql, [request.params.id], (error, result) => {
+            if (error) {
+                console.log(error);
+            }
+            if (result == null) {
+                response.status(400).end();
+                return;
+            }
+
+            data.quizResults = result;
+            response.json(data);
+        })
+    });
+});
+
+
 app.get('/results', checkAuthentication(Role.Student), (request, response) => {
-    db.all('SELECT quizID, title, max(score) as score, (SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quizID = quiz_results.quizID) as question_count ' +
+    db.all('SELECT quizID, title, max(score) as maxScore, (SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quizID = quiz_results.quizID) as question_count ' +
         'FROM quiz_results inner join quizzes on quizID = quizzes.ID ' +
         'where userID = ? ' +
         'group by quizID, title', [request.user.ID], (error, result) => {
@@ -399,10 +432,10 @@ app.get('/teacher/quiz-overview/:id', checkAuthentication(Role.Teacher), (reques
 
             let sql =
                 `SELECT name, MAX(quiz_results.score) as 'maxScore', COUNT(quiz_results.ID) as 'attempts'
-             FROM users
-                      INNER JOIN quiz_results ON users.ID = quiz_results.userID
-             WHERE quiz_results.quiziD = ?
-             GROUP BY users.ID, users.name`;
+                 FROM users
+                          INNER JOIN quiz_results ON users.ID = quiz_results.userID
+                 WHERE quiz_results.quiziD = ?
+                 GROUP BY users.ID, users.name`;
 
             db.all(sql, [request.params.id], (error, result) => {
                 if (error) {

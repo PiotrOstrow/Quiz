@@ -9,6 +9,7 @@ import QuizSubmit from "@/views/QuizSubmit";
 import CreateQuiz from '../views/Create-quiz.vue'
 import HomeTeacher from '../views/Home-teacher.vue'
 import QuizOverview from '../views/teacher/Quiz-overview.vue';
+import StudentResults from '../views/teacher/Student-results.vue';
 
 import Role from '../roles.js'
 import AllStudentsResultsForQuiz from "@/views/AllStudentsResultsForQuiz";
@@ -87,6 +88,13 @@ const routes = [
         name: 'AllResults',
         component: AllStudentsResultsForQuiz,
         meta: {authorize: [Role.Student]},
+        props: true
+    },
+    {
+        path: '/student-results/:id',
+        name: 'StudentResults',
+        component: StudentResults,
+        meta: {authorize: [Role.Teacher]},
         props: true
     }
     // {

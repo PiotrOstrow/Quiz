@@ -9,16 +9,22 @@
         <table v-show="users.length > 0" class="blue-table">
           <thead>
           <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Username</th>
             <th>Email</th>
+            <th></th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="(student, index) in users" v-bind:key="index">
+            <td>{{ student.ID }}</td>
             <td>{{ student.name }}</td>
             <td>{{ student.username }}</td>
             <td>{{ student.email }}</td>
+            <td>
+              <router-link :to="{ name: 'StudentResults', params: { id: student.ID }}">📄</router-link>
+            </td>
           </tr>
           </tbody>
         </table>

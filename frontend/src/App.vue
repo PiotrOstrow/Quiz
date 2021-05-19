@@ -75,10 +75,10 @@ export default {
     return {
       loggedIn: false,
       user: {
+        id: '',
         username: '',
         name: '',
         email: '',
-        birthdate: '',
         role: ''
       },
       quizList: [],
