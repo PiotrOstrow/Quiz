@@ -85,7 +85,7 @@ function getData(request, response) {
             quizList: result
         };
 
-        if(request.user.role === Role.Teacher) {
+        if (request.user.role === Role.Teacher) {
             db.all('SELECT username, name, email FROM users WHERE role = ?', [Role.Student], (error, result) => {
                 data.users = result;
                 response.json(data);
@@ -123,10 +123,10 @@ app.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
         };
 
         db.all('SELECT ID, question, answer1, answer2, answer3, correct_answer as answer4 FROM quiz_questions WHERE quizID = ?', [request.params.id], (error, result) => {
-            if(error)
+            if (error)
                 console.log(error);
 
-            for(const row of result) {
+            for (const row of result) {
                 let answers = [row.answer1, row.answer2, row.answer3, row.answer4];
                 answers = util.shuffle(answers);
 
@@ -144,8 +144,8 @@ app.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
 
 app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
     // needs to be a regular function instead of an arrow function in order for this.lastID to work
-    db.run('INSERT INTO quizzes(title) VALUES(?)', [request.body.title], function(error) {
-        if(error) {
+    db.run('INSERT INTO quizzes(title) VALUES(?)', [request.body.title], function (error) {
+        if (error) {
             console.log(error);
             response.status(500).end();
             return;
@@ -159,15 +159,15 @@ app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
 
         // create a 2 dimensional array of arrays of parameters
         let params = [];
-        for(const q of request.body.questions)
+        for (const q of request.body.questions)
             params.push([this.lastID, q.question, q.correctAnswer, q.incorrectAnswers[0], q.incorrectAnswers[1], q.incorrectAnswers[2]]);
 
         // flatten the array to one dimension because sqlite
         let flatParams = [];
-        params.forEach((arr) => arr.forEach((item) =>  flatParams.push(item)));
+        params.forEach((arr) => arr.forEach((item) => flatParams.push(item)));
 
         db.run(query, flatParams, (error) => {
-            if(error){
+            if (error) {
                 console.log(error);
                 response.status(500).end();
             } else {
@@ -185,7 +185,7 @@ app.get('/logout', checkAuthentication([Role.Student, Role.Teacher]), (request, 
 app.post('/register', (request, response) => {
     if (request.body.username.length < 4) {
         // TODO: validate input
-        response.status(400).json({msg:'username too short'}).end();
+        response.status(400).json({msg: 'username too short'}).end();
         return;
     }
     bcrypt.hash(request.body.password, BCRYPT_SALT_ROUNDS, function (err, hash) {
@@ -261,6 +261,42 @@ app.get('/results', checkAuthentication(Role.Student), (request, response) => {
     });
 });
 
+app.get('/all-results/:id', checkAuthentication(Role.Student), (request, response) => {
+    let data = {
+        quiz: {},
+        students: {}
+    };
+
+    db.get('SELECT ID, title, (SELECT COUNT(*) from quiz_questions WHERE quiz_questions.quizID = quizzes.ID) as numberOfQuestions FROM quizzes WHERE ID = ?'
+        , [request.params.id], (error, result) => {
+            if (error) {
+                console.log(error);
+                response.status(500).end();
+                return;
+            }
+            data.quiz = result;
+
+            let sql =
+                `SELECT name, MAX(quiz_results.score) as 'maxScore'
+             FROM users
+                      INNER JOIN quiz_results ON users.ID = quiz_results.userID
+             WHERE quiz_results.quiziD = ?
+             GROUP BY users.ID, users.name`;
+
+            db.all(sql, [request.params.id], (error, result) => {
+                if (error) {
+                    console.log(error);
+                    response.status(500).end();
+                    return;
+                }
+
+                data.students = result;
+                response.json(data);
+            })
+        });
+});
+
+
 app.get('/teacher/quiz-overview/:id', checkAuthentication(Role.Teacher), (request, response) => {
     let data = {
         quiz: {},
@@ -269,32 +305,32 @@ app.get('/teacher/quiz-overview/:id', checkAuthentication(Role.Teacher), (reques
 
     db.get('SELECT ID, title, (SELECT COUNT(*) from quiz_questions WHERE quiz_questions.quizID = quizzes.ID) as numberOfQuestions FROM quizzes WHERE ID = ?'
         , [request.params.id], (error, result) => {
-        if(error) {
-            console.log(error);
-            response.status(500).end();
-            return;
-        }
-
-        data.quiz = result;
-
-        let sql =
-            `SELECT name, MAX(quiz_results.score) as 'maxScore', COUNT(quiz_results.ID) as 'attempts'
-             FROM users
-                      INNER JOIN quiz_results ON users.ID = quiz_results.userID
-             WHERE quiz_results.quiziD = ?
-             GROUP BY users.ID, users.name`;
-
-        db.all(sql, [request.params.id], (error, result) => {
-            if(error) {
+            if (error) {
                 console.log(error);
                 response.status(500).end();
                 return;
             }
 
-            data.students = result;
-            response.json(data);
+            data.quiz = result;
+
+            let sql =
+                `SELECT name, MAX(quiz_results.score) as 'maxScore', COUNT(quiz_results.ID) as 'attempts'
+             FROM users
+                      INNER JOIN quiz_results ON users.ID = quiz_results.userID
+             WHERE quiz_results.quiziD = ?
+             GROUP BY users.ID, users.name`;
+
+            db.all(sql, [request.params.id], (error, result) => {
+                if (error) {
+                    console.log(error);
+                    response.status(500).end();
+                    return;
+                }
+
+                data.students = result;
+                response.json(data);
+            });
         });
-    });
 
     // let data = {
     //     quiz: {numberOfQuestions: 7},
@@ -312,5 +348,5 @@ app.get('/teacher/quiz-overview/:id', checkAuthentication(Role.Teacher), (reques
 });
 
 app.get('/teacher', checkAuthentication(Role.Teacher), (request, response) => {
-    response.json({msg:'You are a teacher!'});
-})
+    response.json({msg: 'You are a teacher!'});
+});

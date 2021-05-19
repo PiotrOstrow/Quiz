@@ -11,6 +11,7 @@ import HomeTeacher from '../views/Home-teacher.vue'
 import QuizOverview from '../views/teacher/Quiz-overview.vue';
 
 import Role from '../roles.js'
+import AllStudentsResultsForQuiz from "@/views/AllStudentsResultsForQuiz";
 
 Vue.use(VueRouter)
 
@@ -79,6 +80,13 @@ const routes = [
         name: 'Quiz-overview',
         component: QuizOverview,
         meta: {authorize: [Role.Teacher]},
+        props: true
+    },
+    {
+        path: '/all-result/:id',
+        name: 'AllResults',
+        component: AllStudentsResultsForQuiz,
+        meta: {authorize: [Role.Student]},
         props: true
     }
     // {
