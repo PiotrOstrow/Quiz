@@ -61,7 +61,7 @@ const routes = [
         props: true
     },
     {
-        path: '/create',
+        path: '/create/:id?',
         name: 'Create',
         component: CreateQuiz,
         meta: {authorize: [Role.Teacher]},

@@ -436,4 +436,25 @@ button:hover {
   color: #00a2e8;
 }
 
+.icon-button svg {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -.125em;
+}
+
+.icon-button {
+  margin: 2px;
+  color: black;
+}
+
+.blue-table tr:hover button {
+  background-color: white;
+  color: black;
+}
+
+.blue-table button {
+  margin: 0px 2px;
+}
+
 </style>

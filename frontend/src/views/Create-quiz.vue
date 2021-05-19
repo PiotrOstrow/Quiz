@@ -1,13 +1,7 @@
 <template>
-  <div>
+  <div id="main-container">
     <h1>Create quiz</h1>
     <textarea id="title-textarea" placeholder="Enter quiz title here..." v-on:keypress="textareaOnKeyPress($event)" v-model="quiz.title"></textarea>
-<!--    <div class="general-container">-->
-<!--      <div>-->
-<!--        <label for="title" >Quiz Title: </label>-->
-<!--        <input type="text" id="title" v-model="quiz.title">-->
-<!--      </div>-->
-<!--    </div>-->
 
     <table class="blue-table">
       <thead>
@@ -17,6 +11,7 @@
         <th>Incorrect #1</th>
         <th>Incorrect #2</th>
         <th>Incorrect #3</th>
+        <th></th>
       </tr>
       </thead>
       <tbody>
@@ -26,13 +21,21 @@
         <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Incorrect #1" v-model="question.incorrectAnswers[0]" v-on:focus="$event.target.select()"/></td>
         <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Incorrect #2" v-model="question.incorrectAnswers[1]" v-on:focus="$event.target.select()"/></td>
         <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Incorrect #3" v-model="question.incorrectAnswers[2]" v-on:focus="$event.target.select()"/></td>
+        <td>
+          <button class="icon-button" v-on:click.stop="deleteQuestion(index)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+            </svg>
+          </button>
+        </td>
       </tr>
       </tbody>
     </table>
 
     <button v-on:click="addQuestion">Add question</button>
 
-    <button v-on:click="submit">Submit</button>
+    <button v-on:click="submit">Save</button>
 
   </div>
 </template>
@@ -46,9 +49,41 @@ export default {
   data: function() {
     return {
       quiz: {
+        ID: '',
         title: '',
         questions: []
-      }
+      },
+      creating: false
+    }
+  },
+  mounted() {
+    // if there is an ID as a parameter, then the intention is to edit an already existing quiz, otherwise we're
+    // creating a new one
+    this.creating = this.$route.params.id == null;
+
+    if(!this.creating) {
+      console.log('editing');
+      api.get('/quizdetails/' + this.$route.params.id)
+        .then(response => response.json())
+        .then(json => {
+          this.quiz.ID = json.ID;
+          this.quiz.title = json.title;
+
+          for(const question of json.questions) {
+            this.quiz.questions.push({
+              ID: question.ID,
+              question: question.question,
+              correctAnswer: question.correct_answer,
+              incorrectAnswers: [question.answer1, question.answer2, question.answer3]
+            });
+          }
+        });
+    }
+  },
+  updated() {
+    for(const textarea of document.getElementsByTagName('textarea')) {
+      textarea.style.height = '5px';
+      textarea.style.height = (textarea.scrollHeight)+"px";
     }
   },
   methods: {
@@ -57,6 +92,7 @@ export default {
     },
     autoGrow(event) {
       console.log(event);
+      event.target.style.height = '5px';
       event.target.style.height = (event.target.scrollHeight)+"px";
     },
     textareaOnKeyPress(event) {
@@ -69,14 +105,24 @@ export default {
       this.quiz.questions.push(
           {
             question: '',
-            type: 'multichoice',
+            // type: 'multichoice',
             correctAnswer: '',
             incorrectAnswers: []
           });
     },
+    deleteQuestion(index) {
+      this.$emit('showConfirmModal', {
+        title: 'Delete following question?',
+        message: 'Delete "' + this.quiz.questions[index].question + '"?',
+        redButton: 'Delete',
+        cancelButton: 'Cancel',
+        callback: (ok) => {
+          if(ok)
+            this.quiz.questions.splice(index, 1);
+        }
+      });
+    },
     submit() {
-      console.log(this.quiz);
-
       const isBlank = (string) => string.trim() === '';
 
       // TODO: get rid of alerts and highlight empty or incorrect fields with css
@@ -126,12 +172,14 @@ export default {
       }
 
       // submit, same path different http method, no param
-      api.postJson('/quiz', this.quiz)
+      let apiCall = this.creating ? api.postJson : api.putJson;
+      console.log(apiCall);
+      apiCall('/quiz', this.quiz)
         .then(response => {
           if(response.status === 200) {
             this.$emit('showConfirmModal', {
-              title: 'Quiz created!',
-              message: this.quiz.title + ' has been created!',
+              title: 'Quiz saved!',
+              message: this.quiz.title + ' has been saved!',
               okButton: 'OK',
               callback: () => {
                 this.$router.push('/home-teacher');
@@ -158,6 +206,10 @@ h1, h2, h3 {
   text-align: center;
 }
 
+td {
+  padding: 6px;
+}
+
 table {
   width: 850px;
 }
@@ -170,9 +222,7 @@ textarea {
   text-align: center;
   word-break: break-all;
   resize: none;
-  /*white-space: nowrap;*/
   overflow: hidden;
-  /*height: ;*/
   height: 25px;
 }
 
@@ -192,14 +242,9 @@ textarea:focus {
   font-family: Pangolin, sans-serif;
 }
 
-.general-container {
-  margin: 10px auto;
-  width: 400px;
-  height: max-content;
-  border: solid 3px black;
-  border-radius: 20px;
-  padding: 20px;
-  background: white;
+table tbody tr td:nth-child(6){
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .general-container > div {
@@ -207,7 +252,7 @@ textarea:focus {
   width: max-content;
 }
 
-button {
+div > button {
   margin: 10px auto;
   display: block;
 }

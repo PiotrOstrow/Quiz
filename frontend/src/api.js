@@ -9,13 +9,25 @@ const api = {
     checkLogin,
     logout,
     get,
-    deleteRequest
+    deleteRequest,
+    putJson
 }
 
 function deleteRequest(url) {
     return fetch('http://' + window.location.hostname + ':3000' + url, {
         method: 'DELETE',
         credentials: 'include',
+    });
+}
+
+function putJson(url, data) {
+    return fetch('http://' + window.location.hostname + ':3000' + url, {
+        method: 'PUT',
+        credentials: 'include',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
     });
 }
 

@@ -164,6 +164,25 @@ app.delete('/quiz/:id', checkAuthentication(Role.Teacher), (request, response) =
     });
 });
 
+function insertQuestions(quizID, questions, callback = (error) => {}) {
+    // TODO: validate input
+
+    // construct a query to insert all of the questions at once
+    let placeholders = questions.map(() => '(?, ?, ?, ?, ?, ?)').join(', ');
+    let query = 'INSERT INTO quiz_questions(quizID, question, correct_answer, answer1, answer2, answer3) VALUES ' + placeholders;
+
+    // create a 2 dimensional array of arrays of parameters
+    let params = [];
+    for (const q of questions)
+        params.push([quizID, q.question, q.correctAnswer, q.incorrectAnswers[0], q.incorrectAnswers[1], q.incorrectAnswers[2]]);
+
+    // flatten the array to one dimension because sqlite
+    let flatParams = [];
+    params.forEach((arr) => arr.forEach((item) => flatParams.push(item)));
+
+    db.run(query, flatParams, callback);
+}
+
 app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
     // needs to be a regular function instead of an arrow function in order for this.lastID to work
     db.run('INSERT INTO quizzes(title) VALUES(?)', [request.body.title], function (error) {
@@ -173,22 +192,7 @@ app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
             return;
         }
 
-        // TODO: validate input
-
-        // construct a query to insert all of the questions at once
-        let placeholders = request.body.questions.map(() => '(?, ?, ?, ?, ?, ?)').join(', ');
-        let query = 'INSERT INTO quiz_questions(quizID, question, correct_answer, answer1, answer2, answer3) VALUES ' + placeholders;
-
-        // create a 2 dimensional array of arrays of parameters
-        let params = [];
-        for (const q of request.body.questions)
-            params.push([this.lastID, q.question, q.correctAnswer, q.incorrectAnswers[0], q.incorrectAnswers[1], q.incorrectAnswers[2]]);
-
-        // flatten the array to one dimension because sqlite
-        let flatParams = [];
-        params.forEach((arr) => arr.forEach((item) => flatParams.push(item)));
-
-        db.run(query, flatParams, (error) => {
+        insertQuestions(this.lastID, request.body.questions, error => {
             if (error) {
                 console.log(error);
                 response.status(500).end();
@@ -196,8 +200,65 @@ app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
                 response.status(200).end();
             }
         });
+        response.end();
     });
 })
+
+app.put('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
+    // UPDATE quizzes SET title = ? WHERE ID = ?
+    // DELETE FROM quiz_questions WHERE quizID = ?
+    console.log(request.body);
+
+    db.run('UPDATE quizzes SET title = ? WHERE ID = ?', [request.body.title, request.body.ID], error => {
+        if(error)
+            console.log(error);
+        // TODO: handle errors or case when quiz does not exist?
+
+        db.run('DELETE FROM quiz_questions WHERE quizID = ?', [request.body.ID], error => {
+            if(error)
+                console.log(error);
+
+            insertQuestions(request.body.ID, request.body.questions, error => {
+                if (error) {
+                    console.log(error);
+                    response.status(500).end();
+                } else {
+                    response.status(200).end();
+                }
+            });
+        })
+    });
+});
+
+// endpoint to get all the quiz details for a teacher to be able to edit it
+app.get('/quizdetails/:id', checkAuthentication(Role.Teacher), (request, response) => {
+    let data = {
+        ID: '',
+        title: '',
+        questions: []
+    };
+
+    db.get('SELECT * FROM quizzes WHERE ID = ?', [request.params.id], (error, result) => {
+        if(error) {
+            console.log(error);
+            response.status(500).end();
+            return;
+        }
+
+        if(result == null) {
+            response.status(404).end();
+            return;
+        }
+
+        data.ID = result.ID;
+        data.title = result.title;
+
+        db.all('SELECT * FROM quiz_questions WHERE quizID = ?', [request.params.id], (error, result) => {
+            data.questions = result;
+            response.json(data).end();
+        });
+    });
+});
 
 app.get('/logout', checkAuthentication([Role.Student, Role.Teacher]), (request, response) => {
     request.logout();
