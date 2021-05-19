@@ -1,70 +1,34 @@
 <template>
   <div>
     <h1>Create quiz</h1>
-    <div class="general-container">
-      <div>
-        <label for="title" >Quiz Title: </label>
-        <input type="text" id="title" v-model="quiz.title">
-      </div>
-
+    <textarea id="title-textarea" placeholder="Enter quiz title here..." v-on:keypress="textareaOnKeyPress($event)" v-model="quiz.title"></textarea>
+<!--    <div class="general-container">-->
 <!--      <div>-->
-<!--        <label for="timed">Timed </label>-->
-<!--        <input type="checkbox" id="timed">-->
+<!--        <label for="title" >Quiz Title: </label>-->
+<!--        <input type="text" id="title" v-model="quiz.title">-->
 <!--      </div>-->
+<!--    </div>-->
 
-<!--      <div>-->
-<!--        <label for="timelimit">Time limit </label>-->
-<!--        <input type="time" id="timelimit">-->
-<!--      </div>-->
-
-    </div>
-
-    <div class="general-container" v-for="(question, index) in quiz.questions" v-bind:key="index">
-      <div>
-        <label> Question: </label>
-        <input v-model="question.question">
-      </div>
-
-<!--      <div>-->
-<!--        <label> Type: </label>-->
-<!--        <select v-model="question.type">-->
-<!--          <option value="multichoice">Multi-choice</option>-->
-<!--          <option value="truefalse">True or false</option>-->
-<!--          <option value="textinput">Text input</option>-->
-<!--        </select>-->
-<!--      </div>-->
-
-
-      <div v-if="question.type === 'multichoice'">
-        <label> Correct answer: </label>
-        <input v-model="question.correctAnswer">
-      </div>
-      <div v-if="question.type === 'multichoice'">
-        <label> Incorrect answer #1: </label>
-        <input v-model="question.incorrectAnswers[0]">
-      </div>
-      <div v-if="question.type === 'multichoice'">
-        <label> Incorrect answer #2: </label>
-        <input v-model="question.incorrectAnswers[1]">
-      </div>
-      <div v-if="question.type === 'multichoice'">
-        <label> Incorrect answer #3: </label>
-        <input v-model="question.incorrectAnswers[2]">
-      </div>
-
-<!--      <div v-if="question.type === 'truefalse'">-->
-<!--        <input type="radio" id="test1" name="tf">-->
-<!--        <label for="test1">True</label>-->
-<!--        <input type="radio" id="test1" name="tf">-->
-<!--        <label for="test1">False</label>-->
-<!--      </div>-->
-
-<!--      <div>-->
-<!--        <label> Correct answer: </label>-->
-<!--        <input v-model="question.answer4">-->
-<!--      </div>-->
-
-    </div>
+    <table class="blue-table">
+      <thead>
+      <tr>
+        <th>Question</th>
+        <th>Correct Answer</th>
+        <th>Incorrect #1</th>
+        <th>Incorrect #2</th>
+        <th>Incorrect #3</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="(question, index) in quiz.questions" v-bind:key="index">
+        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Enter question here..." v-model="question.question" v-on:focus="$event.target.select()"/></td>
+        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Correct answer..." v-model="question.correctAnswer" v-on:focus="$event.target.select()"/></td>
+        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Incorrect #1" v-model="question.incorrectAnswers[0]" v-on:focus="$event.target.select()"/></td>
+        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Incorrect #2" v-model="question.incorrectAnswers[1]" v-on:focus="$event.target.select()"/></td>
+        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Incorrect #3" v-model="question.incorrectAnswers[2]" v-on:focus="$event.target.select()"/></td>
+      </tr>
+      </tbody>
+    </table>
 
     <button v-on:click="addQuestion">Add question</button>
 
@@ -91,13 +55,23 @@ export default {
     r: function () {
       return Math.floor(Math.random() * 100) + 1;
     },
+    autoGrow(event) {
+      console.log(event);
+      event.target.style.height = (event.target.scrollHeight)+"px";
+    },
+    textareaOnKeyPress(event) {
+      if(event.keyCode === 13) { // enter
+        event.preventDefault();
+        event.target.blur();
+      }
+    },
     addQuestion() {
       this.quiz.questions.push(
           {
             question: '',
             type: 'multichoice',
             correctAnswer: '',
-            incorrectAnswers: ['', '', '']
+            incorrectAnswers: []
           });
     },
     submit() {
@@ -109,27 +83,43 @@ export default {
 
       // check if there are any questions
       if(this.quiz.questions.length < 1) {
-        alert('No questions added');
+        this.$emit('showConfirmModal', {
+          title: 'No questions added!',
+          message: 'Please make sure to have at least one question!',
+          okButton: 'OK I understand'
+        });
         return;
       }
 
       // check for no quiz title
       this.quiz.title = this.quiz.title.trim();
       if(this.quiz.title === '') {
-        alert('Quiz title is empty');
+        this.$emit('showConfirmModal', {
+          title: 'Quiz title is empty!',
+          message: 'Please make sure to set a quiz title!',
+          okButton: 'OK I understand'
+        });
         return;
       }
 
       // check every question for empty fields
       for(const question of this.quiz.questions) {
         if(isBlank(question.question) || isBlank(question.correctAnswer)){
-          alert('A question field is empty');
+          this.$emit('showConfirmModal', {
+            title: 'A question field is empty!',
+            message: 'Please make to a fill every question field!',
+            okButton: 'OK I understand'
+          });
           return;
         }
 
         for(const incorrectAnswer of question.incorrectAnswers) {
           if(isBlank(incorrectAnswer)){
-            alert('A question field is empty');
+            this.$emit('showConfirmModal', {
+              title: 'A question field is empty!',
+              message: 'Please make sure to fill all fields!',
+              okButton: 'OK I understand'
+            });
             return;
           }
         }
@@ -139,13 +129,23 @@ export default {
       api.postJson('/quiz', this.quiz)
         .then(response => {
           if(response.status === 200) {
-            alert('Quiz created!');
-            this.$router.push('/home-teacher');
+            this.$emit('showConfirmModal', {
+              title: 'Quiz created!',
+              message: this.quiz.title + ' has been created!',
+              okButton: 'OK',
+              callback: () => {
+                this.$router.push('/home-teacher');
 
-            // refreshes the page, so the updated data for quiz list is fetched from the server
-            this.$router.go();
+                // refreshes the page, so the updated data for quiz list is fetched from the server
+                this.$router.go();
+              }
+            });
           } else {
-            alert('Error!');
+            this.$emit('showConfirmModal', {
+              title: 'An error occurred!',
+              message: 'Server error, could not create the quiz.',
+              okButton: 'OK'
+            });
           }
         });
     }
@@ -156,6 +156,40 @@ export default {
 <style scoped>
 h1, h2, h3 {
   text-align: center;
+}
+
+table {
+  width: 850px;
+}
+
+textarea {
+  border-style: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 5px;
+  text-align: center;
+  word-break: break-all;
+  resize: none;
+  /*white-space: nowrap;*/
+  overflow: hidden;
+  /*height: ;*/
+  height: 25px;
+}
+
+textarea:focus {
+  border-style: none;
+  background-color: white;
+  cursor: text;
+}
+
+#title-textarea {
+  display: block;
+  margin: 0 auto;
+  font-size: 24px;
+  width: 850px;
+  height: 39px;
+  font-weight: bold;
+  font-family: Pangolin, sans-serif;
 }
 
 .general-container {

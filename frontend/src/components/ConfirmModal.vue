@@ -37,7 +37,6 @@ export default {
       this.callback = opts.callback;
       this.$refs.popup.open()
     },
-
     _confirm() {
       this.$refs.popup.close()
 
