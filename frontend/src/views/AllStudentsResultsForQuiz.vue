@@ -33,14 +33,6 @@ export default {
       sortedScores: []
     }
   },
-  // computed: {
-  //   sortMaxScore: function() {
-  //       function compare(a, b) {
-  //         if(a.students.maxScore < b.students.maxScore) {
-  //
-  //         }
-  //   }
-  // },
   mounted() {
     api.get('/all-results/' + this.$route.params.id)
         .then(response => response.json())

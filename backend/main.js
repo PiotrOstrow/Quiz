@@ -281,7 +281,8 @@ app.get('/all-results/:id', checkAuthentication(Role.Student), (request, respons
              FROM users
                       INNER JOIN quiz_results ON users.ID = quiz_results.userID
              WHERE quiz_results.quiziD = ?
-             GROUP BY users.ID, users.name`;
+             GROUP BY users.ID, users.name
+            ORDER BY MAX(quiz_results.score) DESC`;
 
             db.all(sql, [request.params.id], (error, result) => {
                 if (error) {
