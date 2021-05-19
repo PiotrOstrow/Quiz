@@ -13,18 +13,14 @@
             <th>Name</th>
             <th>Username</th>
             <th>Email</th>
-            <th></th>
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(student, index) in users" v-bind:key="index">
+          <tr v-for="(student, index) in users" v-bind:key="index" v-on:click="$router.push('/student-results/' + student.ID)">
             <td>{{ student.ID }}</td>
             <td>{{ student.name }}</td>
             <td>{{ student.username }}</td>
             <td>{{ student.email }}</td>
-            <td>
-              <router-link :to="{ name: 'StudentResults', params: { id: student.ID }}">📄</router-link>
-            </td>
           </tr>
           </tbody>
         </table>
@@ -43,7 +39,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(quiz, index) in quizList" v-bind:key="index" v-on:click="onQuizClicked($event, quiz.ID)">
+          <tr v-for="(quiz, index) in quizList" v-bind:key="index" v-on:click="$router.push('/quiz-overview/' + quiz.ID)">
             <td>{{ quiz.title }}</td>
             <td> -</td>
             <td>{{ quiz.questionCount }}</td>
@@ -74,9 +70,6 @@ export default {
   name: "Home-teacher.vue",
   props: ['quizList', 'users'],
   methods: {
-    onQuizClicked(event, ID) {
-      this.$router.push('quiz-overview/' + ID);
-    },
     editQuiz(id) {
       this.$router.push('/create/' + id);
     },

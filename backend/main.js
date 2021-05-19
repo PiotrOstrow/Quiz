@@ -200,7 +200,6 @@ app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
                 response.status(200).end();
             }
         });
-        response.end();
     });
 })
 
