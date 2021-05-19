@@ -45,6 +45,7 @@
           v-on:register="register"
           v-on:showConfirmModal="showConfirmModal"
           v-on:showSingleResult="showSingleResult"
+          v-on:deleteQuiz="deleteQuiz"
           />
     </div>
 
@@ -86,21 +87,7 @@ export default {
     }
   },
   methods: {
-    async register(username, name, password, email) {
-
-      // console.log(this.$refs);
-      //
-      // const ok = await this.$refs.confirmModal.show({
-      //   title: 'You have entered wrong details when registering a new user.',
-      //   message: 'Please try again, be wary of duplicate usernames',
-      //   okButton: 'OK I understand',
-      // })
-      // if (ok) {
-      //   // No alert here to avoid double-popups
-      // } else {
-      //   alert('Something wen\'t terribly wrong. Reload the website')
-      // }
-
+    register(username, name, password, email) {
       api.register(username, name,  password, email)
         .then(response => {
           if(response.status === 200) {
@@ -195,6 +182,20 @@ export default {
     },
     showConfirmModal(options) {
       this.$refs.confirmModal.show(options);
+    },
+    deleteQuiz(quizID) {
+      api.deleteRequest('/quiz/' + quizID)
+        .then(response => {
+          if(response.status === 204) { // on success should return 204 no content
+            // remove quiz from quiz list
+            for(let i = 0; i < this.quizList.length; i++) {
+              if(this.quizList[i].ID === quizID){
+                this.quizList.splice(i, 1);
+                break;
+              }
+            }
+          }
+        });
     }
   },
   mounted: function () {

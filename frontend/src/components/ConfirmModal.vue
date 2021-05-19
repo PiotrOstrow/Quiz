@@ -1,9 +1,11 @@
 <template>
-  <popup-modal ref="popup">
+  <popup-modal ref="popup" v-on:cancelByClickingOutside="_cancel">
     <h3 style="margin-top: 0">{{ title }}</h3>
     <p>{{ message }}</p>
-    <div class="btn">
-      <button class="ok-btn" @click="_confirm">{{ okButton }}</button>
+    <div class="btn-container">
+      <button v-show="okButton" class="ok-btn" @click.stop="_confirm">{{ okButton }}</button>
+      <button v-show="redButton" class="red-btn" @click.stop="_confirm">{{ redButton }}</button>
+      <button v-show="cancelButton" class="cancel-btn" @click.stop="_cancel">{{ cancelButton }}</button>
     </div>
   </popup-modal>
 </template>
@@ -20,8 +22,9 @@ export default {
     title: undefined,
     message: undefined,
     okButton: undefined,
-    resolvePromise: undefined,
-    rejectPromise: undefined,
+    redButton: undefined,
+    cancelButton: undefined,
+    callback: undefined
   }),
 
   methods: {
@@ -29,34 +32,45 @@ export default {
       this.title = opts.title
       this.message = opts.message
       this.okButton = opts.okButton
+      this.redButton = opts.redButton;
+      this.cancelButton = opts.cancelButton;
+      this.callback = opts.callback;
       this.$refs.popup.open()
-
-      return new Promise((resolve, reject) => {
-        this.resolvePromise = resolve
-        this.rejectPromise = reject
-      })
     },
 
     _confirm() {
       this.$refs.popup.close()
-      this.resolvePromise(true)
+
+      if(this.callback)
+        this.callback(true);
     },
+    _cancel() {
+      this.$refs.popup.close();
+
+      if(this.callback)
+        this.callback(false);
+    }
   },
 }
 </script>
 
 <style scoped>
-.btn {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.btn-container {
+  width: max-content;
+  float: right;
 }
 
-.ok-btn {
+button {
   color: white;
-  text-decoration: underline;
-  line-height: 2.5rem;
+  /*text-decoration: underline;*/
+  line-height: 2rem;
   cursor: pointer;
+  /*float: right;*/
+  margin-left: 10px;
+}
+
+.red-btn {
+  background-color: red;
 }
 
 </style>

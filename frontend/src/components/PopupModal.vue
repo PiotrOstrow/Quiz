@@ -1,7 +1,7 @@
 <template>
 <transition name="fade">
-  <div class="popup-modal" v-if="isVisible">
-  <div class="window">
+  <div class="popup-modal" v-if="isVisible" @click.stop="$emit('cancelByClickingOutside')">
+  <div class="window" @click.stop="">
     <slot></slot>
   </div>
   </div>

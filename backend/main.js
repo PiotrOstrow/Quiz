@@ -142,6 +142,28 @@ app.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
     })
 });
 
+app.delete('/quiz/:id', checkAuthentication(Role.Teacher), (request, response) => {
+    // regular function instead of an arrow function to access this.changes
+    db.run('DELETE FROM quizzes WHERE ID = ?', [request.params.id], function(error) {
+        if(error) {
+            console.log(error);
+            response.status(500).end();
+            return;
+        }
+
+        // this.changes is the number of rows deleted
+        if(this.changes === 0) {
+            response.status(404).end();
+            return;
+        }
+
+        db.run('DELETE FROM quiz_questions WHERE quizID = ?', [request.params.id], () => {
+            // 204 no content on success
+            response.status(204).end();
+        })
+    });
+});
+
 app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
     // needs to be a regular function instead of an arrow function in order for this.lastID to work
     db.run('INSERT INTO quizzes(title) VALUES(?)', [request.body.title], function (error) {
@@ -264,7 +286,7 @@ app.get('/results', checkAuthentication(Role.Student), (request, response) => {
 app.get('/all-results/:id', checkAuthentication(Role.Student), (request, response) => {
     let data = {
         quiz: {},
-        students: {}
+        students: []
     };
 
     db.get('SELECT ID, title, (SELECT COUNT(*) from quiz_questions WHERE quiz_questions.quizID = quizzes.ID) as numberOfQuestions FROM quizzes WHERE ID = ?'
@@ -332,20 +354,6 @@ app.get('/teacher/quiz-overview/:id', checkAuthentication(Role.Teacher), (reques
                 response.json(data);
             });
         });
-
-    // let data = {
-    //     quiz: {numberOfQuestions: 7},
-    //     students: [
-    //         {name: 'Bob', attempts: 5, maxScore: '5'},
-    //         {name: 'Bob', attempts: 5, maxScore: '5'},
-    //         {name: 'Bob', attempts: 5, maxScore: '5'},
-    //         {name: 'Bob', attempts: 5, maxScore: '5'},
-    //         {name: 'Bob', attempts: 5, maxScore: '7'},
-    //         {name: 'Bob', attempts: 5, maxScore: '5'}
-    //     ]
-    // }
-
-
 });
 
 app.get('/teacher', checkAuthentication(Role.Teacher), (request, response) => {

@@ -76,20 +76,6 @@ export default {
     }
   },
   methods: {
-    // async doConfirmLogin() {
-    //   console.log(this.$refs);
-    //
-    //   const ok = await this.$refs.confirmModal.show({
-    //     title: 'You have entered wrong Username/Password',
-    //         message: 'Please try again, be wary of cApS-sEnSiTiVe',
-    //         okButton: 'OK I understand',
-    //   })
-    //   if (ok) {
-    //     // No alert here to avoid double-popups
-    //   } else {
-    //     alert('Something wen\'t terribly wrong. Reload the website')
-    //   }
-    // },
     submitRegister() {
       if (this.rPassword !== this.rRepeatPassword) {
         this.$emit('showConfirmModal', {

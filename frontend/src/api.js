@@ -8,7 +8,15 @@ const api = {
     getResults,
     checkLogin,
     logout,
-    get
+    get,
+    deleteRequest
+}
+
+function deleteRequest(url) {
+    return fetch('http://' + window.location.hostname + ':3000' + url, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
 }
 
 function postForm(url, form) {
