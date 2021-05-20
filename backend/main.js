@@ -357,10 +357,20 @@ app.get('/student-results/:id', checkAuthentication(Role.Teacher), (request, res
 
 
 app.get('/results', checkAuthentication(Role.Student), (request, response) => {
-    db.all('SELECT quizID, title, max(score) as maxScore, (SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quizID = quiz_results.quizID) as question_count ' +
-        'FROM quiz_results inner join quizzes on quizID = quizzes.ID ' +
-        'where userID = ? ' +
-        'group by quizID, title', [request.user.ID], (error, result) => {
+    let sql =`
+    SELECT 
+        quizID, 
+        title, 
+        MAX(score) as maxScore, 
+        (SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quizID = quiz_results.quizID) as question_count, 
+        COUNT(quiz_results.ID) as attempts
+    FROM quiz_results 
+        INNER JOIN quizzes on quizID = quizzes.ID 
+    WHERE userID = ? 
+    GROUP BY quizID, title`;
+
+
+    db.all(sql, [request.user.ID], (error, result) => {
 
         // handling of error
         if (error) {

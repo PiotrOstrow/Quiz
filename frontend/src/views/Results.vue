@@ -1,17 +1,35 @@
 <template>
-  <section class="grid-container">
-    <h1>Results</h1>
-    <div class="results-container">
-      <main>
-        <div v-for="quiz in quizResults"
-             v-bind:key="quiz.quizID">
-          <h3>{{ quiz.title }}</h3>
-          <p>{{quiz.score}} out of {{ quiz.question_count }} questions correct</p>
-        </div>
-      </main>
-    </div>
-  </section>
-
+<!--  <section class="grid-container">-->
+<!--    <h1>Results</h1>-->
+<!--    <div class="results-container">-->
+<!--      <main>-->
+<!--        <div v-for="quiz in quizResults"-->
+<!--             v-bind:key="quiz.quizID">-->
+<!--          <h3>{{ quiz.title }}</h3>-->
+<!--          <p>{{quiz.score}} out of {{ quiz.question_count }} questions correct</p>-->
+<!--        </div>-->
+<!--      </main>-->
+<!--    </div>-->
+<!--  </section>-->
+  <div>
+    <h1>Your Results</h1>
+    <table class="blue-table">
+      <thead>
+      <tr>
+        <th>Quiz</th>
+        <th>Highest score</th>
+        <th>Attempts</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="quiz in quizResults" v-bind:key="quiz.quizID">
+        <td>{{ quiz.title }}</td>
+        <td>{{ quiz.maxScore }} out of {{ quiz.question_count }} questions correct</td>
+       <td>{{ quiz.attempts }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>

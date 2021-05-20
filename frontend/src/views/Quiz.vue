@@ -3,7 +3,10 @@
     <main>
       <h1>{{ quiz.title }}</h1>
       <div class="question-container" v-for="(question, index) in quiz.questions" v-bind:key="question.ID">
-        <h2>Question {{index+1}}</h2>
+
+        <div class="h3-container">
+          <h2>Question {{index+1}}</h2>
+        </div>
         <h3 class="question-paragraph"> {{ question.question }} </h3>
         <form id="choose-answer">
           <div class="radio-input-container">
@@ -25,10 +28,7 @@
             <input type="radio" v-bind:id="question.ID + '_answer4'" name="quiz-name" v-bind:value="question.answers[3]" v-on:click="selected($event, question.ID)">
             <label v-bind:for="question.ID + '_answer4'"> {{ question.answers[3] }} </label><br>
           </div>
-<!--          <button>Previous Question</button> <button>Next Question</button>-->
         </form>
-<!--        <button class="quit-button">Quit</button>-->
-
       </div>
       <button id="submit-button" @click="submit" :disabled="!submitEnabled">Submit</button>
     </main>
@@ -101,33 +101,43 @@ h1{
   text-align: center;
 }
 
+.h3-container {
+  width: 100%;
+  background-color: #F29544;
+  /*background-color: white;*/
+  padding: 5px;
+  color: #fcfcfc;
+}
+
 .question-paragraph {
   text-align: center;
+  font-size:20px;
+  padding: 15px;
+  /*border: solid 1px black;*/
 }
 
 .question-container {
   width: max-content;
   background-color: white;
-  border-radius: 20px;
-  padding: 20px;
-  margin: 10px auto;
-  border: solid 3px black;
+  border-radius: 2px;
+  margin: 30px auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
 .radio-input-container {
-  margin: 5px auto;
+  margin: 10px;
 }
 
 .radio-input-container label{
   width: 140px;
   text-align: center;
-  border: solid 2px black;
+  /*border: solid 2px black;*/
 }
 
 form {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 10px;
+  /*grid-gap: 10px;*/
 }
 
 
@@ -156,7 +166,7 @@ input[type="radio"] {
   font: 400 15px Pangolin;
   color: white;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 2px;
   transition: transform .2s;
 }
 
@@ -189,7 +199,7 @@ section {
   width: 200px;
   height: 50px;
   font-size: 24px;
-  border: solid 2px black;
+  /*border: solid 2px black;*/
 }
 
 </style>

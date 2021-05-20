@@ -4,10 +4,13 @@
       <h1>My Quizzes</h1>
       <div class="quizzes-container">
         <div v-for="quiz in quizList" v-bind:key="quiz.ID" class="quiz-element">
-          <h3>{{ quiz.title }}</h3>
+          <div class="quiz-element-titlediv">
+            <h3>{{ quiz.title }}</h3>
+          </div>
+          <p>Questions: 7</p> <p>Completed: No</p>
           <div class="button-container">
-            <router-link class="button-router" :to="{ name: 'Quiz', params: { id: quiz.ID }}">Start quiz</router-link>
-            <router-link class="button-router" :to="{ name: 'AllResults', params: { id: quiz.ID }}">Scores</router-link>
+            <button v-on:click="$router.push('/quiz/' + quiz.ID)">Start quiz</button>
+            <button v-on:click="$router.push('/all-results/' + quiz.ID)">Scores</button>
           </div>
         </div>
       </div>
@@ -33,7 +36,7 @@ h1 {
 }
 
 h3 {
-  margin: 5px;
+  margin: 2px;
 }
 
 .quiz {
@@ -50,22 +53,49 @@ h3 {
 }
 
 .quiz-element {
-  flex-direction: column;
+  /*display: flex;*/
+  /*flex-direction: column;*/
   text-align: center;
-  width: 250px;
+  width: 275px;
   height: 150px;
   background-color: white;
-  border: solid 2px black;
-  border-radius: 20px;
-  display: flex;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
   justify-content: space-evenly;
   align-items: center;
+  position: relative;
+}
+
+.quiz-element p {
+  display: inline-block;
+  margin: 15px;
+}
+
+.quiz-element-titlediv {
+  display: block;
+  border-bottom: solid 1px;
+  font-family:Pangolin, sans-serif;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  background-color: #00a2e8;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
 }
 
 .button-container {
-  display: flex;
-  justify-content: space-around;
-  width: 200px;
+  /*display: flex;*/
+  /*justify-content: space-around;*/
+  width: 100%;
+  height: max-content;
+  position: absolute;
+  bottom: 0;
+
+}
+
+.button-container button {
+  margin: 10px;
 }
 
 /*.quiz-element a {*/
@@ -83,8 +113,8 @@ h3 {
   color: white;
   background-color: rgba(0, 162, 232, 0.8);
   padding: 3px 6px;
-  border-radius: 5px;
-  border: solid 2px black;
+  border-radius: 2px;
+  /*border: solid 2px black;*/
   transition: transform .2s;
 
 }

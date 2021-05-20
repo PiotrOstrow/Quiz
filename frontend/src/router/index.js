@@ -84,7 +84,7 @@ const routes = [
         props: true
     },
     {
-        path: '/all-result/:id',
+        path: '/all-results/:id',
         name: 'AllResults',
         component: AllStudentsResultsForQuiz,
         meta: {authorize: [Role.Student]},

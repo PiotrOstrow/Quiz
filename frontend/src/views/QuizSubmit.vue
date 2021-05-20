@@ -2,32 +2,24 @@
   <div id="container">
     <h1>Your results for {{ scoreData.title }}</h1>
     <h2>Score: {{ scoreData.score }}/{{ scoreData.questionCount }}</h2>
-    <div class="column-container">
-
-      <div class="column">
-        <h3>Quiz questions</h3>
-        <div v-for="(answer, index) in scoreData.answers" v-bind:key="index">
-          {{ scoreData.questions[index].question }}
-        </div>
-      </div>
-
-
-      <div class="column">
-        <h3>Your answers</h3>
-        <div v-for="(givenAnswer, index) in scoreData.givenAnswers" v-bind:key="index">
-          {{ givenAnswer }}
-        </div>
-      </div>
-
-
-      <div class="column">
-        <h3>Result:</h3>
-        <div v-for="(answer, index) in scoreData.answers" v-bind:key="index" v-bind:class="{correct: answer, incorrect: !answer}">
-          {{ answer ? 'Correct' : 'Incorrect' }}
-        </div>
-      </div>
-    </div>
-
+    <table class="blue-table">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Quiz question</th>
+        <th>Your answers</th>
+        <th>Result</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="(answer, index) in scoreData.answers" v-bind:key="index">
+        <td>{{ index + 1 }}</td>
+        <td>{{ scoreData.questions[index].question }}</td>
+        <td>{{ scoreData.givenAnswers[index] }}</td>
+        <td v-bind:class="{correct: answer, incorrect: !answer}">{{ answer ? 'Correct' : 'Incorrect' }}</td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -41,12 +33,15 @@ export default {
 </script>
 
 <style scoped>
+h1, h2, h3 {
+  text-align: center;
+}
 #container {
   width: max-content;
   margin: 20px auto;
   padding: 20px;
-  background-color: white;
-  border-radius: 20px;
+  /*background-color: white;*/
+  /*border-radius: 20px;*/
 }
 
 .column-container {

@@ -364,10 +364,11 @@ button {
   font: 400 15px Pangolin;
   background-color: rgba(0, 162, 232, 0.8);
   color: white;
-  padding: 3px 6px;
+  padding: 8px;
   border-style: none;
-  border-radius: 5px;
+  border-radius: 2px;
   transition: transform .2s;
+
 }
 
 button:disabled {
@@ -383,6 +384,7 @@ button:hover {
   cursor: pointer;
   background-color: rgba(0, 162, 232, 1);
   transform: scale(1.05);
+
 }
 
 .main {
@@ -427,8 +429,8 @@ button:hover {
 }
 
 .blue-table tbody tr:hover {
-  background-color: #00a2e8;
-  color: white;
+  background-color: #afcce8;
+  color: black;
 }
 
 .blue-table tbody tr.active-row {
@@ -446,11 +448,13 @@ button:hover {
 .icon-button {
   margin: 2px;
   color: black;
+  padding: 4px;
+
 }
 
-.blue-table tr:hover button {
-  background-color: white;
-  color: black;
+.blue-table tr button:hover {
+  /*background-color: white;*/
+  color: white;
 }
 
 .blue-table button {

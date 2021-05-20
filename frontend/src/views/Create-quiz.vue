@@ -33,6 +33,7 @@
       </tbody>
     </table>
 
+
     <button v-on:click="addQuestion">Add question</button>
 
     <button v-on:click="submit">Save</button>

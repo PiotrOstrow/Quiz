@@ -2,7 +2,6 @@
   <div>
     <h1>Scoreboard</h1>
     <h3>{{ student.name }}</h3>
-    <h3> {{student.email}}</h3>
     <table class="blue-table">
       <thead>
       <tr>
