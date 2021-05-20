@@ -462,3 +462,45 @@ app.get('/teacher/quiz-overview/:id', checkAuthentication(Role.Teacher), (reques
 app.get('/teacher', checkAuthentication(Role.Teacher), (request, response) => {
     response.json({msg: 'You are a teacher!'});
 });
+
+
+app.post('/change-password', checkAuthentication(Role.Student), (request, response) => {
+    let data = {
+        success: false,
+        msg: ''
+    }
+
+    if(request.body.newPassword !== request.body.newPasswordRepeated) {
+        data.msg = 'Repeated password do not match!';
+        response.json(data);
+        return;
+    }
+
+    db.get('SELECT password FROM users WHERE ID = ?', [request.user.ID], (error, result) => {
+        if (error)
+            console.log(error);
+
+        // compare passwords
+        bcrypt.compare(request.body.currentPassword, result.password, function (err, bcryptResult) {
+            if (!bcryptResult) {
+                data.msg = 'Incorrect password!';
+                response.json(data);
+                return;
+            }
+
+            // update password
+            bcrypt.hash(request.body.newPassword, BCRYPT_SALT_ROUNDS, function (err, hash) {
+                db.run('UPDATE users SET password = ? WHERE ID = ?', [hash, request.user.ID], (error) => {
+                    if (error) {
+                        console.log(error);
+                        data.msg = 'Server error';
+                    } else {
+                        data.success = true;
+                        data.msg = 'Password changed!';
+                    }
+                    response.json(data);
+                });
+            });
+        });
+    });
+});

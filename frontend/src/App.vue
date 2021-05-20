@@ -44,12 +44,14 @@
           v-on:login="login"
           v-on:register="register"
           v-on:showConfirmModal="showConfirmModal"
+          v-on:showInputModal="showInputModal"
           v-on:showSingleResult="showSingleResult"
           v-on:deleteQuiz="deleteQuiz"
           />
     </div>
 
     <confirm-modal ref="confirmModal"></confirm-modal>
+    <input-modal ref="inputModal"></input-modal>
 
     <footer>
       <ul class="footer-info">
@@ -68,9 +70,10 @@ import Role from './roles.js'
 import fetchIntercept from 'fetch-intercept';
 
 import ConfirmModal from "@/components/ConfirmModal";
+import InputModal from "@/components/InputModal";
 
 export default {
-  components: {ConfirmModal},
+  components: {ConfirmModal, InputModal},
   data: function() {
     return {
       loggedIn: false,
@@ -182,6 +185,9 @@ export default {
     },
     showConfirmModal(options) {
       this.$refs.confirmModal.show(options);
+    },
+    showInputModal(options) {
+      this.$refs.inputModal.show(options);
     },
     deleteQuiz(quizID) {
       api.deleteRequest('/quiz/' + quizID)
