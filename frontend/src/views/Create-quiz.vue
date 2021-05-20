@@ -57,11 +57,12 @@ export default {
         title: '',
         questions: []
       },
-      creating: false
+      creating: false,
+      submitted: false
     }
   },
   beforeRouteLeave(to, from, next) {
-    if(this.haveChangesBeenMade()) {
+    if(!this.submitted && this.haveChangesBeenMade()) {
       this.$emit('showConfirmModal', {
         title: 'Discard changes?',
         message: 'You have unsaved changes that will be discarded, are you sure you want to leave?',
@@ -220,6 +221,7 @@ export default {
       let apiCall = this.creating ? api.postJson : api.putJson;
       apiCall('/quiz', this.quiz)
         .then(response => {
+          this.submitted = true;
           if(response.status === 200) {
             this.$emit('showConfirmModal', {
               title: 'Quiz saved!',

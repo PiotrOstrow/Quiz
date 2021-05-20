@@ -62,7 +62,7 @@ export default {
 button {
   color: white;
   /*text-decoration: underline;*/
-  line-height: 2rem;
+  /*line-height: 2rem;*/
   cursor: pointer;
   /*float: right;*/
   margin-left: 10px;
