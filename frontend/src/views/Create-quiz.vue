@@ -154,6 +154,9 @@ export default {
       if(this.quiz.title !== this.originalQuiz.title)
         return true;
 
+      if(this.quiz.categoryID !== this.originalQuiz.categoryID)
+        return true;
+
       if(this.quiz.questions.length !== this.originalQuiz.questions.length)
         return true;
 

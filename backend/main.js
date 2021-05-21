@@ -206,7 +206,7 @@ function insertQuestions(quizID, questions, callback = (error) => {}) {
 
 app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
     // needs to be a regular function instead of an arrow function in order for this.lastID to work
-    db.run('INSERT INTO quizzes(title) VALUES(?)', [request.body.title], function (error) {
+    db.run('INSERT INTO quizzes(title, categoryID) VALUES(?, ?)', [request.body.title, request.body.categoryID], function (error) {
         if (error) {
             console.log(error);
             response.status(500).end();
@@ -229,7 +229,7 @@ app.put('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
     // DELETE FROM quiz_questions WHERE quizID = ?
     console.log(request.body);
 
-    db.run('UPDATE quizzes SET title = ? WHERE ID = ?', [request.body.title, request.body.ID], error => {
+    db.run('UPDATE quizzes SET title = ?, categoryID = ? WHERE ID = ?', [request.body.title, request.body.categoryID, request.body.ID], error => {
         if(error)
             console.log(error);
         // TODO: handle errors or case when quiz does not exist?
