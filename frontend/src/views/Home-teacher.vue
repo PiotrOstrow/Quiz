@@ -34,14 +34,14 @@
           <tr>
             <th>Name</th>
             <th>Category</th>
-            <th>Number of questions</th>
+            <th>Questions</th>
             <th></th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="(quiz, index) in quizList" v-bind:key="index" v-on:click="$router.push('/quiz-overview/' + quiz.ID)">
             <td>{{ quiz.title }}</td>
-            <td> -</td>
+            <td>{{ quiz.categoryName }}</td>
             <td>{{ quiz.questionCount }}</td>
             <td>
               <button class="icon-button" v-on:click.stop="editQuiz(quiz.ID)">
@@ -68,7 +68,7 @@
 <script>
 export default {
   name: "Home-teacher.vue",
-  props: ['quizList', 'users'],
+  props: ['quizList', 'users', 'quizCategories'],
   methods: {
     editQuiz(id) {
       this.$router.push('/create/' + id);
@@ -113,6 +113,11 @@ h1, h2, h3, p {
   padding-bottom: 0;
 }
 
+/*td, th {*/
+/*  word-wrap: anywhere;*/
+/*  white-space: nowrap;*/
+/*  overflow: hidden;*/
+/*}*/
 
 /* Extra large devices (large laptops and dvbnhjjhg, esktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {

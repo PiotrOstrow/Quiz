@@ -76,24 +76,45 @@ function checkAuthentication(roles) {
 }
 
 function getData(request, response) {
-    db.all('SELECT ID, title, (SELECT COUNT(*) FROM quiz_questions WHERE quizID = quizzes.ID) as questionCount FROM quizzes', [], (error, result) => {
-        if (error)
-            console.log(error);
+    let data = {
+        user: request.user,
+        quizList: [],
+        categories: []
+    };
 
-        let data = {
-            user: request.user,
-            quizList: result
-        };
+
+    db.serialize(() =>{
+        db.all(`SELECT 
+                    quizzes.ID, 
+                    title, 
+                    categoryID,
+                    categoryName,
+                    (SELECT COUNT(*) FROM quiz_questions WHERE quizID = quizzes.ID) as questionCount 
+                FROM quizzes
+                INNER JOIN quiz_categories ON quizzes.categoryID = quiz_categories.ID
+                `, [], (error, result) => {
+            if (error)
+                console.log(error);
+
+            data.quizList = result;
+        });
+
 
         if (request.user.role === Role.Teacher) {
             db.all('SELECT ID, username, name, email FROM users WHERE role = ?', [Role.Student], (error, result) => {
                 data.users = result;
-                response.json(data);
+
             });
-        } else {
-            response.json(data);
         }
-    });
+
+        db.all('SELECT * FROM quiz_categories', [], (error, result) => {
+            if(error)
+                console.log(error);
+
+            data.categories = result;
+            response.json(data);
+        });
+    })
 }
 
 // If the second function gets called, authentication was successful.
@@ -185,7 +206,7 @@ function insertQuestions(quizID, questions, callback = (error) => {}) {
 
 app.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
     // needs to be a regular function instead of an arrow function in order for this.lastID to work
-    db.run('INSERT INTO quizzes(title) VALUES(?)', [request.body.title], function (error) {
+    db.run('INSERT INTO quizzes(title, categoryID) VALUES(?, ?)', [request.body.title, request.body.categoryID], function (error) {
         if (error) {
             console.log(error);
             response.status(500).end();
@@ -208,7 +229,7 @@ app.put('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
     // DELETE FROM quiz_questions WHERE quizID = ?
     console.log(request.body);
 
-    db.run('UPDATE quizzes SET title = ? WHERE ID = ?', [request.body.title, request.body.ID], error => {
+    db.run('UPDATE quizzes SET title = ?, categoryID = ? WHERE ID = ?', [request.body.title, request.body.categoryID, request.body.ID], error => {
         if(error)
             console.log(error);
         // TODO: handle errors or case when quiz does not exist?
@@ -234,6 +255,7 @@ app.get('/quizdetails/:id', checkAuthentication(Role.Teacher), (request, respons
     let data = {
         ID: '',
         title: '',
+        categoryID: '',
         questions: []
     };
 
@@ -251,6 +273,7 @@ app.get('/quizdetails/:id', checkAuthentication(Role.Teacher), (request, respons
 
         data.ID = result.ID;
         data.title = result.title;
+        data.categoryID = result.categoryID;
 
         db.all('SELECT * FROM quiz_questions WHERE quizID = ?', [request.params.id], (error, result) => {
             data.questions = result;
