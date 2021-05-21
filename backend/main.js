@@ -76,24 +76,45 @@ function checkAuthentication(roles) {
 }
 
 function getData(request, response) {
-    db.all('SELECT ID, title, (SELECT COUNT(*) FROM quiz_questions WHERE quizID = quizzes.ID) as questionCount FROM quizzes', [], (error, result) => {
-        if (error)
-            console.log(error);
+    let data = {
+        user: request.user,
+        quizList: [],
+        categories: []
+    };
 
-        let data = {
-            user: request.user,
-            quizList: result
-        };
+
+    db.serialize(() =>{
+        db.all(`SELECT 
+                    quizzes.ID, 
+                    title, 
+                    categoryID,
+                    categoryName,
+                    (SELECT COUNT(*) FROM quiz_questions WHERE quizID = quizzes.ID) as questionCount 
+                FROM quizzes
+                INNER JOIN quiz_categories ON quizzes.categoryID = quiz_categories.ID
+                `, [], (error, result) => {
+            if (error)
+                console.log(error);
+
+            data.quizList = result;
+        });
+
 
         if (request.user.role === Role.Teacher) {
             db.all('SELECT ID, username, name, email FROM users WHERE role = ?', [Role.Student], (error, result) => {
                 data.users = result;
-                response.json(data);
+
             });
-        } else {
-            response.json(data);
         }
-    });
+
+        db.all('SELECT * FROM quiz_categories', [], (error, result) => {
+            if(error)
+                console.log(error);
+
+            data.categories = result;
+            response.json(data);
+        });
+    })
 }
 
 // If the second function gets called, authentication was successful.
@@ -234,6 +255,7 @@ app.get('/quizdetails/:id', checkAuthentication(Role.Teacher), (request, respons
     let data = {
         ID: '',
         title: '',
+        categoryID: '',
         questions: []
     };
 
@@ -251,6 +273,7 @@ app.get('/quizdetails/:id', checkAuthentication(Role.Teacher), (request, respons
 
         data.ID = result.ID;
         data.title = result.title;
+        data.categoryID = result.categoryID;
 
         db.all('SELECT * FROM quiz_questions WHERE quizID = ?', [request.params.id], (error, result) => {
             data.questions = result;

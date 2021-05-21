@@ -3,6 +3,14 @@
     <h1>Create quiz</h1>
     <textarea id="title-textarea" placeholder="Enter quiz title here..." v-on:keypress="textareaOnKeyPress($event)" v-model="quiz.title"></textarea>
 
+    <div id="category-container">
+<!--      <select id="category">-->
+<!--        <option v-for="(category) of quizCategories" value="" v-bind:key="category.ID"> {{category.categoryName}} </option>-->
+<!--      </select>-->
+      <StyledSelect v-bind:options="quizCategoryNames" v-on:input="onCategoryChanged" ref="styledSelect"/>
+      <button>Create a new category</button>
+    </div>
+
     <table class="blue-table">
       <thead>
       <tr>
@@ -45,21 +53,29 @@
 
 <script>
 
+import StyledSelect from '@/components/StyledSelect.vue'
 import api from '../api.js'
 
 export default {
+  components: { StyledSelect },
   name: "Create-quiz",
+  props: ['quizCategories'],
   data: function() {
     return {
       originalQuiz: {}, // original quiz to check if any changes were made in case of editing a quiz
       quiz: {
         ID: '',
         title: '',
+        categoryID: '',
         questions: []
       },
       creating: false,
-      submitted: false
+      submitted: false,
+      quizCategoryNames: []
     }
+  },
+  computed: {
+
   },
   beforeRouteLeave(to, from, next) {
     if(!this.submitted && this.haveChangesBeenMade()) {
@@ -77,6 +93,11 @@ export default {
       next();
     }
   },
+  created() {
+    this.quizCategoryNames = [];
+    for(const category of this.quizCategories)
+      this.quizCategoryNames.push(category.categoryName);
+  },
   mounted() {
     // if there is an ID as a parameter, then the intention is to edit an already existing quiz, otherwise we're
     // creating a new one
@@ -88,6 +109,7 @@ export default {
         .then(json => {
           this.quiz.ID = json.ID;
           this.quiz.title = json.title;
+          this.quiz.categoryID = json.categoryID;
 
           for(const question of json.questions) {
             this.quiz.questions.push({
@@ -100,6 +122,9 @@ export default {
 
           // deep copy
           this.originalQuiz = JSON.parse(JSON.stringify(this.quiz));
+
+          // set category for the StyledSelect dropdown element
+          this.$refs.styledSelect.select(this.getQuizCategoryNameByID(this.quiz.categoryID));
         });
     } else {
       // deep copy
@@ -113,6 +138,18 @@ export default {
     }
   },
   methods: {
+    getQuizCategoryNameByID(ID) {
+      for(const category of this.quizCategories)
+        if(category.ID === ID)
+          return category.categoryName;
+    },
+    onCategoryChanged(categoryName) {
+      for(const category of this.quizCategories)
+        if(categoryName === category.categoryName) {
+          this.quiz.categoryID = category.ID;
+          break;
+        }
+    },
     haveChangesBeenMade() {
       if(this.quiz.title !== this.originalQuiz.title)
         return true;
@@ -277,6 +314,35 @@ textarea:focus {
   background-color: white;
   cursor: text;
 }
+
+#category-container {
+  /*border: solid 1px black;*/
+  width: max-content;
+  margin: 20px auto;
+}
+
+/*#category-container select {*/
+/*  margin: 10px;*/
+/*  height: 35px;*/
+/*  width: 155px;*/
+/*  background-color: rgba(0, 162, 232, 0.8);*/
+/*  color: white;*/
+/*  border: none;*/
+/*}*/
+
+/*option {*/
+/*  height: 35px;*/
+/*}*/
+
+/*#category-container label {*/
+/*  display: none;*/
+/*}*/
+
+#category-container button {
+  display: inline-block;
+}
+
+
 
 #title-textarea {
   display: block;
