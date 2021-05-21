@@ -11,7 +11,7 @@
     </div>
 
     <div class="forms-container">
-      <form id="log-in" v-on:submit="$emit('login', username, password)">
+      <form id="log-in" v-on:submit.prevent="$emit('login', username, password)">
         <h2>Log in </h2>
         <table>
           <tr>
@@ -26,7 +26,7 @@
         <button class="confirm-btn">Submit</button>
       </form>
       <br>
-      <form id="sign-up" v-on:submit="submitRegister">
+      <form id="sign-up" v-on:submit.prevent="submitRegister">
         <h2>Sign up</h2>
         <table>
           <tr>
