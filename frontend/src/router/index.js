@@ -13,6 +13,7 @@ import StudentResults from '../views/teacher/Student-results.vue';
 
 import Role from '../roles.js'
 import AllStudentsResultsForQuiz from "@/views/AllStudentsResultsForQuiz";
+import FailedQuestions from "@/views/FailedQuestions";
 
 Vue.use(VueRouter)
 
@@ -48,7 +49,7 @@ const routes = [
         props: true
     },
     {
-        path: '/quiz/:id',
+        path: '/quiz/:id?',
         name: 'Quiz',
         component: Quiz ,
         meta: {authorize: [Role.Student]},
@@ -96,12 +97,14 @@ const routes = [
         component: StudentResults,
         meta: {authorize: [Role.Teacher]},
         props: true
+    },
+    {
+        path: '/failed-questions',
+        name: 'FailedQuestions',
+        component: FailedQuestions,
+        meta: {authorize: [Role.Student]},
+        props: true
     }
-    // {
-    //     path: '/:pathMatch(.*)*',
-    //     name: 'NotFound',
-    //     component: NotFound
-    // }
 ];
 
 

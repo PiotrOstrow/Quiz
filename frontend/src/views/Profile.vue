@@ -45,10 +45,8 @@ export default {
             api.postJson('/change-password', json)
               .then(response =>  response.json())
               .then(json => {
-                // let json = await response.json();
                 this.$emit('showConfirmModal', {
                   title: json.msg,
-                  // message: json.msg,
                   okButton: 'ok'
                 });
               });
@@ -61,13 +59,6 @@ export default {
 </script>
 
 <style scoped>
-
-/*section {*/
-/*  display: grid;*/
-/*  grid-template-columns: 1fr;*/
-/*  grid-template-rows: auto auto auto 50px;*/
-/*  grid-gap: 20px;*/
-/*}*/
 
 .profile{
   width: 200px;

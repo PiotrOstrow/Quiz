@@ -19,6 +19,9 @@
         <li v-if="user.role === 'student'">
           <router-link to="/results">Results</router-link>
         </li>
+        <li v-if="user.role === 'student'">
+          <router-link to="/failed-questions">ReQuiz</router-link>
+        </li>
 
         <li v-if="user.role === 'teacher'">
           <router-link to="/home-teacher">Home</router-link>

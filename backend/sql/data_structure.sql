@@ -32,9 +32,9 @@ CREATE TABLE quiz_results (
 );
 
 CREATE TABLE failed_questions (
-    ID INTEGER PRIMARY KEY,
     userID INTEGER,
     questionID INTEGER,
+    PRIMARY KEY(userID, questionID),
     FOREIGN KEY(userID) REFERENCES users(ID),
     FOREIGN KEY(questionID) REFERENCES quiz_questions(ID)
 );

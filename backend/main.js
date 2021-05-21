@@ -309,8 +309,11 @@ app.post('/submit', checkAuthentication(Role.Student), (request, response) => {
             givenAnswers.push(givenAnswer);
 
             answers[i] = givenAnswer === correctAnswer;
-            if (answers[i])
+            if (answers[i]) {
                 correctAnswerCount++;
+            } else {
+                db.run('INSERT INTO failed_questions(userID, questionID) VALUES(?, ?)', [request.user.ID, questionID], (error) => {});
+            }
         }
 
         let parameters = [request.user.ID, request.body.id, correctAnswerCount];
@@ -319,10 +322,11 @@ app.post('/submit', checkAuthentication(Role.Student), (request, response) => {
                 console.log(error);
 
             response.json({score: correctAnswerCount, answers: answers, givenAnswers: givenAnswers});
+
+
         });
     });
 });
-
 
 app.get('/student-results/:id', checkAuthentication(Role.Teacher), (request, response) => {
     let data = {
@@ -355,6 +359,70 @@ app.get('/student-results/:id', checkAuthentication(Role.Teacher), (request, res
     });
 });
 
+app.get('/repetition-quiz', checkAuthentication(Role.Student), (request, response) => {
+    let sql = `SELECT
+                    quiz_questions.ID,
+                    quiz_questions.question,
+                    quiz_questions.answer1,
+                    quiz_questions.answer2,
+                    quiz_questions.answer3,
+                    quiz_questions.correct_answer as 'answer4'
+                FROM quiz_questions
+                INNER JOIN failed_questions ON quiz_questions.ID = failed_questions.questionID
+                WHERE failed_questions.userID = ?`;
+
+    let data = {
+        ID: -1,
+        title: 'Repetition Quiz',
+        questions: []
+    };
+
+    db.all(sql, [request.user.ID], (error, result) => {
+        if(error)
+            console.log(error);
+        console.log(result);
+
+        for (const row of result) {
+            let answers = [row.answer1, row.answer2, row.answer3, row.answer4];
+            answers = util.shuffle(answers);
+
+            data.questions.push({
+                ID: row.ID,
+                question: row.question,
+                answers: answers
+            });
+        }
+
+        response.json(data);
+    })
+});
+
+app.get('/failed-questions', checkAuthentication(Role.Student), (request, response) => {
+    let sql = `SELECT
+                    quizzes.title,
+                    COUNT(*) AS incorrectAnswerCount,
+                    (SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quizID = quizzes.ID) as question_count
+                FROM failed_questions
+                         INNER JOIN quiz_questions ON failed_questions.questionID = quiz_questions.ID
+                         INNER JOIN quizzes ON quiz_questions.quizID = quizzes.ID
+                WHERE userID = ?
+                GROUP BY quizzes.ID, quizzes.title;`;
+
+    db.all(sql, [request.user.ID], (error, result) => {
+
+        // handling of error
+        if (error) {
+            console.log(error);
+        }
+        // handling of result when result is null
+        if (result == null) {
+            response.status(400).end();
+            return;
+        }
+        // handling of result
+        response.json(result);
+    });
+});
 
 app.get('/results', checkAuthentication(Role.Student), (request, response) => {
     let sql =`

@@ -45,7 +45,8 @@ export default {
     return {
       quiz: {},
       answers: new Map(),
-      submitEnabled: false
+      submitEnabled: false,
+      isRepetitionQuiz: false
     }
   },
   methods: {
@@ -84,7 +85,16 @@ export default {
     }
   },
   mounted() {
-    api.getQuiz(this.$route.params.id)
+    this.isRepetitionQuiz = this.$route.params.id == null;
+    let promise;
+
+    if(this.isRepetitionQuiz) {
+      promise = api.get('/repetition-quiz');
+    } else {
+      promise = api.getQuiz(this.$route.params.id);
+    }
+
+    promise
       .then(response => {
         return response.json();
       }).then(json => {
