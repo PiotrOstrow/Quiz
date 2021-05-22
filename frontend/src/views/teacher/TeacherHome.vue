@@ -16,7 +16,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(student, index) in users" v-bind:key="index" v-on:click="$router.push('/student-results/' + student.ID)">
+          <tr v-for="(student, index) in users" v-bind:key="index" v-on:click="$router.push('/student-overview/' + student.ID)">
             <td>{{ student.ID }}</td>
             <td>{{ student.name }}</td>
             <td>{{ student.username }}</td>
@@ -71,7 +71,7 @@ export default {
   props: ['quizList', 'users', 'quizCategories'],
   methods: {
     editQuiz(id) {
-      this.$router.push('/create/' + id);
+      this.$router.push('/teacher/create/' + id);
     },
     deleteQuiz(id) {
       // find quiz by id

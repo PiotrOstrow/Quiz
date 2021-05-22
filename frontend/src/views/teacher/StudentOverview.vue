@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Scoreboard</h1>
+    <h1>Profile</h1>
     <h3>{{ student.name }}</h3>
     <table class="blue-table">
       <thead>
@@ -25,7 +25,7 @@
 import api from "@/api";
 
 export default {
-  name: "StudentResults",
+  name: "StudentOverview",
   data() {
     return {
       student: {},
@@ -34,7 +34,7 @@ export default {
   },
   props: ['users'],
   mounted() {
-    api.get('/student-results/' + this.$route.params.id)
+    api.get('/student-overview/' + this.$route.params.id)
         .then(response => response.json())
         .then(json => {
           this.student = json.student;

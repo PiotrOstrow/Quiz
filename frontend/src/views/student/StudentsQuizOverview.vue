@@ -25,7 +25,7 @@
 import api from "@/api";
 
 export default {
-  name: "AllStudentsResultsForQuiz",
+  name: "StudentQuizOverview",
   data: function () {
     return {
       quiz: {},

@@ -1,4 +1,2 @@
-module.exports = {
-    Teacher: 'teacher',
-    Student: 'student'
-}
+module.exports.Teacher = 'teacher';
+module.exports.Student = 'student';

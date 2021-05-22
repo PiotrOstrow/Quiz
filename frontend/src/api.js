@@ -1,5 +1,5 @@
 
-const api = {
+export default {
     postForm,
     postJson,
     logIn,
@@ -104,5 +104,3 @@ function get(url) {
         credentials: 'include'
     });
 }
-
-export default api;

@@ -11,23 +11,23 @@
     <nav v-if="loggedIn">
       <ul class="nav-links">
         <li v-if="user.role === 'student'">
-          <router-link to="/home-student">Home</router-link>
+          <router-link to="/student/home">Home</router-link>
         </li>
         <li v-if="user.role === 'student'">
-          <router-link to="/profile">Profile</router-link>
+          <router-link to="/student/profile">Profile</router-link>
         </li>
         <li v-if="user.role === 'student'">
-          <router-link to="/results">Results</router-link>
+          <router-link to="/student/results">Results</router-link>
         </li>
         <li v-if="user.role === 'student'">
-          <router-link to="/failed-questions">ReQuiz</router-link>
+          <router-link to="/student/repetition">ReQuiz</router-link>
         </li>
 
         <li v-if="user.role === 'teacher'">
-          <router-link to="/home-teacher">Home</router-link>
+          <router-link to="/teacher/home">Home</router-link>
         </li>
         <li v-if="user.role === 'teacher'">
-          <router-link to="/create">Create Quiz</router-link>
+          <router-link to="/teacher/create">Create Quiz</router-link>
         </li>
 
 
@@ -130,9 +130,9 @@ export default {
 
       if(currentRoute.fullPath === '/' || (authorize.length > 0 && !authorize.includes(this.user.role))) {
         if (this.user.role === Role.Student) {
-          this.$router.push('/home-student');
+          this.$router.push('/student/home');
         } else {
-          this.$router.push('/home-teacher');
+          this.$router.push('/teacher/home');
         }
       }
     },
@@ -165,7 +165,7 @@ export default {
     },
     showSingleResult(data) {
       this.singleQuizScore = data;
-      this.$router.push('/single-result');
+      this.$router.push('/student/single-result');
     },
     beforeEach(to, from, next) {
       // redirect to home page (path === '/') if not logged in

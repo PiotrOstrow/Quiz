@@ -54,7 +54,7 @@
 <script>
 
 import StyledSelect from '@/components/StyledSelect.vue'
-import api from '../api.js'
+import api from '../../api.js'
 
 export default {
   components: { StyledSelect },
@@ -268,7 +268,7 @@ export default {
               message: this.quiz.title + ' has been saved!',
               okButton: 'OK',
               callback: () => {
-                this.$router.push('/home-teacher');
+                this.$router.push('/teacher/home');
 
                 // refreshes the page, so the updated data for quiz list is fetched from the server
                 this.$router.go();

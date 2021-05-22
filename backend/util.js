@@ -1,6 +1,6 @@
-module.exports ={
+module.exports = {
     shuffle(arra1) {
-        var ctr = arra1.length, temp, index;
+        let ctr = arra1.length, temp, index;
 
         // While there are elements in the array
         while (ctr > 0) {

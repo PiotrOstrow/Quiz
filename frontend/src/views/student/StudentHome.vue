@@ -9,8 +9,8 @@
           </div>
           <p>Questions: 7</p> <p>Completed: No</p>
           <div class="button-container">
-            <button v-on:click="$router.push('/quiz/' + quiz.ID)">Start quiz</button>
-            <button v-on:click="$router.push('/all-results/' + quiz.ID)">Scores</button>
+            <button v-on:click="$router.push('/student/quiz/' + quiz.ID)">Start quiz</button>
+            <button v-on:click="$router.push('/student/quiz-overview/' + quiz.ID)">Scores</button>
           </div>
         </div>
       </div>

@@ -1,13 +1,12 @@
 <template>
 <div>
-
-  <h1>Retake Failed Questions</h1>
+  <h1>Repetition Quiz</h1>
 
   <table class="blue-table">
     <thead>
     <tr>
       <th>Quiz</th>
-      <th>Wrong Questions</th>
+      <th>Missed Questions</th>
 <!--      <th>Retake/Repeat</th>-->
     </tr>
     </thead>
@@ -48,7 +47,7 @@
 import api from "@/api";
 
 export default {
-  name: "FailedQuestions",
+  name: "RepetitionOverview",
   data() {
     return {
       quizResults: '',
@@ -56,7 +55,7 @@ export default {
   },
   methods: {
     startQuiz() {
-      this.$router.push('/quiz');
+      this.$router.push('/student/quiz');
     }
   },
   props: {

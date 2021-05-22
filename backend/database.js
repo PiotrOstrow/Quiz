@@ -28,4 +28,4 @@ const db = new sqlite3.Database(DB_FILE_NAME, err => {
     }
 });
 
-module.exports = db;
+module.exports.db = db;
