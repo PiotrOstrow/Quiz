@@ -39,7 +39,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(quiz, index) in quizList" v-bind:key="index" v-on:click="$router.push('/quiz-overview/' + quiz.ID)">
+          <tr v-for="(quiz, index) in quizList" v-bind:key="index" v-on:click="$router.push('/teacher/quiz-overview/' + quiz.ID)">
             <td>{{ quiz.title }}</td>
             <td>{{ quiz.categoryName }}</td>
             <td>{{ quiz.questionCount }}</td>
