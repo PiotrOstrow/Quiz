@@ -473,4 +473,39 @@ button:hover {
   margin: 0px 2px;
 }
 
+.radio-input-container {
+  margin: 10px;
+}
+
+input[type="radio"]:checked + label {
+  background-color: #014055;
+}
+
+input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.radio-input-container label{
+  width: 140px;
+  text-align: center;
+  /*border: solid 2px black;*/
+}
+
+.radio-input-container label {
+  display: inline-block;
+  background-color: rgba(0, 162, 232, 0.8);
+  font: 400 15px Pangolin;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 2px;
+  transition: transform .2s;
+}
+
+.radio-input-container label:hover {
+  background-color: rgba(0, 162, 232, 1);
+  transform: scale(1.05);
+}
+
 </style>

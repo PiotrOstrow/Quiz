@@ -12,11 +12,11 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(answer, index) in scoreData.answers" v-bind:key="index">
+      <tr v-for="(question, index) in scoreData.questions" v-bind:key="index">
         <td>{{ index + 1 }}</td>
-        <td>{{ scoreData.questions[index].question }}</td>
-        <td>{{ scoreData.givenAnswers[index] }}</td>
-        <td v-bind:class="{correct: answer, incorrect: !answer}">{{ answer ? 'Correct' : 'Incorrect' }}</td>
+        <td>{{ question.question }}</td>
+        <td>{{ question.givenAnswer }}</td>
+        <td v-bind:class="{correct: question.correct, incorrect: !question.correct}">{{ question.correct ? 'Correct' : 'Incorrect' }}</td>
       </tr>
       </tbody>
     </table>

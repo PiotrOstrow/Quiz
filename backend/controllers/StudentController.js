@@ -56,21 +56,21 @@ router.post('/submit-repetition-quiz', checkAuthentication(Role.Student), (reque
 
         let correctAnswerCount = 0;
         let answers = [];
-        let givenAnswers = [];
 
         for (let i = 0; i < result.length; i++) {
             let questionID = result[i].ID;
             let givenAnswer = request.body.answers[questionID];
             let correctAnswer = result[i].correct_answer;
+            let isCorrect = givenAnswer === correctAnswer;
 
-            givenAnswers.push(givenAnswer);
+            answers.push({questionID: questionID, correct: isCorrect});
 
-            answers[i] = givenAnswer === correctAnswer;
-            if (answers[i]) {
+            if (isCorrect) {
                 correctAnswerCount++;
+                db.run('DELETE FROM failed_questions WHERE userID = ? AND questionID = ?', [request.user.ID, questionID], err => {});
             }
         }
-        response.json({score: correctAnswerCount, answers: answers, givenAnswers: givenAnswers});
+        response.json({score: correctAnswerCount, answers: answers});
     });
 });
 
