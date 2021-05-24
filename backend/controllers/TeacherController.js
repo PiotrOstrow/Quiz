@@ -173,6 +173,26 @@ router.get('/teacher/quiz-overview/:id', checkAuthentication(Role.Teacher), (req
         });
 });
 
+router.post('/category', checkAuthentication(Role.Teacher), (request, response) => {
+    // capitalize category name for each word
+    let categoryName = '';
+
+    for(const word of request.body.categoryName.trim().split(' ')) {
+        let trimmed = word.trim();
+        if(trimmed.length > 0) {
+            categoryName += trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase() + ' ';
+        }
+    }
+
+    // category as UNIQUE in database, no need to check
+    db.run('INSERT INTO quiz_categories(categoryName) VALUES(?)', [categoryName.trim()], (error) => {
+        if(error) {
+            response.status(409).end();
+        } else {
+            response.status(200).end();
+        }
+    });
+});
 
 function insertQuestions(quizID, questions, callback = (error) => {}) {
     // TODO: validate input
