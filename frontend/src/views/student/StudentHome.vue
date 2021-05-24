@@ -7,7 +7,7 @@
           <div class="quiz-element-titlediv">
             <h3>{{ quiz.title }}</h3>
           </div>
-          <p>Questions: 7</p> <p>Completed: No</p>
+          <p>Questions: {{ quiz.questionCount }}</p> <p>Completed: No</p>
           <div class="button-container">
             <button v-on:click="$router.push('/student/quiz/' + quiz.ID)">Start quiz</button>
             <button v-on:click="$router.push('/student/quiz-overview/' + quiz.ID)">Scores</button>

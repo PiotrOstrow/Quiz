@@ -64,19 +64,36 @@ export default {
       for (let [key, value] of this.answers)
         data.answers[key] = value;
 
-      api.postJson('/submit', data)
-        .then(response => response.json())
-        .then(json => {
-          let resultData = {
-            score: json.score,
-            questionCount: this.quiz.questions.length,
-            title: this.quiz.title,
-            questions: this.quiz.questions,
-            answers: json.answers,
-            givenAnswers: json.givenAnswers,
-          };
-          this.$emit('showSingleResult', resultData);
-        });
+      if(this.isRepetitionQuiz) {
+        console.log("Submitting repetition quiz")
+        api.postJson('/submit-repetition-quiz', data)
+            .then(response => response.json())
+            .then(json => {
+              let resultData = {
+                score: json.score,
+                questionCount: this.quiz.questions.length,
+                title: this.quiz.title,
+                questions: this.quiz.questions,
+                answers: json.answers,
+                givenAnswers: json.givenAnswers,
+              };
+              this.$emit('showSingleResult', resultData);
+            });
+      } else {
+        api.postJson('/submit', data)
+            .then(response => response.json())
+            .then(json => {
+              let resultData = {
+                score: json.score,
+                questionCount: this.quiz.questions.length,
+                title: this.quiz.title,
+                questions: this.quiz.questions,
+                answers: json.answers,
+                givenAnswers: json.givenAnswers,
+              };
+              this.$emit('showSingleResult', resultData);
+            });
+      }
     },
     selected(event, id) {
       this.answers.set(id, event.target.value);

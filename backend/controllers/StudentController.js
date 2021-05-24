@@ -46,6 +46,36 @@ router.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) =
     })
 });
 
+router.post('/submit-repetition-quiz', checkAuthentication(Role.Student), (request,response) =>{
+    db.all(`SELECT quiz_questions.ID, quiz_questions.correct_answer as 'correct_answer' FROM quiz_questions
+    INNER JOIN failed_questions ON quiz_questions.ID = failed_questions.questionID
+    WHERE failed_questions.userID = ?`, [request.user.ID], (error, result) => {
+
+        if (error)
+            console.log(error);
+
+        let correctAnswerCount = 0;
+        let answers = [];
+        let givenAnswers = [];
+
+        for (let i = 0; i < result.length; i++) {
+            let questionID = result[i].ID;
+            let givenAnswer = request.body.answers[questionID];
+            let correctAnswer = result[i].correct_answer;
+
+            givenAnswers.push(givenAnswer);
+
+            answers[i] = givenAnswer === correctAnswer;
+            if (answers[i]) {
+                correctAnswerCount++;
+            }
+        }
+        response.json({score: correctAnswerCount, answers: answers, givenAnswers: givenAnswers});
+    });
+});
+
+
+
 router.post('/submit', checkAuthentication(Role.Student), (request, response) => {
     db.all('SELECT ID, correct_answer FROM quiz_questions WHERE quizID = ?', [request.body.id], (error, result) => {
         if (error)
