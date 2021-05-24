@@ -1,7 +1,7 @@
 <template>
   <div class="custom-select" :tabindex="tabindex" @blur="open = false">
     <div class="selected" :class="{ open: open }" @click="open = !open">
-      {{ selected }}
+      {{ this.selectedComputed }}
     </div>
     <div class="items" :class="{ selectHide: !open }">
       <div
@@ -22,22 +22,7 @@
 <script>
 export default {
   name: "StyledSelect",
-  props: {
-    options: {
-      type: Array,
-      required: true,
-    },
-    default: {
-      type: String,
-      required: false,
-      default: null,
-    },
-    tabindex: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-  },
+  props: ['options', 'default'],
   data() {
     return {
       selected: this.default
@@ -46,7 +31,13 @@ export default {
               ? this.options[0]
               : null,
       open: false,
+      tabindex: 0
     };
+  },
+  computed: {
+    selectedComputed() {
+      return this.selected ? this.selected : this.default;
+    }
   },
   mounted() {
     this.$emit("input", this.selected);
@@ -62,11 +53,14 @@ export default {
 <style scoped>
 .custom-select {
   position: relative;
-  width: 100%;
+
   text-align: left;
   outline: none;
-  height: 47px;
-  line-height: 47px;
+  /*height: 19px;*/
+  height: max-content;
+  /*height: 47px;*/
+  /*line-height: 47px;*/
+  font-size: 15px;
 }
 
 .custom-select .selected {
@@ -74,9 +68,11 @@ export default {
   border-radius: 2px;
   border: none;
   color: #fff;
-  padding-left: 8px;
   cursor: pointer;
   user-select: none;
+  padding: 8px;
+  width: 100%;
+  text-align:center;
 }
 
 .custom-select .selected.open {
@@ -84,12 +80,17 @@ export default {
 }
 
 .custom-select .selected:after {
-  position: absolute;
-  content: "";
-  top: 22px;
-  right: 1em;
-  width: 0;
+  /*position: absolute;*/
+
+  content: '';
+  float: right;
+  /*top: 16px;*/
+  /*right: .6em;*/
+  /*width: 0;*/
+  /*height: 0;*/
   height: 0;
+  margin-top: 8px;
+
   border: 5px solid ;
   border-color: #fff transparent transparent transparent;
 }
@@ -106,13 +107,16 @@ export default {
   left: 0;
   right: 0;
   z-index: 1;
+  width: 100%;
 }
 
 .custom-select .items div {
   color: #fff;
-  padding-left: 1em;
   cursor: pointer;
   user-select: none;
+  padding: 8px;
+  text-align: center;
+
 }
 
 .custom-select .items div:hover {

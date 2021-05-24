@@ -11,7 +11,7 @@ CREATE TABLE users
 CREATE TABLE quiz_categories
 (
     ID           INTEGER PRIMARY KEY,
-    categoryName VARCHAR NOT NULL
+    categoryName VARCHAR NOT NULL UNIQUE
 );
 
 CREATE TABLE quizzes

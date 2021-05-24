@@ -7,9 +7,13 @@
 <!--      <select id="category">-->
 <!--        <option v-for="(category) of quizCategories" value="" v-bind:key="category.ID"> {{category.categoryName}} </option>-->
 <!--      </select>-->
-      <StyledSelect v-bind:options="quizCategoryNames" v-on:input="onCategoryChanged" ref="styledSelect"/>
-      <button>Create a new category</button>
+      <StyledSelect id="select" v-bind:options="this.quizCategoryNames" v-bind:default="this.quizCategoryDefault" v-on:input="onCategoryChanged" ref="styledSelect"/>
+      <button v-on:click="addCategory">Create a new category</button>
     </div>
+
+<!--    <p id="info">Empty answer fields will be left out, if you want a true/false question, fill out correct answer as either-->
+<!--    true/false and incorrect answer 1 as the opposite. If no incorrect answer is filled, the student will be prompted-->
+<!--    to fill in the answer themselves.</p>-->
 
     <table class="blue-table">
       <thead>
@@ -43,11 +47,11 @@
       </tbody>
     </table>
 
+    <div id="bottom-button-container">
+      <button v-on:click="addQuestion">Add question</button>
 
-    <button v-on:click="addQuestion">Add question</button>
-
-    <button v-on:click="submit">Save</button>
-
+      <button v-on:click="submit">Save</button>
+    </div>
   </div>
 </template>
 
@@ -66,16 +70,31 @@ export default {
       quiz: {
         ID: '',
         title: '',
-        categoryID: '',
+        categoryID: 1,
         questions: []
       },
       creating: false,
-      submitted: false,
-      quizCategoryNames: []
+      submitted: false
     }
   },
   computed: {
-
+    quizCategoryNames() {
+      let quizCategoryNames = [];
+      for(const category of this.quizCategories)
+        quizCategoryNames.push(category.categoryName);
+      return quizCategoryNames;
+    },
+    quizCategoryDefault() {
+      return this.getQuizCategoryNameByID(this.quiz.categoryID);
+    }
+  },
+  beforeMount() {
+    window.addEventListener("beforeunload", event => {
+      if(!this.haveChangesBeenMade()) return;
+      event.preventDefault()
+      // Chrome requires returnValue to be set.
+      event.returnValue = ""
+    })
   },
   beforeRouteLeave(to, from, next) {
     if(!this.submitted && this.haveChangesBeenMade()) {
@@ -94,9 +113,7 @@ export default {
     }
   },
   created() {
-    this.quizCategoryNames = [];
-    for(const category of this.quizCategories)
-      this.quizCategoryNames.push(category.categoryName);
+
   },
   mounted() {
     // if there is an ID as a parameter, then the intention is to edit an already existing quiz, otherwise we're
@@ -138,6 +155,21 @@ export default {
     }
   },
   methods: {
+    addCategory() {
+      this.$emit('showInputModal', {
+        title: 'Add category',
+        message: 'Enter category name:',
+        inputs: [{type: 'text', placeholder: 'Category Name'}],
+        okButton: 'Add Category',
+        cancelButton: 'Cancel',
+        callback: (input) => {
+          console.log(input[0]);
+          if(input) {
+            api.postJson('/category', {categoryName: input[0]});
+          }
+        }
+      });
+    },
     getQuizCategoryNameByID(ID) {
       for(const category of this.quizCategories)
         if(category.ID === ID)
@@ -236,6 +268,7 @@ export default {
 
       // check every question for empty fields
       for(const question of this.quiz.questions) {
+        console.log(question);
         if(isBlank(question.question) || isBlank(question.correctAnswer)){
           this.$emit('showConfirmModal', {
             title: 'A question field is empty!',
@@ -296,6 +329,12 @@ td {
   padding: 6px;
 }
 
+p {
+  width: 800px;
+  text-align: center;
+  margin: 0 auto;
+}
+
 table {
   width: 850px;
 }
@@ -322,30 +361,21 @@ textarea:focus {
   /*border: solid 1px black;*/
   width: max-content;
   margin: 20px auto;
+
 }
 
-/*#category-container select {*/
-/*  margin: 10px;*/
-/*  height: 35px;*/
-/*  width: 155px;*/
-/*  background-color: rgba(0, 162, 232, 0.8);*/
-/*  color: white;*/
-/*  border: none;*/
-/*}*/
+#category-container * {
+  margin: 10px;
+}
 
-/*option {*/
-/*  height: 35px;*/
-/*}*/
-
-/*#category-container label {*/
-/*  display: none;*/
-/*}*/
+#category-container #select {
+  width: 200px;
+  display: inline-block;
+}
 
 #category-container button {
   display: inline-block;
 }
-
-
 
 #title-textarea {
   display: block;
@@ -357,7 +387,7 @@ textarea:focus {
   font-family: Pangolin, sans-serif;
 }
 
-table tbody tr td:nth-child(6){
+table tbody tr td:nth-child(6) {
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -367,9 +397,15 @@ table tbody tr td:nth-child(6){
   width: max-content;
 }
 
-div > button {
-  margin: 10px auto;
-  display: block;
+#bottom-button-container {
+  margin: 0 auto;
+  width: max-content;
+}
+
+#bottom-button-container > button {
+  margin: 10px;
+  /*display: block;*/
+  width: 110px;
 }
 
 </style>
