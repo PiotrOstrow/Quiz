@@ -4,12 +4,8 @@
       <h1>My Quizzes</h1>
 
       <div id="category-container">
-        <div class="radio-input-container">
-          <input type="radio" name="category" id="0" value="0" v-on:click="setCategory(0)">
-          <label for="0">All</label>
-        </div>
         <div class="radio-input-container" v-for="category of quizCategories" v-bind:key="category.ID">
-          <input type="radio" name="category" v-bind:id="category.ID" v-bind:value="category.ID" v-on:click="setCategory(category.ID)">
+          <input type="radio" name="category" v-bind:id="category.ID" v-bind:value="category.ID" v-on:click="setCategory($event, category.ID)">
           <label v-bind:for="category.ID">{{ category.categoryName }}</label>
         </div>
       </div>
@@ -42,8 +38,13 @@ export default {
     }
   },
   methods: {
-    setCategory(ID) {
-      this.selectedCategory = ID;
+    setCategory(event, ID) {
+      if(this.selectedCategory === ID) {
+        this.selectedCategory = 0;
+        event.target.checked = false;
+      } else {
+        this.selectedCategory = ID;
+      }
     }
   },
   computed: {
@@ -125,8 +126,6 @@ main {
 }
 
 .button-container {
-  /*display: flex;*/
-  /*justify-content: space-around;*/
   width: 100%;
   height: max-content;
   position: absolute;
@@ -137,16 +136,6 @@ main {
 .button-container button {
   margin: 10px;
 }
-
-/*.quiz-element a {*/
-/*  text-decoration: none;*/
-/*  color: white;*/
-/*}*/
-
-/*.quiz-element:hover .button-router {*/
-/*  color: white;*/
-/*  cursor: pointer;*/
-/*}*/
 
 .button-router {
   text-decoration: none;
@@ -165,22 +154,15 @@ main {
 }
 
 #category-container {
-  /*display: grid;*/
-  /*grid-template-columns: 1fr 1fr 1fr 1fr;*/
   margin: 0 auto;
   display: flex;
   justify-content: center;
-  /*grid-gap: 10px;*/
-
-  /*border: solid 1px black;*/
-  /*background-color: rgba(0, 162, 232, 0.8);*/
   border-bottom: solid 2px #00a2e8;
   width: 100%;
 }
 
 .radio-input-container label {
   width: max-content;
-  /*background-color: transparent;*/
   color: #2c3e50;
   background-color: transparent;
 }
@@ -190,13 +172,12 @@ main {
   color:white;
 }
 
-input[type="radio"]:checked + label {
-  background-color: rgba(0, 162, 232, 0.8);
+.radio-input-container input[type="radio"]:checked + label {
+  background-color: #2c3e50;
   color:white;
 }
 
 .radio-input-container {
-  /*margin: 0;*/
   display: inline-block;
 }
 

@@ -46,15 +46,22 @@ export default {
       quiz: {},
       answers: new Map(),
       submitEnabled: false,
-      isRepetitionQuiz: false
+      isRepetitionQuiz: false,
+      isSubmitting: false
     }
   },
   methods: {
     submit() {
       if(this.answers.size < this.quiz.questions.length) {
-        alert('Not all questions answered');
+        this.$emit('showConfirmModal', {
+          title: 'Not all questions answered!',
+          message: 'Please fill in all the questions and submit again!',
+          okButton: 'Ok'
+        });
         return;
       }
+
+      this.isSubmitting = true;
 
       let data = {
         id: this.quiz.ID,
@@ -91,7 +98,36 @@ export default {
       this.answers.set(id, event.target.value);
 
       this.submitEnabled = this.answers.size === this.quiz.questions.length;
+    },
+    onBeforeUnload(event) {
+      event.preventDefault()
+      // Chrome requires returnValue to be set.
+      event.returnValue = ""
     }
+  },
+  beforeRouteLeave(to, from, nextOriginal) {
+    let next = () => {
+      nextOriginal();
+      window.removeEventListener('beforeunload', this.onBeforeUnload);
+    }
+
+    if(!this.isSubmitting && to.path !== '/') {
+      this.$emit('showConfirmModal', {
+        title: 'Quiz not submitted!',
+        message: 'All your answers will be lost. Are you sure you want to leave?',
+        okButton: 'Yes',
+        cancelButton: 'Cancel',
+        callback: (ok) => {
+          if(ok)
+            next();
+        }
+      });
+    } else {
+      next();
+    }
+  },
+  beforeMount() {
+    window.addEventListener('beforeunload', this.onBeforeUnload);
   },
   mounted() {
     this.isRepetitionQuiz = this.$route.params.id == null;
@@ -148,7 +184,6 @@ form {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   /*grid-gap: 10px;*/
 }
-
 
 .question-container h2 {
   margin: 0;

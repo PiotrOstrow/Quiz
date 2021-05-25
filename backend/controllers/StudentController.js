@@ -74,8 +74,6 @@ router.post('/submit-repetition-quiz', checkAuthentication(Role.Student), (reque
     });
 });
 
-
-
 router.post('/submit', checkAuthentication(Role.Student), (request, response) => {
     db.all('SELECT ID, correct_answer FROM quiz_questions WHERE quizID = ?', [request.body.id], (error, result) => {
         if (error)
@@ -88,21 +86,19 @@ router.post('/submit', checkAuthentication(Role.Student), (request, response) =>
 
         let correctAnswerCount = 0;
         let answers = [];
-        let givenAnswers = [];
 
         for (let i = 0; i < result.length; i++) {
             let questionID = result[i].ID;
             let givenAnswer = request.body.answers[questionID];
             let correctAnswer = result[i].correct_answer;
+            let isCorrect = givenAnswer === correctAnswer;
 
-            givenAnswers.push(givenAnswer);
+            answers.push({questionID: questionID, correct: isCorrect});
 
-            answers[i] = givenAnswer === correctAnswer;
-            if (answers[i]) {
+            if (isCorrect) {
                 correctAnswerCount++;
             } else {
-                db.run('INSERT INTO failed_questions(userID, questionID) VALUES(?, ?)', [request.user.ID, questionID], (error) => {
-                });
+                db.run('INSERT INTO failed_questions(userID, questionID) VALUES(?, ?)', [request.user.ID, questionID], (error) => {});
             }
         }
 
@@ -111,9 +107,7 @@ router.post('/submit', checkAuthentication(Role.Student), (request, response) =>
             if (error)
                 console.log(error);
 
-            response.json({score: correctAnswerCount, answers: answers, givenAnswers: givenAnswers});
-
-
+            response.json({score: correctAnswerCount, answers: answers});
         });
     });
 });

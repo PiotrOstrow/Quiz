@@ -461,7 +461,6 @@ button:hover {
   margin: 2px;
   color: black;
   padding: 4px;
-
 }
 
 .blue-table tr button:hover {
@@ -490,7 +489,7 @@ input[type="radio"] {
 .radio-input-container label{
   width: 140px;
   text-align: center;
-  /*border: solid 2px black;*/
+  user-select: none;
 }
 
 .radio-input-container label {
