@@ -252,4 +252,29 @@ router.get('/all-results/:id', checkAuthentication(Role.Student), (request, resp
     });
 });
 
+router.get('/student-home-results-for-each-quiz/', checkAuthentication(Role.Student), (request, response) => {
+    let sql = `
+        SELECT quizzes.ID,
+               title,
+               MAX(score)                                          as maxScore,
+               (SELECT COUNT(*)
+                FROM quiz_questions
+                WHERE quiz_questions.quizID = quizzes.ID) as question_count,
+                quiz_categories.ID as categoryID,
+                quiz_categories.categoryName
+        FROM quizzes
+                 LEFT JOIN quiz_results on quizzes.ID = quiz_results.quizID AND userID = ?
+                 INNER JOIN quiz_categories ON quizzes.categoryID = quiz_categories.ID
+        GROUP BY quizID, title`;
+
+    db.all(sql,[request.user.ID], (error, result) => {
+        if (error) {
+            console.log(error);
+        }
+
+        response.json(result)
+    });
+});
+
+
 module.exports = router;

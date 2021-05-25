@@ -14,7 +14,7 @@
           <div class="quiz-element-titlediv">
             <h3>{{ quiz.title }}</h3>
           </div>
-          <p>Questions: {{ quiz.questionCount }}</p> <p>Completed: No</p>
+          <p>Questions: {{ quiz.question_count }}</p> <p> {{ quiz.maxScore ? 'Score:' +  quiz.maxScore+ '/' + quiz.question_count : 'No score yet' }} </p>
           <div class="button-container">
             <button v-on:click="$router.push('/student/quiz/' + quiz.ID)">Start quiz</button>
             <button v-on:click="$router.push('/student/quiz-overview/' + quiz.ID)">Scores</button>
@@ -26,15 +26,17 @@
 </template>
 
 <script>
+import api from '../../api.js';
 export default {
   name: "Home-student.vue",
   props: {
     quizList: [Array, Object],
-    quizCategories: [Array]
+    quizCategories: [Array],
   },
   data: function() {
     return {
-      selectedCategory: 0
+      selectedCategory: 0,
+      quizScore: []
     }
   },
   methods: {
@@ -50,15 +52,20 @@ export default {
   computed: {
     quizListFiltered() {
       if(this.selectedCategory === 0)
-        return this.quizList;
+        return this.quizScore;
 
       let filtered = [];
-      for(const quiz of this.quizList)
+      for(const quiz of this.quizScore)
         if(quiz.categoryID === this.selectedCategory)
           filtered.push(quiz);
 
       return filtered;
     }
+  },
+  mounted() {
+      api.get('/student-home-results-for-each-quiz/')
+          .then(response => response.json())
+          .then(json => this.quizScore = json);
   }
 }
 </script>
