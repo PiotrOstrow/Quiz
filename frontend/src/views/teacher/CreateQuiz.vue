@@ -7,13 +7,13 @@
 <!--      <select id="category">-->
 <!--        <option v-for="(category) of quizCategories" value="" v-bind:key="category.ID"> {{category.categoryName}} </option>-->
 <!--      </select>-->
-      <StyledSelect id="select" v-bind:options="this.quizCategoryNames" v-bind:default="this.quizCategoryDefault" v-on:input="onCategoryChanged" ref="styledSelect"/>
+      <StyledSelect class="styledSelect" v-bind:options="this.quizCategoryNames" v-bind:default="this.quizCategoryDefault" v-on:input="onCategoryChanged" ref="styledSelect"/>
       <button v-on:click="addCategory">Create a new category</button>
     </div>
 
-<!--    <p id="info">Empty answer fields will be left out, if you want a true/false question, fill out correct answer as either-->
-<!--    true/false and incorrect answer 1 as the opposite. If no incorrect answer is filled, the student will be prompted-->
-<!--    to fill in the answer themselves.</p>-->
+    <p id="info">Empty answer fields will be left out, if you want a true/false question, fill out correct answer as either
+    true/false and incorrect answer 1 as the opposite. Leave all incorrect fields empty if you want the student to be prompted to enter
+    an answer by themselves.</p>
 
     <table class="blue-table">
       <thead>
@@ -32,10 +32,16 @@
         <td>{{index + 1}}</td>
         <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Enter question here..." v-model="question.question" v-on:focus="$event.target.select()"/></td>
         <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Correct answer..." v-model="question.correctAnswer" v-on:focus="$event.target.select()"/></td>
-        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Incorrect #1" v-model="question.incorrectAnswers[0]" v-on:focus="$event.target.select()"/></td>
-        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Incorrect #2" v-model="question.incorrectAnswers[1]" v-on:focus="$event.target.select()"/></td>
-        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" placeholder="Incorrect #3" v-model="question.incorrectAnswers[2]" v-on:focus="$event.target.select()"/></td>
+        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" v-bind:disabled="question.isTextInput" v-bind:placeholder="answerPlaceholder(index, 1)" v-model="question.incorrectAnswers[0]" v-on:focus="$event.target.select()"/></td>
+        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" v-bind:disabled="question.isTextInput" v-bind:placeholder="answerPlaceholder(index, 2)" v-model="question.incorrectAnswers[1]" v-on:focus="$event.target.select()"/></td>
+        <td><textarea v-on:keypress="textareaOnKeyPress($event)" v-on:input="autoGrow($event)" v-bind:disabled="question.isTextInput" v-bind:placeholder="answerPlaceholder(index, 3)" v-model="question.incorrectAnswers[2]" v-on:focus="$event.target.select()"/></td>
         <td>
+<!--            style="display: flex;flex-direction: row; justify-content: center; justify-items: center; grid-template-columns: auto auto;"-->
+<!--        >-->
+<!--          <div>-->
+<!--            <input v-bind:id="'checkbox' + index" type="checkbox" v-on:click="onTextInputChecked($event, index)"/>-->
+<!--            <label v-bind:for="'checkbox' + index">Text input</label>-->
+<!--          </div>-->
           <button class="icon-button" v-on:click.stop="deleteQuestion(index)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
               <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
@@ -89,15 +95,15 @@ export default {
     }
   },
   beforeMount() {
-    window.addEventListener("beforeunload", event => {
-      if(!this.haveChangesBeenMade()) return;
-      event.preventDefault()
-      // Chrome requires returnValue to be set.
-      event.returnValue = ""
-    })
+    window.addEventListener("beforeunload", this.onBeforeUnload)
   },
-  beforeRouteLeave(to, from, next) {
-    if(!this.submitted && this.haveChangesBeenMade()) {
+  beforeRouteLeave(to, from, nextOriginal) {
+    let next = () => {
+      window.removeEventListener('beforeunload', this.onBeforeUnload);
+      nextOriginal();
+    }
+
+    if(!this.submitted && this.haveChangesBeenMade() && to.path !== '/') {
       this.$emit('showConfirmModal', {
         title: 'Discard changes?',
         message: 'You have unsaved changes that will be discarded, are you sure you want to leave?',
@@ -155,6 +161,20 @@ export default {
     }
   },
   methods: {
+    onBeforeUnload(event) {
+        if(this.submitted || !this.haveChangesBeenMade())
+          return;
+
+        event.preventDefault()
+        // Chrome requires returnValue to be set.
+        event.returnValue = ""
+    },
+    answerPlaceholder(index, n) {
+      return this.quiz.questions[index].isTextInput ? '-' : 'Incorrect #' + n + '...';
+    },
+    onTextInputChecked(event, index) {
+      this.$set(this.quiz.questions[index], 'isTextInput', event.target.checked);
+    },
     addCategory() {
       this.$emit('showInputModal', {
         title: 'Add category',
@@ -163,7 +183,6 @@ export default {
         okButton: 'Add Category',
         cancelButton: 'Cancel',
         callback: (input) => {
-          console.log(input[0]);
           if(input) {
             api.postJson('/category', {categoryName: input[0]});
           }
@@ -243,10 +262,11 @@ export default {
     submit() {
       const isBlank = (string) => string.trim() === '';
 
-      // TODO: get rid of alerts and highlight empty or incorrect fields with css
+      // deep copy
+      let quiz = JSON.parse(JSON.stringify(this.quiz));
 
       // check if there are any questions
-      if(this.quiz.questions.length < 1) {
+      if(quiz.questions.length < 1) {
         this.$emit('showConfirmModal', {
           title: 'No questions added!',
           message: 'Please make sure to have at least one question!',
@@ -256,8 +276,8 @@ export default {
       }
 
       // check for no quiz title
-      this.quiz.title = this.quiz.title.trim();
-      if(this.quiz.title === '') {
+      quiz.title = quiz.title.trim();
+      if(quiz.title === '') {
         this.$emit('showConfirmModal', {
           title: 'Quiz title is empty!',
           message: 'Please make sure to set a quiz title!',
@@ -267,8 +287,7 @@ export default {
       }
 
       // check every question for empty fields
-      for(const question of this.quiz.questions) {
-        console.log(question);
+      for(const question of quiz.questions) {
         if(isBlank(question.question) || isBlank(question.correctAnswer)){
           this.$emit('showConfirmModal', {
             title: 'A question field is empty!',
@@ -278,32 +297,34 @@ export default {
           return;
         }
 
-        for(const incorrectAnswer of question.incorrectAnswers) {
-          if(isBlank(incorrectAnswer)){
-            this.$emit('showConfirmModal', {
-              title: 'A question field is empty!',
-              message: 'Please make sure to fill all fields!',
-              okButton: 'OK I understand'
-            });
-            return;
-          }
-        }
+        // Answer alternatives can have some answers left out. Push non blank answers to be sent, then fill array
+        // with empty strings until it has 3 elements
+        let answersToSend = [];
+        for (const incorrectAnswer of question.incorrectAnswers)
+          if (!isBlank(incorrectAnswer))
+              answersToSend.push(incorrectAnswer);
+
+        while(answersToSend.length < 3)
+          answersToSend.push('');
+
+        question.incorrectAnswers = answersToSend;
       }
 
       // submit, same path different http method, no param
       let apiCall = this.creating ? api.postJson : api.putJson;
-      apiCall('/quiz', this.quiz)
+      apiCall('/quiz', quiz)
         .then(response => {
           this.submitted = true;
           if(response.status === 200) {
             this.$emit('showConfirmModal', {
               title: 'Quiz saved!',
-              message: this.quiz.title + ' has been saved!',
+              message: quiz.title + ' has been saved!',
               okButton: 'OK',
               callback: () => {
                 this.$router.push('/teacher/home');
 
                 // refreshes the page, so the updated data for quiz list is fetched from the server
+                // TODO: just get the data in mounted
                 this.$router.go();
               }
             });
@@ -368,8 +389,11 @@ textarea:focus {
   margin: 10px;
 }
 
-#category-container #select {
+#category-container .styledSelect {
   width: 200px;
+}
+
+.styledSelect {
   display: inline-block;
 }
 
@@ -406,6 +430,14 @@ table tbody tr td:nth-child(6) {
   margin: 10px;
   /*display: block;*/
   width: 110px;
+}
+
+textarea:disabled::placeholder {
+  /*color: transparent;*/
+}
+
+textarea:disabled {
+  /*color: transparent;*/
 }
 
 </style>

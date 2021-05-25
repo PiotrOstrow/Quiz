@@ -7,6 +7,33 @@ const Util = require('../util.js');
 
 const router = express.Router();
 
+/**
+ * Puts together questions from database results
+ */
+function composeQuestions(result) {
+    let questions = [];
+
+    // answers assumed to be ordered by having the blank strings at the end of the array, which is how the frontend
+    // sends them and which backend should verify
+    for (const row of result) {
+        let question = {
+            ID: row.ID,
+            question: row.question
+        };
+
+        let answers = [row.answer1, row.answer2, row.answer3, row.answer4].filter((item) => item != null && item.length > 0);
+
+        if(answers.length > 1){
+            Util.shuffle(answers);
+            question.answers = answers;
+        }
+
+        questions.push(question);
+    }
+
+    return questions;
+}
+
 router.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
     db.get('SELECT * FROM quizzes WHERE ID = ?', [request.params.id], (error, result) => {
         if (error) {
@@ -30,16 +57,7 @@ router.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) =
             if (error)
                 console.log(error);
 
-            for (const row of result) {
-                let answers = [row.answer1, row.answer2, row.answer3, row.answer4];
-                Util.shuffle(answers);
-
-                data.questions.push({
-                    ID: row.ID,
-                    question: row.question,
-                    answers: answers
-                });
-            }
+            data.questions = composeQuestions(result);
 
             response.json(data);
         });
@@ -134,16 +152,7 @@ router.get('/repetition-quiz', checkAuthentication(Role.Student), (request, resp
         if (error)
             console.log(error);
 
-        for (const row of result) {
-            let answers = [row.answer1, row.answer2, row.answer3, row.answer4];
-            Util.shuffle(answers);
-
-            data.questions.push({
-                ID: row.ID,
-                question: row.question,
-                answers: answers
-            });
-        }
+        data.questions = composeQuestions(result);
 
         Util.shuffle(data.questions);
 

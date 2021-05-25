@@ -29,6 +29,7 @@ router.delete('/quiz/:id', checkAuthentication(Role.Teacher), (request, response
 });
 
 router.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
+    // TODO: validate input, incorrectAnswers array should be filled with non blanks first, which is done by frontend but it wouldn't hurt to make sure
     // needs to be a regular function instead of an arrow function in order for this.lastID to work
     db.run('INSERT INTO quizzes(title, categoryID) VALUES(?, ?)', [request.body.title, request.body.categoryID], function (error) {
         if (error) {
