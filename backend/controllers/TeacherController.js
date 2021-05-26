@@ -174,6 +174,37 @@ router.get('/teacher/quiz-overview/:id', checkAuthentication(Role.Teacher), (req
         });
 });
 
+// have in common controller?
+router.get('/category', checkAuthentication(Role.Teacher), (request, response) => {
+    db.all('SELECT * FROM quiz_Categories', [], (error, result) => {
+        if(error) {
+            console.log(error);
+            response.status(500).end();
+            return;
+        }
+
+        response.json(result).end();
+    })
+});
+
+router.delete('/category/:id', checkAuthentication(Role.Teacher), (request, response) => {
+    db.run('DELETE FROM quiz_categories WHERE ID = ?', [request.params.id], function(error) {
+        if (error) {
+            console.log(error);
+            response.status(500).end();
+            return;
+        }
+
+        // this.changes is the number of rows deleted
+        if (this.changes === 0) {
+            response.status(404).end();
+            return;
+        }
+
+        response.status(204).end();
+    });
+})
+
 router.post('/category', checkAuthentication(Role.Teacher), (request, response) => {
     // capitalize category name for each word
     let categoryName = '';
@@ -184,13 +215,14 @@ router.post('/category', checkAuthentication(Role.Teacher), (request, response) 
             categoryName += trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase() + ' ';
         }
     }
+    categoryName = categoryName.trim();
 
     // category as UNIQUE in database, no need to check
-    db.run('INSERT INTO quiz_categories(categoryName) VALUES(?)', [categoryName.trim()], (error) => {
+    db.run('INSERT INTO quiz_categories(categoryName) VALUES(?)', [categoryName], function(error) {
         if(error) {
             response.status(409).end();
         } else {
-            response.status(200).end();
+            response.status(200).json({ID:this.lastID, categoryName: categoryName}).end();
         }
     });
 });

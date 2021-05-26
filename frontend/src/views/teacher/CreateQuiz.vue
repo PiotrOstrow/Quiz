@@ -9,6 +9,7 @@
 <!--      </select>-->
       <StyledSelect class="styledSelect" v-bind:options="this.quizCategoryNames" v-bind:default="this.quizCategoryDefault" v-on:input="onCategoryChanged" ref="styledSelect"/>
       <button v-on:click="addCategory">Create a new category</button>
+      <button v-on:click="removeCategory">Remove selected category</button>
     </div>
 
     <p id="info">Empty answer fields will be left out, if you want a true/false question, fill out correct answer as either
@@ -69,9 +70,9 @@ import api from '../../api.js'
 export default {
   components: { StyledSelect },
   name: "Create-quiz",
-  props: ['quizCategories'],
   data: function() {
     return {
+      quizCategories: [],
       originalQuiz: {}, // original quiz to check if any changes were made in case of editing a quiz
       quiz: {
         ID: '',
@@ -122,6 +123,10 @@ export default {
 
   },
   mounted() {
+    api.get('/category')
+      .then(response => response.json())
+      .then(json => this.quizCategories = json);
+
     // if there is an ID as a parameter, then the intention is to edit an already existing quiz, otherwise we're
     // creating a new one
     this.creating = this.$route.params.id == null;
@@ -184,7 +189,36 @@ export default {
         cancelButton: 'Cancel',
         callback: (input) => {
           if(input) {
-            api.postJson('/category', {categoryName: input[0]});
+            api.postJson('/category', {categoryName: input[0]})
+              .then(async response => {
+                if(response.status === 200) {
+                  let category = await response.json();
+                  this.quizCategories.push(category);
+                  this.quiz.categoryID = category.ID;
+                  this.$refs.styledSelect.select(category.categoryName);
+                }
+              });
+          }
+        }
+      });
+    },
+    removeCategory() {
+      let categoryName = this.$refs.styledSelect.$data.selected;
+      this.$emit('showConfirmModal', {
+        title: 'Remove Category',
+        message: 'Are you sure you want to delete "' + categoryName + '"?',
+        redButton: 'Delete',
+        cancelButton: 'Cancel',
+        callback: (ok) => {
+          if(ok) {
+            api.deleteRequest('/category/' + this.quiz.categoryID)
+              .then(response => {
+                if(response.status === 204) {
+                  this.quizCategories = this.quizCategories.filter(cat => cat.ID !== this.quiz.categoryID);
+                  this.quiz.categoryID = this.quizCategories[0].ID;
+                  this.$refs.styledSelect.select(this.quizCategories[0].categoryName);
+                }
+              });
           }
         }
       });
