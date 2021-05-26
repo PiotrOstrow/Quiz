@@ -45,6 +45,9 @@ export default {
   methods: {
     select(value) {
       this.selected = value;
+    },
+    getSelected() {
+      return this.selected ? this.selected : this.default;
     }
   }
 }

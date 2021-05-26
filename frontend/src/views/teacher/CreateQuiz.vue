@@ -203,7 +203,7 @@ export default {
       });
     },
     removeCategory() {
-      let categoryName = this.$refs.styledSelect.$data.selected;
+      let categoryName = this.$refs.styledSelect.getSelected();
       this.$emit('showConfirmModal', {
         title: 'Remove Category',
         message: 'Are you sure you want to delete "' + categoryName + '"?',
