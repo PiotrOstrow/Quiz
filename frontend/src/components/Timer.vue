@@ -18,7 +18,7 @@
       ></path>
     </svg>
     <span id="base-timer-label">
-      0:{{ timeLeft }}
+      {{timeLeftFormatted}}
       </span>
   </div>
 </template>
@@ -32,22 +32,40 @@ export default {
       maxTime: 0
     }
   },
+  computed: {
+    timeLeftFormatted() {
+      if(this.timeLeft < 0)
+        return '--:--';
+      let minutes = String(Math.floor(this.timeLeft / 60)).padStart(2, '0');
+      let seconds = String(this.timeLeft % 60).padStart(2, '0');
+      return minutes + ':' + seconds;
+    }
+  },
   methods: {
     start(seconds) {
       this.timeLeft = seconds;
       this.maxTime = seconds;
-      let interval = setInterval(() => {
+
+      let interval = undefined;
+
+      let handler = () => {
         this.timeLeft--;
         this.setCircleDasharray();
 
-        if(this.timeLeft === 0) {
+        if(this.timeLeft < 0) {
           clearInterval(interval);
         }
-      }, 1000);
+      }
+
+      setTimeout(() => {
+        handler();
+        interval = setInterval(handler, 1000);
+      }, 1);
     },
     setCircleDasharray() {
+      if(this.timeLeft < 0)
+        return 0;
       let a = (283 * (this.timeLeft / this.maxTime)).toFixed(0);
-      console.log(a);
       this.$refs.pathRemaining.setAttribute('stroke-dasharray', a + ' 283');
     }
   }
@@ -98,7 +116,7 @@ export default {
   stroke-width: 7px;
 
   /* Rounds the line endings to create a seamless circle */
-  stroke-linecap: round;
+  /*stroke-linecap: round;*/
 
   /* Makes sure the animation starts at the top of the circle */
   transform: rotate(90deg);
