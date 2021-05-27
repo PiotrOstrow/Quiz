@@ -13,6 +13,7 @@ import TeachersQuizOverview from '../views/teacher/TeachersQuizOverview.vue';
 import StudentOverview from '../views/teacher/StudentOverview.vue';
 import StudentsQuizOverview from "@/views/student/StudentsQuizOverview.vue";
 import RepetitionOverview from "@/views/student/RepetitionOverview.vue";
+import LiveQuiz from "@/views/student/LiveQuiz";
 
 import Role from '../roles.js'
 
@@ -100,6 +101,13 @@ const routes = [
         path: '/student/repetition',
         name: 'Repetition',
         component: RepetitionOverview,
+        meta: {authorize: [Role.Student]},
+        props: true
+    },
+    {
+        path: '/student/live',
+        name: 'LiveQuiz',
+        component: LiveQuiz,
         meta: {authorize: [Role.Student]},
         props: true
     }

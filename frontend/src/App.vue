@@ -22,6 +22,9 @@
         <li v-if="user.role === 'student'">
           <router-link to="/student/repetition">ReQuiz</router-link>
         </li>
+        <li v-if="user.role === 'student'">
+          <router-link to="/student/live">Live Quiz</router-link>
+        </li>
 
         <li v-if="user.role === 'teacher'">
           <router-link to="/teacher/home">Home</router-link>
@@ -244,6 +247,8 @@ export default {
 
 :root {
   --footer-height: 52px;
+  --nav-height: 52px;
+  --header-height: 120px;
 }
 
 * {
@@ -316,7 +321,7 @@ a {
 
 header {
   width: 100%;
-  height: 120px;
+  height: var(--header-height);
   grid-area: header;
   margin: 0 auto;
   background-color: #F29544;
@@ -348,7 +353,7 @@ nav {
   align-items: center;
   background-color: #00a2e8;
   /*min-height: 2vh;*/
-  height: 52px;
+  height: var(--nav-height);
 }
 
 #empty_nav {
@@ -402,8 +407,11 @@ button:hover {
 .main {
   grid-area: main;
   padding-bottom: var(--footer-height); /* offsets the footer */
+  height: calc(100vh - var(--header-height) - var(--nav-height));
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*flex-direction: column;*/
 }
-
 
 .blue-table {
   margin: 25px auto;
