@@ -1,53 +1,53 @@
 <template>
-<div id="container">
-  <div v-if="state === states.SplashScreen" class="inner-container">
+  <div class="live-quiz-container">
+    <div v-if="state === states.SplashScreen" class="inner-container">
 
-    <h1>Participants joined: {{ participants.length }}</h1>
-    <p id="participant-list">{{participantNameList}}</p>
-    <button id="submit-button" v-on:click="startQuiz">Start quiz</button>
+      <h1>Participants joined: {{ participants.length }}</h1>
+      <p id="participant-list">{{participantNameList}}</p>
+      <button id="submit-button" v-on:click="startQuiz">Start quiz</button>
 
-<!--    <p v-for="(participant, index) of participants" v-bind:key="index" v-bind:style="{top:participant.y + 'px', right: participant.x + 'px', position:'absolute'}">-->
-<!--      {{ participant.name + ' ' + participant.x + ', ' + participant.y}}-->
-<!--    </p>-->
+  <!--    <p v-for="(participant, index) of participants" v-bind:key="index" v-bind:style="{top:participant.y + 'px', right: participant.x + 'px', position:'absolute'}">-->
+  <!--      {{ participant.name + ' ' + participant.x + ', ' + participant.y}}-->
+  <!--    </p>-->
+
+    </div>
+    <div v-if="state === states.Question" class="inner-container">
+      <h1>{{ quiz.questions[currentQuestionIndex].question }}</h1>
+      <h2> Answers: 2/12</h2>
+    </div>
+
+    <div v-if="state === states.Leaderboard">
+      <h1>{{ quiz.questions[currentQuestionIndex].question }}</h1>
+
+      <h2>Top 5 scores:</h2>
+      <table class="blue-table">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Score</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>Murre</td>
+          <td>50</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div v-if="state === states.Finished" id="finished-container">
+      <h1>Quiz finished</h1>
+
+
+      <div class="final-score-row"><img id="gold-medal"   src="https://img.icons8.com/emoji/48/000000/1st-place-medal-emoji.png"> <h1>Abc</h1></div>
+      <div class="final-score-row"><img id="silver-medal" src="https://img.icons8.com/emoji/48/000000/2nd-place-medal-emoji.png"> <h2>Xyz</h2></div>
+      <div class="final-score-row"><img id="bronze-medal" src="https://img.icons8.com/emoji/48/000000/3rd-place-medal-emoji.png"> <h3>Bob</h3></div>
+    </div>
+
+    <Timer v-show="state === states.Question || state === states.Leaderboard" ref="timer" id="timer"/>
 
   </div>
-  <div v-if="state === states.Question" class="inner-container">
-    <h1>{{ quiz.questions[currentQuestionIndex].question }}</h1>
-    <h2> Answers: 2/12</h2>
-  </div>
-
-  <div v-if="state === states.Leaderboard">
-    <h1>{{ quiz.questions[currentQuestionIndex].question }}</h1>
-
-    <h2>Top 5 scores:</h2>
-    <table class="blue-table">
-      <thead>
-      <tr>
-        <th>Name</th>
-        <th>Score</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>Murre</td>
-        <td>50</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div v-if="state === states.Finished" id="finished-container">
-    <h1>Quiz finished</h1>
-
-
-    <div class="final-score-row"><img id="gold-medal"   src="https://img.icons8.com/emoji/48/000000/1st-place-medal-emoji.png"> <h1>Abc</h1></div>
-    <div class="final-score-row"><img id="silver-medal" src="https://img.icons8.com/emoji/48/000000/2nd-place-medal-emoji.png"> <h2>Xyz</h2></div>
-    <div class="final-score-row"><img id="bronze-medal" src="https://img.icons8.com/emoji/48/000000/3rd-place-medal-emoji.png"> <h3>Bob</h3></div>
-  </div>
-
-  <Timer v-show="state === states.Question || state === states.Leaderboard" ref="timer" id="timer"/>
-
-</div>
 </template>
 
 <script>
@@ -85,7 +85,22 @@ export default {
   mounted() {
     this.state = this.states.SplashScreen;
 
-    api.get('/quizdetails/1')
+    // Create WebSocket connection.
+    const socket = new WebSocket('ws://' + window.location.hostname + ':3000');
+
+    // Connection opened
+    // eslint-disable-next-line no-unused-vars
+    socket.addEventListener('open', (event) => {
+      socket.send(JSON.stringify({ action: 'start', quizID: this.$route.params.id }));
+    });
+
+    // Listen for messages
+    // eslint-disable-next-line no-unused-vars
+    socket.addEventListener('message', (event) => {
+      // console.log('Message from server ', event.data);
+    });
+
+    api.get('/quizdetails/' + this.$route.params.id)
       .then(response => response.json())
       .then(json => {
         this.quiz = json
@@ -140,7 +155,7 @@ h1, h2, h3 {
   text-align:center;
 }
 
-#container {
+.live-quiz-container {
   display: flex;
   justify-content: center;
   flex-direction: column;

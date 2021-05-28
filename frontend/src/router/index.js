@@ -15,6 +15,7 @@ import StudentsQuizOverview from "@/views/student/StudentsQuizOverview.vue";
 import RepetitionOverview from "@/views/student/RepetitionOverview.vue";
 import LiveQuiz from "@/views/student/LiveQuiz";
 import LiveQuizTeacher from "@/views/teacher/LiveQuizTeacher";
+import LiveQuizList from '@/views/teacher/LiveQuizList';
 
 import Role from '../roles.js'
 
@@ -113,8 +114,15 @@ const routes = [
         props: true
     },
     {
-        path: '/teacher/live',
-        nam: 'LiveQuizTeacher',
+        path: '/teacher/live-quiz-list',
+        name: 'LiveQuizList',
+        component: LiveQuizList,
+        meta: {authorize: [Role.Teacher]},
+        props: true
+    },
+    {
+        path: '/teacher/live/:id',
+        name: 'LiveQuizTeacher',
         component: LiveQuizTeacher,
         meta: {authorize: [Role.Teacher]},
         props: true

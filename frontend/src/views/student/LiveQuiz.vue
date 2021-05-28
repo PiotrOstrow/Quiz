@@ -1,7 +1,13 @@
 <template>
   <div id="main-container">
     <main>
-      <div class="question-container" v-if="!showingLeaderboard && quiz.questions.length > currentQuestionID - 1">
+      <div class="live-quiz-list-container" v-if="state === states.liveQuizList">
+        <h1>Live quiz</h1>
+        <p>Förklaring för livequiz här...</p>
+        <input class="code-input" placeholder="Enter code here..." v-model="code"/>
+        <button v-on:click="join">Join live quiz</button>
+      </div>
+      <div class="question-container" v-if="state === states.Question && quiz.questions.length > currentQuestionID - 1">
         <div class="h2-container">
           <h2>Question {{currentQuestionID+1}}/{{ quiz.questions.length }}</h2>
         </div>
@@ -25,7 +31,7 @@
           </div>
         </form>
       </div>
-      <div id="score-container" v-if="showingLeaderboard">
+      <div id="score-container" v-if="state === states.Leaderboard">
         <h2>Top 5 scores:</h2>
         <table class="blue-table">
           <thead>
@@ -44,7 +50,7 @@
       </div>
     </main>
 
-    <timer v-show="!this.isQuizOver()" ref="timer" id="timer"/>
+    <timer v-show="!this.isQuizOver() && state !== states.liveQuizList" ref="timer" id="timer"/>
 
   </div>
 </template>
@@ -62,20 +68,31 @@ export default {
       currentQuestionID: 0,
       timePerQuestion: 10,
       timeForLeaderboard: 10,
-      showingLeaderboard: false,
       questionTimeOverTimeout: undefined, // timeout function ID that is called when a question has not been answered
-      currentQuestionAnswered: false
+      currentQuestionAnswered: false,
+      states: {
+        liveQuizList: 1,
+        Question: 2,
+        Leaderboard: 3,
+        Finished: 4
+      },
+      state: undefined,
+      code: ''
     }
   },
   mounted() {
+    this.state = this.states.liveQuizList;
     api.getQuiz(1)
       .then(response => response.json())
       .then(json => {
         this.quiz = json;
-        setTimeout(() => this.startQuiz(), 1000);
+        // setTimeout(() => this.startQuiz(), 1000);
       });
   },
   methods: {
+    join() {
+      // console.log('entered code ' + this.code);
+    },
     startQuiz() {
       this.startQuestionTimer();
     },
@@ -123,7 +140,7 @@ export default {
 </script>
 
 <style scoped>
-h2 {
+h1, h2, h3, p {
   text-align: center;
 }
 
@@ -198,6 +215,28 @@ main {
 
 .right-answer, .right-answer:hover {
   background-color: #0f8e00;
+}
+
+.code-input {
+  padding: 8px;
+  font-size: 28px;
+  text-align:center;
+}
+
+.live-quiz-list-container {
+  padding-bottom: 200px;
+}
+
+.live-quiz-list-container * {
+  display: block;
+}
+
+.live-quiz-list-container button {
+  margin: 20px auto;
+  display:block;
+  width: 200px;
+  height: 50px;
+  font-size: 24px;
 }
 
 </style>
