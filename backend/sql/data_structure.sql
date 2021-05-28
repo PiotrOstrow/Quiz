@@ -19,6 +19,7 @@ CREATE TABLE quizzes
     ID         INTEGER PRIMARY KEY,
     title      VARCHAR NOT NULL,
     categoryID INTEGER,
+    isLiveQuiz INTEGER DEFAULT 0,
     FOREIGN KEY (categoryID) REFERENCES quiz_categories (ID)
 );
 

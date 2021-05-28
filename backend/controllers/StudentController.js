@@ -35,7 +35,7 @@ function composeQuestions(result) {
 }
 
 router.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
-    db.get('SELECT * FROM quizzes WHERE ID = ?', [request.params.id], (error, result) => {
+    db.get('SELECT * FROM quizzes WHERE ID = ? AND isLiveQuiz = 0', [request.params.id], (error, result) => {
         if (error) {
             console.log(error);
             response.status(500).end();
@@ -274,6 +274,7 @@ router.get('/student-home-results-for-each-quiz/', checkAuthentication(Role.Stud
         FROM quizzes
                  LEFT JOIN quiz_results on quizzes.ID = quiz_results.quizID AND userID = ?
                  INNER JOIN quiz_categories ON quizzes.categoryID = quiz_categories.ID
+        WHERE isLiveQuiz = 0 
         GROUP BY quizID, title`;
 
     db.all(sql,[request.user.ID], (error, result) => {
