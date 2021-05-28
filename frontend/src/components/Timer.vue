@@ -30,7 +30,8 @@ export default {
     return {
       timeLeft: 0,
       maxTime: 0,
-      interval: undefined
+      interval: undefined,
+      callback: () => {}
     }
   },
   computed: {
@@ -43,16 +44,18 @@ export default {
     }
   },
   methods: {
-    start(seconds) {
+    start(seconds, callback = () => {}) {
       this.stop();
       this.timeLeft = seconds;
       this.maxTime = seconds;
+      this.callback = callback;
 
       let handler = () => {
         this.timeLeft--;
         this.setCircleDasharray();
 
         if(this.timeLeft < 0) {
+          this.callback();
           this.stop();
         }
       }

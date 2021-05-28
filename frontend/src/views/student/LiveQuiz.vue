@@ -44,7 +44,7 @@
       </div>
     </main>
 
-    <timer v-if="!this.isQuizOver()" ref="timer" id="timer"/>
+    <timer v-show="!this.isQuizOver()" ref="timer" id="timer"/>
 
   </div>
 </template>

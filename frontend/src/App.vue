@@ -32,6 +32,9 @@
         <li v-if="user.role === 'teacher'">
           <router-link to="/teacher/create">Create Quiz</router-link>
         </li>
+        <li v-if="user.role === 'teacher'">
+          <router-link to="/teacher/live">Live Quiz</router-link>
+        </li>
 
 
         <li>
