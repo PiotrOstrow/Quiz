@@ -121,7 +121,7 @@ const routes = [
         props: true
     },
     {
-        path: '/teacher/live/:id',
+        path: '/teacher/live/:id?',
         name: 'LiveQuizTeacher',
         component: LiveQuizTeacher,
         meta: {authorize: [Role.Teacher]},

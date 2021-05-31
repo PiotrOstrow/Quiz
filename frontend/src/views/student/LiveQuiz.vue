@@ -7,25 +7,34 @@
         <input class="code-input" placeholder="Enter code here..." v-model="code"/>
         <button v-on:click="join">Join live quiz</button>
       </div>
+
+      <div v-if="state === states.SplashScreen" class="inner-container">
+<!--        TODO: move to component? -->
+        <h1>Participants joined: {{ participants.length }}</h1>
+        <p id="participant-list">{{participantNameList}}</p>
+        <p>Waiting for teacher to start the quiz...</p>
+
+      </div>
+
       <div class="question-container" v-if="state === states.Question && quiz.questions.length > currentQuestionID - 1">
         <div class="h2-container">
           <h2>Question {{currentQuestionID+1}}/{{ quiz.questions.length }}</h2>
         </div>
         <h3 class="question-paragraph">{{quiz.questions[currentQuestionID].question}}</h3>
         <form>
-          <div class="radio-input-container" v-on:click="selectAnswer($event)">
+          <div class="radio-input-container" v-on:click="selectAnswer($event, quiz.questions[currentQuestionID].answers[0])">
             <input type="radio" name="quiz-name">
             <label>{{ quiz.questions[currentQuestionID].answers[0] }}</label>
           </div>
-          <div class="radio-input-container" v-on:click="selectAnswer($event)">
+          <div class="radio-input-container" v-on:click="selectAnswer($event, quiz.questions[currentQuestionID].answers[1])">
             <input type="radio" name="quiz-name">
             <label>{{ quiz.questions[currentQuestionID].answers[1] }}</label>
           </div>
-          <div class="radio-input-container" v-on:click="selectAnswer($event)">
+          <div class="radio-input-container" v-on:click="selectAnswer($event, quiz.questions[currentQuestionID].answers[2])">
             <input type="radio" name="quiz-name">
             <label>{{ quiz.questions[currentQuestionID].answers[2] }}</label>
           </div>
-          <div class="radio-input-container" v-on:click="selectAnswer($event)">
+          <div class="radio-input-container" v-on:click="selectAnswer($event, quiz.questions[currentQuestionID].answers[3])">
             <input type="radio" name="quiz-name">
             <label>{{ quiz.questions[currentQuestionID].answers[3] }}</label>
           </div>
@@ -35,105 +44,187 @@
         <h2>Top 5 scores:</h2>
         <table class="blue-table">
           <thead>
-          <tr>
-            <th>Name</th>
-            <th>Score</th>
-          </tr>
+            <tr>
+              <th>Name</th>
+              <th>Score</th>
+            </tr>
           </thead>
           <tbody>
-          <tr>
-            <td>Murre</td>
-            <td>50</td>
-          </tr>
+            <tr v-for="(user, index) of leaderboard" v-bind:key="index">
+              <td>{{ user.name }}</td>
+              <td>{{ user.score }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
+      <div v-if="state === states.Finished" >
+        <FinalLeaderboard :leaderboard="leaderboard"/>
+        <h3 v-if="getOwnScoreIfNotInTopThree">
+          #{{getOwnScoreIfNotInTopThree.placement}} {{getOwnScoreIfNotInTopThree.name}} - {{ getOwnScoreIfNotInTopThree.score }} Points
+        </h3>
+      </div>
     </main>
 
-    <timer v-show="!this.isQuizOver() && state !== states.liveQuizList" ref="timer" id="timer"/>
+    <timer v-show="state === states.Question || state === states.Leaderboard" ref="timer" id="timer"/>
 
   </div>
 </template>
 
 <script>
 import Timer from '@/components/Timer.vue'
+import FinalLeaderboard from '@/components/FinalLeaderboard.vue'
 import api from '@/api.js'
 
 export default {
   name: "LiveQuiz",
-  components: {Timer},
+  components: {Timer, FinalLeaderboard},
+  props: ['user'],
   data: function () {
     return {
       quiz: {},
       currentQuestionID: 0,
-      timePerQuestion: 10,
-      timeForLeaderboard: 10,
+      timePerQuestion: 60 * 60,
+      timeForLeaderboard: 5,
       questionTimeOverTimeout: undefined, // timeout function ID that is called when a question has not been answered
       currentQuestionAnswered: false,
       states: {
         liveQuizList: 1,
-        Question: 2,
-        Leaderboard: 3,
-        Finished: 4
+        SplashScreen: 2,
+        Question: 3,
+        Leaderboard: 4,
+        Finished: 5
       },
       state: undefined,
-      code: ''
+      code: '',
+      socket: undefined,
+      participants: [],
+      selectedAnswerTarget: undefined,
+      leaderboard: []
+    }
+  },
+  computed: {
+    participantNameList() {
+      let list = '';
+      for(const participant of this.participants)
+        list += participant.name + ', ';
+
+      list = list.substr(0, list.length - 2);
+      return list;
+    },
+    getOwnScoreIfNotInTopThree() {
+      for(let i = 0; i < this.leaderboard.length; i++) {
+        if(this.leaderboard[i].ID === this.user.ID) {
+          if(i < 3)
+            return undefined;
+          return {
+            name: this.leaderboard[i].name,
+            score: this.leaderboard[i].score,
+            placement: i + 1
+          }
+        }
+      }
+      return undefined;
     }
   },
   mounted() {
     this.state = this.states.liveQuizList;
-    api.getQuiz(1)
-      .then(response => response.json())
-      .then(json => {
-        this.quiz = json;
-        // setTimeout(() => this.startQuiz(), 1000);
-      });
+
+    this.socket = new WebSocket('ws://' + window.location.hostname + ':3000');
+
+    // Connection opened
+    // eslint-disable-next-line no-unused-vars
+    this.socket.addEventListener('open', (event) => {
+    });
+
+    // Listen for messages
+    this.socket.addEventListener('message', this.onMessageReceived);
   },
   methods: {
+    onMessageReceived(event) {
+      const data = JSON.parse(event.data);
+      console.log(data);
+
+      if(data.error) {
+        this.$emit('showConfirmModal', {
+          title: 'error',
+          message: data.error,
+          okButton: 'Ok'
+        });
+        return;
+      }
+
+      switch(data.reply) {
+        case 'joined':
+          this.state = this.states.SplashScreen;
+          console.log('quizID is ' + data.quizID);
+          this.timePerQuestion = data.timePerQuestion;
+          this.timeForLeaderboard = data.timeForLeaderboard;
+          api.getQuiz(data.quizID)
+              .then(response => response.json())
+              .then(json => {
+                this.quiz = json;
+                // setTimeout(() => this.startQuiz(), 1000);
+              });
+          break;
+        case 'started': this.startQuiz(); break;
+        case 'answer':
+          this.selectedAnswerTarget.classList.add(data.correct ? 'right-answer' : 'wrong-answer');
+
+          setTimeout(() => {
+            this.selectedAnswerTarget.classList.remove('right-answer');
+            this.selectedAnswerTarget.classList.remove('wrong-answer');
+            this.currentQuestionAnswered = false;
+            this.showLeaderboard();
+          }, 2500);
+          break;
+        case 'leaderboard':
+          this.state = this.isQuizOver() ? this.states.Finished : this.states.Leaderboard;
+          this.leaderboard = data.leaderboard;
+            if(!this.isQuizOver()) {
+              this.$refs.timer.start(this.timeForLeaderboard);
+            } else {
+              this.$refs.timer.stop();
+            }
+          break;
+        case 'next':
+          this.currentQuestionID++;
+          this.state = this.states.Question;
+          this.currentQuestionAnswered = false;
+          this.$refs.timer.start(this.timePerQuestion);
+          break;
+      }
+
+      if(data.participants)
+        this.participants = data.participants;
+
+    },
     join() {
       // console.log('entered code ' + this.code);
+      this.socket.send(JSON.stringify({
+        action: 'join',
+        code: this.code
+      }));
     },
     startQuiz() {
-      this.startQuestionTimer();
-    },
-    selectAnswer(event) {
-      clearTimeout(this.questionTimeOverTimeout);
-
-      if(!this.currentQuestionAnswered) {
-        this.currentQuestionAnswered = true;
-        event.target.classList.add(Math.random() > 0.5 ? 'right-answer' : 'wrong-answer');
-
-        setTimeout(() => {
-          event.target.classList.remove('right-answer');
-          event.target.classList.remove('wrong-answer');
-          this.currentQuestionAnswered = false;
-          this.showLeaderboard();
-        }, 2500);
-      }
-    },
-    startQuestionTimer() {
+      this.state = this.states.Question;
       this.$refs.timer.start(this.timePerQuestion);
-      this.questionTimeOverTimeout = setTimeout(() => {
-        this.showLeaderboard();
-      }, this.timePerQuestion * 1000);
     },
-    showLeaderboard() {
-      this.showingLeaderboard = true;
+    selectAnswer(event, value) {
+      if(!this.currentQuestionAnswered) {
+        clearTimeout(this.questionTimeOverTimeout);
 
-      if(!this.isQuizOver()) {
-        this.currentQuestionID++;
-        this.$refs.timer.start(this.timeForLeaderboard);
+        this.currentQuestionAnswered = true;
+        this.selectedAnswerTarget = event.target;
+        console.log('selected answer is ' + value);
 
-        setTimeout(() => {
-          this.showingLeaderboard = false;
-          this.startQuestionTimer();
-        }, this.timeForLeaderboard * 1000);
-      } else {
-        this.$refs.timer.stop();
+        this.socket.send(JSON.stringify({
+          action: 'answer',
+          answer: value
+        }));
       }
     },
     isQuizOver() {
-      return this.currentQuestionID >= this.quiz.questions.length;
+      return this.quiz.questions && this.currentQuestionID >= this.quiz.questions.length - 1;
     }
   }
 }

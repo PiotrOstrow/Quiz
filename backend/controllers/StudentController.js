@@ -35,7 +35,7 @@ function composeQuestions(result) {
 }
 
 router.get('/quiz/:id', checkAuthentication(Role.Student), (request, response) => {
-    db.get('SELECT * FROM quizzes WHERE ID = ? AND isLiveQuiz = 0', [request.params.id], (error, result) => {
+    db.get('SELECT * FROM quizzes WHERE ID = ?', [request.params.id], (error, result) => {
         if (error) {
             console.log(error);
             response.status(500).end();
