@@ -93,49 +93,76 @@ export default {
 
 <style scoped>
 
-h2 {
-  margin-top: 5px;
-}
+/* MOBILE */
 
 .home {
-  display: flex;
   justify-content: center;
-  max-width: 100%;
-  grid-template-columns: 50% 50%;
-  padding: 1% 5%;
-  gap: 15px;
+  grid-template-columns: 100%;
+  padding: 20px 20px;
+
 }
 
 img {
   width: 100%;
 }
 
-form td {
-  width: 50%;
-  text-align: left;
-}
-
-form tr {
-  text-align: left;
-}
-
-form input {
-  width: 100%;
-  /*padding: 5px;*/
-}
-
 .information-container {
   width: 100%;
   background-color: white;
-  border-radius: 20px;
-  padding: 1%;
+  padding: 25px;
+  border-bottom: solid 2px #00a2e8
 }
 
 .forms-container {
   width: 100%;
   background-color: white;
-  border-radius: 20px;
-  padding: 1%;
+  padding: 25px;
+}
+
+/* DESKTOP */
+@media screen and (min-width: 685px) {
+  h2 {
+    margin-top: 5px;
+  }
+
+  .home {
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+    grid-template-columns: 100%;
+    padding: 1% 5%;
+    gap: 15px;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  form td {
+    width: 50%;
+    text-align: left;
+  }
+
+  form tr {
+    text-align: left;
+  }
+
+  form input {
+    width: 100%;
+    /*padding: 5px;*/
+  }
+
+  .information-container {
+    width: 100%;
+    background-color: white;
+    border: none;
+  }
+
+  .forms-container {
+    width: 100%;
+    background-color: white;
+    padding: 1%;
+  }
 }
 
 </style>

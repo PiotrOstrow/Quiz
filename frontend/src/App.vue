@@ -271,10 +271,7 @@ footer {
 }
 
 footer ul {
-  /* ul element in footer had a left padding of 40px which made the text off center*/
-  /* was most likely due to list style but same thing happens even with list-style: none*/
   padding: 0;
-  /*list-style: none;*/
 }
 
 ul {
@@ -296,7 +293,7 @@ a {
   position: relative;
   left: 0;
   margin: 10px 10px;
-  height: 100px;
+  height: 45px;
   width: auto;
 }
 
@@ -304,19 +301,13 @@ a {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  /*display: grid;*/
-  /*grid-template-columns: 1fr;*/
-  /*grid-template-areas: "header"*/
-  /*          "nav"*/
-  /*          "main"*/
-  /*          "footer";*/
   min-height: 100vh;
   position: relative;
 }
 
 header {
   width: 100%;
-  height: 120px;
+  height: 65px;
   grid-area: header;
   margin: 0 auto;
   background-color: #F29544;
@@ -333,7 +324,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
+  font-size: 20px;
 }
 
 #header-container h1 {
@@ -505,6 +496,41 @@ input[type="radio"] {
 .radio-input-container label:hover {
   background-color: rgba(0, 162, 232, 1);
   transform: scale(1.05);
+}
+
+
+
+@media screen and (min-width:695px) {
+  #header-container {
+    height: 100%;
+    width: 100%;
+    color: white;
+    margin: 0 auto;
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+  }
+
+  #logo {
+    border-radius: 6em / 7em;
+    float: left;
+    position: relative;
+    left: 0;
+    margin: 10px 10px;
+    height: 100px;
+    width: auto;
+  }
+  header {
+    width: 100%;
+    height: 120px;
+    grid-area: header;
+    margin: 0 auto;
+    background-color: #F29544;
+    position: relative;
+  }
 }
 
 </style>
