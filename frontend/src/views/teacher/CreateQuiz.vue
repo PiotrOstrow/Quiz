@@ -1,4 +1,9 @@
 <template>
+  <div>
+  <div id="mobile-container">
+    <h2>You can only create a quiz on a wider screen, please change to tablet or desktop.</h2>
+  </div>
+
   <div id="main-container">
     <h1>Create quiz</h1>
     <textarea id="title-textarea" placeholder="Enter quiz title here..." v-on:keypress="textareaOnKeyPress($event)" v-model="quiz.title"></textarea>
@@ -59,6 +64,7 @@
 
       <button v-on:click="submit">Save</button>
     </div>
+  </div>
   </div>
 </template>
 
@@ -376,102 +382,121 @@ export default {
 </script>
 
 <style scoped>
-h1, h2, h3 {
+#main-container {
+ display: none;
+}
+
+#mobile-container {
   text-align: center;
+  margin: 25%;
 }
 
-td {
-  padding: 6px;
-}
+@media screen and (min-width: 850px){
+  #main-container {
+    display: block;
+  }
 
-p {
-  width: 800px;
-  text-align: center;
-  margin: 0 auto;
-}
+  #mobile-container {
+    display: none;
+  }
 
-table {
-  width: 850px;
-}
+  h1, h2, h3 {
+    text-align: center;
+  }
 
-textarea {
-  border-style: none;
-  background-color: transparent;
-  cursor: pointer;
-  padding: 5px;
-  text-align: center;
-  word-break: break-all;
-  resize: none;
-  overflow: hidden;
-  height: 25px;
-}
+  td {
+    padding: 6px;
+  }
 
-textarea:focus {
-  border-style: none;
-  background-color: white;
-  cursor: text;
-}
+  p {
+    width: 800px;
+    text-align: center;
+    margin: 0 auto;
+  }
 
-#category-container {
-  /*border: solid 1px black;*/
-  width: max-content;
-  margin: 20px auto;
+  table {
+    width: 850px;
+  }
 
-}
+  textarea {
+    border-style: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 5px;
+    text-align: center;
+    word-break: break-all;
+    resize: none;
+    overflow: hidden;
+    height: 25px;
+  }
 
-#category-container * {
-  margin: 10px;
-}
+  textarea:focus {
+    border-style: none;
+    background-color: white;
+    cursor: text;
+  }
 
-#category-container .styledSelect {
-  width: 200px;
-}
+  #category-container {
+    /*border: solid 1px black;*/
+    width: max-content;
+    margin: 20px auto;
 
-.styledSelect {
-  display: inline-block;
-}
+  }
 
-#category-container button {
-  display: inline-block;
-}
+  #category-container * {
+    margin: 10px;
+  }
 
-#title-textarea {
-  display: block;
-  margin: 0 auto;
-  font-size: 24px;
-  width: 850px;
-  height: 39px;
-  font-weight: bold;
-  font-family: Pangolin, sans-serif;
-}
+  #category-container .styledSelect {
+    width: 200px;
+  }
 
-table tbody tr td:nth-child(6) {
-  padding-top: 0;
-  padding-bottom: 0;
-}
+  .styledSelect {
+    display: inline-block;
+  }
 
-.general-container > div {
-  margin: 10px auto;
-  width: max-content;
-}
+  #category-container button {
+    display: inline-block;
+  }
 
-#bottom-button-container {
-  margin: 0 auto;
-  width: max-content;
-}
+  #title-textarea {
+    display: block;
+    margin: 0 auto;
+    font-size: 24px;
+    width: 850px;
+    height: 39px;
+    font-weight: bold;
+    font-family: Pangolin, sans-serif;
+  }
 
-#bottom-button-container > button {
-  margin: 10px;
-  /*display: block;*/
-  width: 110px;
-}
+  table tbody tr td:nth-child(6) {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
 
-textarea:disabled::placeholder {
-  /*color: transparent;*/
-}
+  .general-container > div {
+    margin: 10px auto;
+    width: max-content;
+  }
 
-textarea:disabled {
-  /*color: transparent;*/
+  #bottom-button-container {
+    margin: 0 auto;
+    width: max-content;
+  }
+
+  #bottom-button-container > button {
+    margin: 10px;
+    /*display: block;*/
+    width: 110px;
+  }
+
+  textarea:disabled::placeholder {
+    /*color: transparent;*/
+  }
+
+  textarea:disabled {
+    /*color: transparent;*/
+  }
 }
 
 </style>
