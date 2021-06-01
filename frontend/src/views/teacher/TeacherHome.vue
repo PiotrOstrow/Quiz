@@ -113,14 +113,8 @@ h1, h2, h3, p {
   padding-bottom: 0;
 }
 
-/*td, th {*/
-/*  word-wrap: anywhere;*/
-/*  white-space: nowrap;*/
-/*  overflow: hidden;*/
-/*}*/
-
-/* Extra large devices (large laptops and dvbnhjjhg, esktops, 1200px and up) */
-@media only screen and (min-width: 1200px) {
+/* Extra large devices (large laptops and devices, desktops, 1200px and up) */
+@media only screen and (min-width: 1100px) {
   #grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr;

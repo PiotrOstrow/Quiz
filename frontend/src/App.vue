@@ -401,7 +401,7 @@ button:hover {
   border-collapse: collapse;
   font-size: 0.9em;
   font-family: sans-serif;
-  width: 500px;
+  width: 400px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -413,7 +413,7 @@ button:hover {
 
 .blue-table th,
 .blue-table td {
-  padding: 12px 15px;
+  padding: 7px 0px;
   font-family: Pangolin, sans-serif;
   text-align: center;
 }
@@ -500,7 +500,7 @@ input[type="radio"] {
 
 
 
-@media screen and (min-width:695px) {
+@media screen and (min-width:710px) {
   #header-container {
     height: 100%;
     width: 100%;
@@ -530,6 +530,22 @@ input[type="radio"] {
     margin: 0 auto;
     background-color: #F29544;
     position: relative;
+  }
+
+  .blue-table {
+    margin: 25px auto;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    width: 500px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .blue-table th,
+  .blue-table td {
+    padding: 12px 15px;
+    font-family: Pangolin, sans-serif;
+    text-align: center;
   }
 }
 
