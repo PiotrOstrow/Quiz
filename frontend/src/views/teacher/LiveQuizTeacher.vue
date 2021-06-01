@@ -27,6 +27,8 @@
     <div v-if="state === states.SplashScreen" class="inner-container">
 
       <h1>Participants joined: {{ participants.length }}</h1>
+      <h3>To participate, enter code:</h3>
+      <h1>{{ code }}</h1>
       <p id="participant-list">{{participantNameList}}</p>
       <button id="submit-button" v-on:click="startQuiz">Start quiz</button>
 
@@ -117,6 +119,31 @@ export default {
       return list;
     }
   },
+  beforeMount() {
+    window.addEventListener("beforeunload", this.onBeforeUnload)
+  },
+  beforeRouteLeave(to, from, nextOriginal) {
+    let next = () => {
+      window.removeEventListener('beforeunload', this.onBeforeUnload);
+      this.socket.close();
+      nextOriginal();
+    }
+
+    if(!this.isQuizOver() && this.state !== this.states.List && to.path !== '/') {
+      this.$emit('showConfirmModal', {
+        title: 'Leave live quiz?',
+        message: 'Live quiz will be cancelled, are you sure you want to leave?',
+        okButton: 'Yes',
+        cancelButton: 'Cancel',
+        callback: (ok) => {
+          if(ok)
+            next();
+        }
+      });
+    } else {
+      next();
+    }
+  },
   mounted() {
     this.state = this.states.List;
 
@@ -146,15 +173,33 @@ export default {
     // setTimeout(handler, 1000);
   },
   methods: {
+    onBeforeUnload(event) {
+      if(!this.isQuizOver() && this.state !== this.states.List)
+        return;
+
+      event.preventDefault()
+      // Chrome requires returnValue to be set.
+      event.returnValue = ""
+    },
     onMessageReceived(event) {
       const data = JSON.parse(event.data);
 
       console.log(data);
 
+      if(data.error) {
+        this.$emit('showConfirmModal', {
+          title: 'Error',
+          message: data.error,
+          okButton: 'Ok'
+        });
+        return;
+      }
+
       switch(data.reply) {
         case 'initialized':
           this.timePerQuestion = data.timePerQuestion;
           this.timeForLeaderboard = data.timeForLeaderboard;
+          this.state = this.states.SplashScreen;
           break;
         case 'started':
           this.currentQuestionIndex = -1;
@@ -190,8 +235,7 @@ export default {
             api.get('/quizdetails/' + quizID)
                 .then(response => response.json())
                 .then(json => {
-                  this.quiz = json
-                  this.state = this.states.SplashScreen;
+                  this.quiz = json;
                   this.code = inputs[0];
                   this.socket.send(JSON.stringify({ action: 'init', quizID: quizID, code: this.code }));
                 });

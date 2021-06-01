@@ -22,6 +22,10 @@ class Quiz {
         }
     }
 
+    isStarted() {
+        return this.questionStartTime !== 0;
+    }
+
     start() {
         this.questionStartTime = Date.now();
         this.timeoutID = setTimeout(this.timeoutFunction, this.timePerQuestion * 1000);
@@ -38,11 +42,20 @@ class Quiz {
 
     addParticipant(user) {
         this.participants.set(user.ID, user);
+        this.updateParticipants();
+    }
 
+    removeParticipant(user) {
+        if(!this.isStarted()) {
+            this.participants.delete(user.ID);
+            this.updateParticipants();
+        }
+    }
+
+    updateParticipants() {
         const data = JSON.stringify({participants: this.getParticipantList()});
 
         this.teacher.ws.send(data);
-
         this.sendToAllParticipants(data);
     }
 
@@ -152,18 +165,16 @@ class Quiz {
     }
 }
 
-// class Participant {
-//     constructor(user) {
-//         this.ID = user.ID;
-//         this.score = 0;
-//         this.name = user.name;
-//     }
-// }
-
 const liveQuizzes = new Map();
 
 function initQuiz(user, quizID, quizCode) {
     quizCode = quizCode.toLowerCase();
+
+    if(liveQuizzes.has(quizCode)){
+        user.ws.send(JSON.stringify({ error: 'Code already in use' }));
+        return;
+    }
+
     console.log('Starting quiz id ' + quizID + ' with code ' + quizCode);
 
     let data = {
@@ -187,8 +198,11 @@ function initQuiz(user, quizID, quizCode) {
 
         db.all('SELECT * FROM quiz_questions WHERE quizID = ?', [quizID], (error, result) => {
             data.questions = result;
+
             const quiz = new Quiz(data, user);
             liveQuizzes.set(quizCode, quiz);
+
+            user.code = quizCode;
             user.ws.send(JSON.stringify({
                 reply: 'initialized',
                 timePerQuestion: quiz.timePerQuestion,
@@ -202,9 +216,9 @@ function joinQuiz(user, code) {
     code = code.toLowerCase();
     const quiz = liveQuizzes.get(code);
 
-    if(quiz) {
+    if(quiz && !quiz.isStarted()) {
         quiz.addParticipant(user);
-        user.currentQuiz = quiz;
+        user.code = code;
 
         user.ws.send(JSON.stringify({
             reply: 'joined',
@@ -219,16 +233,31 @@ function joinQuiz(user, code) {
 }
 
 function startQuiz(user, code) {
-    const quiz = liveQuizzes.get(code);
+    if(liveQuizzes.has(code)) {
+        const quiz = liveQuizzes.get(code);
 
-    if(quiz.teacher.ID !== user.ID)
-        return;
+        if (quiz.teacher.ID !== user.ID)
+            return;
 
-    quiz.start();
+        quiz.start();
+    }
 }
 
 function answer(user, answer) {
-    user.currentQuiz.answer(user, answer);
+    if(liveQuizzes.has(user.code))
+        liveQuizzes.get(user.code).answer(user, answer);
+}
+
+function cancelTeachersQuiz(user) {
+    if(liveQuizzes.has(user.code)) {
+        const quiz = liveQuizzes.get(user.code);
+
+        if (quiz.teacher.ID === user.ID) {
+            liveQuizzes.delete(user.code);
+
+            quiz.sendToAllParticipants(JSON.stringify({reply:'cancelled'}));
+        }
+    }
 }
 
 module.exports = function(httpServer, sessionParser) {
@@ -264,6 +293,16 @@ module.exports = function(httpServer, sessionParser) {
                     switch (message.action) {
                         case 'join': joinQuiz(user, message.code); break;
                         case 'answer': answer(user, message.answer); break;
+                    }
+                }
+            });
+
+            ws.on('close', function close() {
+                if(user.role === Role.Teacher) {
+                    cancelTeachersQuiz(user);
+                } else {
+                    if (user.code && liveQuizzes.has(user.code)) {
+                        liveQuizzes.get(user.code).removeParticipant(user);
                     }
                 }
             });

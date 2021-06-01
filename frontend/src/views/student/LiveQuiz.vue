@@ -126,6 +126,31 @@ export default {
       return undefined;
     }
   },
+  beforeMount() {
+    window.addEventListener("beforeunload", this.onBeforeUnload)
+  },
+  beforeRouteLeave(to, from, nextOriginal) {
+    let next = () => {
+      window.removeEventListener('beforeunload', this.onBeforeUnload);
+      this.socket.close();
+      nextOriginal();
+    }
+
+    if(!this.isQuizOver() && this.state !== this.states.List && to.path !== '/') {
+      this.$emit('showConfirmModal', {
+        title: 'Leave live quiz?',
+        message: 'Are you sure you want to leave?',
+        okButton: 'Yes',
+        cancelButton: 'Cancel',
+        callback: (ok) => {
+          if(ok)
+            next();
+        }
+      });
+    } else {
+      next();
+    }
+  },
   mounted() {
     this.state = this.states.liveQuizList;
 
@@ -140,13 +165,21 @@ export default {
     this.socket.addEventListener('message', this.onMessageReceived);
   },
   methods: {
+    onBeforeUnload(event) {
+      if(!this.isQuizOver() && this.state !== this.states.List)
+        return;
+
+      event.preventDefault()
+      // Chrome requires returnValue to be set.
+      event.returnValue = ""
+    },
     onMessageReceived(event) {
       const data = JSON.parse(event.data);
       console.log(data);
 
       if(data.error) {
         this.$emit('showConfirmModal', {
-          title: 'error',
+          title: 'Error',
           message: data.error,
           okButton: 'Ok'
         });
@@ -191,6 +224,16 @@ export default {
           this.state = this.states.Question;
           this.currentQuestionAnswered = false;
           this.$refs.timer.start(this.timePerQuestion);
+          break;
+        case 'cancelled':
+          this.$emit('showConfirmModal', {
+            title: 'Quiz cancelled',
+            message: 'Your teacher has cancelled the quiz',
+            okButton: 'Ok',
+            callback: () => {
+              this.state = this.states.liveQuizList;
+            }
+          });
           break;
       }
 
