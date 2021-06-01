@@ -320,7 +320,11 @@ form {
 
 #main-container {
   position: relative;
-  height: 100%;
+  min-height: calc(100vh - var(--header-height) - var(--nav-height) - var(--footer-height));
+
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 #timer {

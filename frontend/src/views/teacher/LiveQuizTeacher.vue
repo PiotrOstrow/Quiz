@@ -277,8 +277,10 @@ h1, h2, h3, p {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  height: 100%;
+  min-height: calc(100vh - var(--header-height) - var(--nav-height) - var(--footer-height));
+
   position:relative;
+  border: solid 5px red;
 }
 
 .inner-container {
