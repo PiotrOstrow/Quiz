@@ -9,7 +9,8 @@
     </header>
 
     <nav v-if="loggedIn">
-      <ul class="nav-links">
+      <HamburgerMenu id="hamburger-container" v-on:hamburgerClick="onBurgerClick" ref="hamburgerMenu"/>
+      <ul class="nav-links" ref="navUl">
         <li v-if="user.role === 'student'">
           <router-link to="/student/home">Home</router-link>
         </li>
@@ -36,13 +37,46 @@
           <router-link to="/teacher/live">Live Quiz</router-link>
         </li>
 
+        <li>
+          <a @click="logout">Log out</a>
+        </li>
+      </ul>
+
+    </nav>
+    <nav v-else id="empty_nav"></nav>
+    <div class="hidden-mobile-nav-container" ref="mobileNavContainer">
+      <ul ref="navUl">
+        <li v-if="user.role === 'student'">
+          <router-link to="/student/home">Home</router-link>
+        </li>
+        <li v-if="user.role === 'student'">
+          <router-link to="/student/profile">Profile</router-link>
+        </li>
+        <li v-if="user.role === 'student'">
+          <router-link to="/student/results">Results</router-link>
+        </li>
+        <li v-if="user.role === 'student'">
+          <router-link to="/student/repetition">ReQuiz</router-link>
+        </li>
+        <li v-if="user.role === 'student'">
+          <router-link to="/student/live">Live Quiz</router-link>
+        </li>
+
+        <li v-if="user.role === 'teacher'">
+          <router-link to="/teacher/home">Home</router-link>
+        </li>
+        <li v-if="user.role === 'teacher'">
+          <router-link to="/teacher/create">Create Quiz</router-link>
+        </li>
+        <li v-if="user.role === 'teacher'">
+          <router-link to="/teacher/live">Live Quiz</router-link>
+        </li>
 
         <li>
           <a @click="logout">Log out</a>
         </li>
       </ul>
-    </nav>
-    <nav v-else id="empty_nav"></nav>
+    </div>
     <div class="main">
       <router-view
           :loggedIn="loggedIn"
@@ -81,9 +115,10 @@ import fetchIntercept from 'fetch-intercept';
 
 import ConfirmModal from "@/components/ConfirmModal";
 import InputModal from "@/components/InputModal";
+import HamburgerMenu from "@/components/HamburgerMenu";
 
 export default {
-  components: {ConfirmModal, InputModal},
+  components: {HamburgerMenu, ConfirmModal, InputModal},
   data: function() {
     return {
       loggedIn: false,
@@ -97,7 +132,8 @@ export default {
       quizList: [],
       quizCategories: [],
       users: [],
-      singleQuizScore: {}
+      singleQuizScore: {},
+      isMobileNavOpen: false
     }
   },
   methods: {
@@ -168,6 +204,7 @@ export default {
       this.loggedIn = false;
       this.$router.push('/');
       api.logout();
+      this.isMobileNavOpen = false;
     },
     showSingleResult(data) {
       this.singleQuizScore = data;
@@ -214,6 +251,13 @@ export default {
             }
           }
         });
+    },
+    onBurgerClick(isOpen) {
+      this.isMobileNavOpen = isOpen;
+      if(isOpen)
+        this.$refs.mobileNavContainer.classList.add('hidden-mobile-nav-container-open');
+      else
+        this.$refs.mobileNavContainer.classList.remove('hidden-mobile-nav-container-open');
     }
   },
   mounted: function () {
@@ -347,7 +391,8 @@ nav {
   align-items: center;
   background-color: #00a2e8;
   /*min-height: 2vh;*/
-  height: var(--nav-height);
+  min-height: var(--nav-height);
+  position: relative;
 }
 
 #empty_nav {
@@ -355,9 +400,7 @@ nav {
 }
 
 .nav-links {
-  display: flex;
-  padding-left: 0;
-  list-style: none;
+  display: none;
 }
 
 .nav-links a {
@@ -369,6 +412,38 @@ nav {
 
 .nav-links a:hover {
   text-decoration: underline;
+}
+
+.hidden-mobile-nav-container {
+  height: 0;
+  display: none;
+}
+
+.hidden-mobile-nav-container ul {
+  /*border: solid 1px red;*/
+  margin: 0;
+  background-color: #00a2e8;
+  font-weight: bold;
+  color: white;
+  padding-left: 0;
+}
+
+.hidden-mobile-nav-container ul li {
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.hidden-mobile-nav-container a {
+  text-decoration: none;
+  color: white;
+  font-size: 22px;
+}
+
+.hidden-mobile-nav-container-open {
+  height: max-content;
+  display: block;
+  transition: 1s all ease;
 }
 
 button {
@@ -412,7 +487,7 @@ button:hover {
   border-collapse: collapse;
   font-size: 0.9em;
   font-family: sans-serif;
-  width: 400px;
+  width: 95%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -509,9 +584,13 @@ input[type="radio"] {
   transform: scale(1.05);
 }
 
+#hamburger-container {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
 
-
-@media screen and (min-width:710px) {
+@media screen and (min-width:768px) {
   :root {
     --header-height: 120px;
   }
@@ -538,6 +617,7 @@ input[type="radio"] {
     height: 100px;
     width: auto;
   }
+
   header {
     width: 100%;
     height: 120px;
@@ -545,6 +625,12 @@ input[type="radio"] {
     margin: 0 auto;
     background-color: #F29544;
     position: relative;
+  }
+
+  .nav-links {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
   }
 
   .blue-table {
@@ -561,6 +647,10 @@ input[type="radio"] {
     padding: 12px 15px;
     font-family: Pangolin, sans-serif;
     text-align: center;
+  }
+
+  #hamburger-container {
+    display: none;
   }
 }
 

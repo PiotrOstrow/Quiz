@@ -233,5 +233,9 @@ section {
   /*border: solid 2px black;*/
 }
 
+@media screen and (min-width:768px) {
+
+}
+
 </style>
 

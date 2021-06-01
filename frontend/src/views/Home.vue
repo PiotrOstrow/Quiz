@@ -120,7 +120,7 @@ img {
 }
 
 /* DESKTOP */
-@media screen and (min-width: 685px) {
+@media screen and (min-width: 768px) {
   h2 {
     margin-top: 5px;
   }

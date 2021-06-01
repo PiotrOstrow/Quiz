@@ -103,8 +103,12 @@ h1, h2, h3, p {
   text-align: center;
 }
 
+#main-container {
+  /*width: 90%;*/
+}
+
 #grid-container {
-  width: max-content;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -116,6 +120,7 @@ h1, h2, h3, p {
 /* Extra large devices (large laptops and devices, desktops, 1200px and up) */
 @media only screen and (min-width: 1100px) {
   #grid-container {
+    width: max-content;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 50px;
