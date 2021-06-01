@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 
 const { db } = require('./database.js');
+const liveQuizServer = require('./liveQuizServer.js');
 
 const authController = require('./controllers/authController.js');
 const studentController = require('./controllers/studentController.js');
@@ -45,11 +46,12 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-app.use(expressSession({
+const sessionParser = expressSession({
     secret: 'qwerty12345',
     resave: false,
     saveUninitialized: false
-}));
+});
+app.use(sessionParser);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -63,6 +65,8 @@ app.use(authController);
 app.use(studentController);
 app.use(teacherController);
 
-app.listen(HTTP_PORT, () => {
+const httpServer = app.listen(HTTP_PORT, () => {
     console.log('Server running on port ' + HTTP_PORT);
 });
+
+liveQuizServer(httpServer, sessionParser);

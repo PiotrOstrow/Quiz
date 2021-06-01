@@ -31,7 +31,7 @@ router.delete('/quiz/:id', checkAuthentication(Role.Teacher), (request, response
 router.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
     // TODO: validate input, incorrectAnswers array should be filled with non blanks first, which is done by frontend but it wouldn't hurt to make sure
     // needs to be a regular function instead of an arrow function in order for this.lastID to work
-    db.run('INSERT INTO quizzes(title, categoryID) VALUES(?, ?)', [request.body.title, request.body.categoryID], function (error) {
+    db.run('INSERT INTO quizzes(title, categoryID, isLiveQuiz) VALUES(?, ?, ?)', [request.body.title, request.body.categoryID, request.body.isLiveQuiz], function (error) {
         if (error) {
             console.log(error);
             response.status(500).end();
@@ -50,7 +50,7 @@ router.post('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
 })
 
 router.put('/quiz', checkAuthentication(Role.Teacher), (request, response) => {
-    db.run('UPDATE quizzes SET title = ?, categoryID = ? WHERE ID = ?', [request.body.title, request.body.categoryID, request.body.ID], error => {
+    db.run('UPDATE quizzes SET title = ?, categoryID = ?, isLiveQuiz = ? WHERE ID = ?', [request.body.title, request.body.categoryID, request.body.isLiveQuiz, request.body.ID], error => {
         if(error) {
             console.log(error);
             response.status(500).end();
@@ -80,6 +80,7 @@ router.get('/quizdetails/:id', checkAuthentication(Role.Teacher), (request, resp
         ID: '',
         title: '',
         categoryID: '',
+        isLiveQuiz: false,
         questions: []
     };
 
@@ -98,6 +99,7 @@ router.get('/quizdetails/:id', checkAuthentication(Role.Teacher), (request, resp
         data.ID = result.ID;
         data.title = result.title;
         data.categoryID = result.categoryID;
+        data.isLiveQuiz = result.isLiveQuiz;
 
         db.all('SELECT * FROM quiz_questions WHERE quizID = ?', [request.params.id], (error, result) => {
             data.questions = result;

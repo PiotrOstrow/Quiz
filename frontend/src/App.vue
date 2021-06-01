@@ -22,12 +22,18 @@
         <li v-if="user.role === 'student'">
           <router-link to="/student/repetition">ReQuiz</router-link>
         </li>
+        <li v-if="user.role === 'student'">
+          <router-link to="/student/live">Live Quiz</router-link>
+        </li>
 
         <li v-if="user.role === 'teacher'">
           <router-link to="/teacher/home">Home</router-link>
         </li>
         <li v-if="user.role === 'teacher'">
           <router-link to="/teacher/create">Create Quiz</router-link>
+        </li>
+        <li v-if="user.role === 'teacher'">
+          <router-link to="/teacher/live">Live Quiz</router-link>
         </li>
 
 
@@ -244,6 +250,8 @@ export default {
 
 :root {
   --footer-height: 52px;
+  --nav-height: 52px;
+  --header-height: 65px;
 }
 
 * {
@@ -307,7 +315,11 @@ a {
 
 header {
   width: 100%;
+/*<<<<<<< HEAD*/
   height: 65px;
+/*=======*/
+/*  height: var(--header-height);*/
+/*>>>>>>> liveQuiz*/
   grid-area: header;
   margin: 0 auto;
   background-color: #F29544;
@@ -339,7 +351,7 @@ nav {
   align-items: center;
   background-color: #00a2e8;
   /*min-height: 2vh;*/
-  height: 52px;
+  height: var(--nav-height);
 }
 
 #empty_nav {
@@ -393,8 +405,11 @@ button:hover {
 .main {
   grid-area: main;
   padding-bottom: var(--footer-height); /* offsets the footer */
+  min-height: calc(100vh - var(--header-height) - var(--nav-height) - var(--footer-height));
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*flex-direction: column;*/
 }
-
 
 .blue-table {
   margin: 25px auto;
@@ -501,6 +516,10 @@ input[type="radio"] {
 
 
 @media screen and (min-width:710px) {
+  :root {
+    --header-height: 120px;
+  }
+
   #header-container {
     height: 100%;
     width: 100%;

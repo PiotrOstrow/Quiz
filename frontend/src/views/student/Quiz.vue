@@ -162,7 +162,6 @@ h1{
 .h3-container {
   width: 100%;
   background-color: #F29544;
-  /*background-color: white;*/
   padding: 5px;
   color: #fcfcfc;
 }

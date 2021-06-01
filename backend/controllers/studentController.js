@@ -274,6 +274,7 @@ router.get('/student-home-results-for-each-quiz/', checkAuthentication(Role.Stud
         FROM quizzes
                  LEFT JOIN quiz_results on quizzes.ID = quiz_results.quizID AND userID = ?
                  INNER JOIN quiz_categories ON quizzes.categoryID = quiz_categories.ID
+        WHERE isLiveQuiz = 0 
         GROUP BY quizID, title`;
 
     db.all(sql,[request.user.ID], (error, result) => {

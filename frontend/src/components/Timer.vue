@@ -10,11 +10,11 @@
           stroke-dasharray="283"
           class="base-timer__path-remaining"
           d="
-          M 50, 50
-          m -45, 0
-          a 45,45 0 1,0 90,0
-          a 45,45 0 1,0 -90,0
-        "
+            M 50, 50
+            m -45, 0
+            a 45,45 0 1,0 90,0
+            a 45,45 0 1,0 -90,0
+          "
       ></path>
     </svg>
     <span id="base-timer-label">
@@ -29,7 +29,9 @@ export default {
   data: function() {
     return {
       timeLeft: 0,
-      maxTime: 0
+      maxTime: 0,
+      interval: undefined,
+      callback: () => {}
     }
   },
   computed: {
@@ -42,25 +44,32 @@ export default {
     }
   },
   methods: {
-    start(seconds) {
+    start(seconds, callback = () => {}) {
+      this.stop();
       this.timeLeft = seconds;
       this.maxTime = seconds;
-
-      let interval = undefined;
+      this.callback = callback;
 
       let handler = () => {
         this.timeLeft--;
         this.setCircleDasharray();
 
         if(this.timeLeft < 0) {
-          clearInterval(interval);
+          this.callback();
+          this.stop();
         }
       }
 
       setTimeout(() => {
         handler();
-        interval = setInterval(handler, 1000);
+        this.interval = setInterval(handler, 1000);
       }, 1);
+    },
+    stop() {
+      if(this.interval){
+        clearInterval(this.interval);
+        this.interval = undefined;
+      }
     },
     setCircleDasharray() {
       if(this.timeLeft < 0)
@@ -76,8 +85,8 @@ export default {
 /* Sets the containers height and width */
 .base-timer {
   position: relative;
-  height: 250px;
-  width: 250px;
+  height: 200px;
+  width: 200px;
 }
 
 /* Removes SVG styling that would hide the time label */
@@ -96,8 +105,8 @@ export default {
   position: absolute;
 
   /* Size should match the parent container */
-  width: 250px;
-  height: 250px;
+  width: 200px;
+  height: 200px;
 
   /* Keep the label aligned to the top */
   top: 0;

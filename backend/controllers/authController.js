@@ -101,6 +101,7 @@ function onAuthenticated(request, response) {
     db.serialize(() =>{
         db.all(`SELECT 
                     quizzes.ID, 
+                    quizzes.isLiveQuiz, 
                     title, 
                     categoryID,
                     categoryName,
