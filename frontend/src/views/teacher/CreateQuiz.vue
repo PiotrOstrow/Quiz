@@ -399,10 +399,13 @@ export default {
 
 #mobile-container {
   text-align: center;
-  margin: 25%;
+  min-height: calc(100vh - var(--header-height) - var(--nav-height) - var(--footer-height));
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
-@media screen and (min-width: 850px){
+@media screen and (min-width: 995px){
   #main-container {
     display: block;
   }

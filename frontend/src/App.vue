@@ -315,11 +315,7 @@ a {
 
 header {
   width: 100%;
-/*<<<<<<< HEAD*/
-  height: 65px;
-/*=======*/
-/*  height: var(--header-height);*/
-/*>>>>>>> liveQuiz*/
+  height: var(--header-height);
   grid-area: header;
   margin: 0 auto;
   background-color: #F29544;
