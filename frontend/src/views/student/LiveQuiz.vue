@@ -85,7 +85,6 @@ export default {
       currentQuestionID: 0,
       timePerQuestion: 60 * 60,
       timeForLeaderboard: 5,
-      questionTimeOverTimeout: undefined, // timeout function ID that is called when a question has not been answered
       currentQuestionAnswered: false,
       states: {
         liveQuizList: 1,
@@ -136,7 +135,7 @@ export default {
       nextOriginal();
     }
 
-    if(!this.isQuizOver() && this.state !== this.states.List && to.path !== '/') {
+    if(to.path !== '/' && this.state !== this.states.liveQuizList && this.state !== this.states.Finished) {
       this.$emit('showConfirmModal', {
         title: 'Leave live quiz?',
         message: 'Are you sure you want to leave?',
@@ -166,7 +165,7 @@ export default {
   },
   methods: {
     onBeforeUnload(event) {
-      if(!this.isQuizOver() && this.state !== this.states.List)
+      if(this.state !== this.states.liveQuizList && this.state !== this.states.Finished)
         return;
 
       event.preventDefault()
@@ -189,7 +188,7 @@ export default {
       switch(data.reply) {
         case 'joined':
           this.state = this.states.SplashScreen;
-          console.log('quizID is ' + data.quizID);
+          this.currentQuestionID = 0;
           this.timePerQuestion = data.timePerQuestion;
           this.timeForLeaderboard = data.timeForLeaderboard;
           api.getQuiz(data.quizID)
@@ -202,22 +201,19 @@ export default {
         case 'started': this.startQuiz(); break;
         case 'answer':
           this.selectedAnswerTarget.classList.add(data.correct ? 'right-answer' : 'wrong-answer');
-
-          setTimeout(() => {
-            this.selectedAnswerTarget.classList.remove('right-answer');
-            this.selectedAnswerTarget.classList.remove('wrong-answer');
-            this.currentQuestionAnswered = false;
-            this.showLeaderboard();
-          }, 2500);
           break;
         case 'leaderboard':
+          this.selectedAnswerTarget.classList.remove('right-answer');
+          this.selectedAnswerTarget.classList.remove('wrong-answer');
+          this.currentQuestionAnswered = false;
           this.state = this.isQuizOver() ? this.states.Finished : this.states.Leaderboard;
           this.leaderboard = data.leaderboard;
-            if(!this.isQuizOver()) {
-              this.$refs.timer.start(this.timeForLeaderboard);
-            } else {
-              this.$refs.timer.stop();
-            }
+
+          if(!this.isQuizOver()) {
+            this.$refs.timer.start(this.timeForLeaderboard);
+          } else {
+            this.$refs.timer.stop();
+          }
           break;
         case 'next':
           this.currentQuestionID++;
@@ -254,11 +250,8 @@ export default {
     },
     selectAnswer(event, value) {
       if(!this.currentQuestionAnswered) {
-        clearTimeout(this.questionTimeOverTimeout);
-
         this.currentQuestionAnswered = true;
         this.selectedAnswerTarget = event.target;
-        console.log('selected answer is ' + value);
 
         this.socket.send(JSON.stringify({
           action: 'answer',

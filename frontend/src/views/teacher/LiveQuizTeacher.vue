@@ -280,7 +280,6 @@ h1, h2, h3, p {
   min-height: calc(100vh - var(--header-height) - var(--nav-height) - var(--footer-height));
 
   position:relative;
-  border: solid 5px red;
 }
 
 .inner-container {

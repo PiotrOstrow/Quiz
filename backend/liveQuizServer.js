@@ -11,8 +11,8 @@ class Quiz {
         this.answers = new Map();
         this.questionStartTime = 0;
 
-        this.timeForLeaderboard = 5;
-        this.timePerQuestion = 10;
+        this.timeForLeaderboard = 10;
+        this.timePerQuestion = 20;
 
         this.timeoutID = undefined;
         this.timeoutFunction = () => {
@@ -219,6 +219,7 @@ function joinQuiz(user, code) {
     if(quiz && !quiz.isStarted()) {
         quiz.addParticipant(user);
         user.code = code;
+        user.score = 0;
 
         user.ws.send(JSON.stringify({
             reply: 'joined',
@@ -233,6 +234,7 @@ function joinQuiz(user, code) {
 }
 
 function startQuiz(user, code) {
+    code = code.toLowerCase();
     if(liveQuizzes.has(code)) {
         const quiz = liveQuizzes.get(code);
 
@@ -255,7 +257,8 @@ function cancelTeachersQuiz(user) {
         if (quiz.teacher.ID === user.ID) {
             liveQuizzes.delete(user.code);
 
-            quiz.sendToAllParticipants(JSON.stringify({reply:'cancelled'}));
+            if(!quiz.isQuizOver())
+                quiz.sendToAllParticipants(JSON.stringify({reply:'cancelled'}));
         }
     }
 }
