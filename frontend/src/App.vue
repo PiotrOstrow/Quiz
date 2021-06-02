@@ -376,7 +376,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 15px;
 }
 
 #header-container h1 {
@@ -588,6 +588,21 @@ input[type="radio"] {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+@media screen and (min-width: 350px) and (max-width: 767px) {
+  #header-container {
+    height: 100%;
+    width: 100%;
+    color: white;
+    margin: 0 auto;
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
 }
 
 @media screen and (min-width:768px) {

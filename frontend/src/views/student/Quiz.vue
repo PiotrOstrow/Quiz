@@ -187,8 +187,8 @@ main {
 }
 
 form {
-  display: flex;
-  /*grid-template-columns: 1fr 1fr 1fr 1fr;*/
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   justify-content: center;
   /*grid-gap: 10px;*/
 }
@@ -233,8 +233,85 @@ section {
   /*border: solid 2px black;*/
 }
 
-@media screen and (min-width:768px) {
+@media screen and (min-width:670px) {
+  h1{
+    font-size: 40px;
+    text-align: center;
+  }
 
+  .h3-container {
+    width: 100%;
+    background-color: #F29544;
+    padding: 5px;
+    color: #fcfcfc;
+  }
+
+  main {
+    width: max-content;
+    margin: 0 auto;
+  }
+
+  .question-paragraph {
+    text-align: center;
+    font-size:20px;
+    padding: 15px;
+    /*border: solid 1px black;*/
+  }
+
+  .question-container {
+    width: 100%;
+    background-color: white;
+    border-radius: 2px;
+    margin: 30px auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  form {
+    display: flex;
+    /*grid-template-columns: 1fr 1fr 1fr 1fr;*/
+    justify-content: center;
+    /*grid-gap: 10px;*/
+  }
+
+  .question-container h2 {
+    margin: 0;
+  }
+
+  .question-container h3 {
+    margin: 5px;
+  }
+
+  .quiz-navigation{
+    /*width: 400px;*/
+    margin: auto;
+  }
+
+  section {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto 50px;
+    grid-gap: 20px;
+  }
+
+  .textinput-container {
+    margin: 20px auto;
+    width: max-content;
+    padding-bottom: 20px; /* margin doesn't work at the bottom for whatever reason */
+  }
+
+  .textinput {
+    display: block;
+    text-align: center;
+  }
+
+  #submit-button {
+    margin: 20px auto;
+    display:block;
+    width: 200px;
+    height: 50px;
+    font-size: 24px;
+    /*border: solid 2px black;*/
+  }
 }
 
 </style>

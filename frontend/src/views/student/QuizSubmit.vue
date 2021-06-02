@@ -37,7 +37,7 @@ h1, h2, h3 {
   text-align: center;
 }
 #container {
-  width: max-content;
+  width: 100%;
   margin: 20px auto;
   padding: 20px;
   /*background-color: white;*/

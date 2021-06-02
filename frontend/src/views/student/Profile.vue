@@ -3,10 +3,12 @@
     <h1>Profile</h1>
     <main>
       <article>
-        <p>Username: {{ user.username }}</p>
-        <p>Name: {{ user.name }}</p>
-        <p>E-mail: {{ user.email }}</p>
-        <button @click="changePassword">Change password</button>
+        <p><b>Username:</b> {{ user.username }}</p>
+        <p><b>Name:</b> {{ user.name }}</p>
+        <p><b>E-mail:</b> {{ user.email }}</p>
+        <div class="change-password-button">
+          <button @click="changePassword">Change password</button>
+        </div>
       </article>
     </main>
   </div>
@@ -34,7 +36,7 @@ export default {
         okButton: 'Change',
         cancelButton: 'Cancel',
         callback: (result) => {
-          if(result) {
+          if (result) {
 
             let json = {
               currentPassword: result[0],
@@ -43,13 +45,13 @@ export default {
             }
 
             api.postJson('/change-password', json)
-              .then(response =>  response.json())
-              .then(json => {
-                this.$emit('showConfirmModal', {
-                  title: json.msg,
-                  okButton: 'ok'
+                .then(response => response.json())
+                .then(json => {
+                  this.$emit('showConfirmModal', {
+                    title: json.msg,
+                    okButton: 'ok'
+                  });
                 });
-              });
           }
         }
       });
@@ -60,12 +62,18 @@ export default {
 
 <style scoped>
 
-.profile{
+.profile {
   width: 200px;
   margin: auto;
 }
-h1{
+
+h1 {
   font-size: 40px;
+  text-align: center;
+}
+
+.change-password-button {
+  text-align: center;
 }
 
 </style>

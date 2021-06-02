@@ -94,9 +94,9 @@ main {
 .quizzes-container {
   padding: 20px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-gap: 20px;
-  /*width: 500px;*/
+  width: max-content;
   margin: 0 auto;
 }
 
@@ -144,22 +144,6 @@ main {
   margin: 10px;
 }
 
-.button-router {
-  text-decoration: none;
-  color: white;
-  background-color: rgba(0, 162, 232, 0.8);
-  padding: 3px 6px;
-  border-radius: 2px;
-  /*border: solid 2px black;*/
-  transition: transform .2s;
-
-}
-
-.button-router:hover {
-  transform: scale(1.05);
-  background-color: rgba(0, 162, 232, 1);
-}
-
 #category-container {
   margin: 0 auto;
   display: flex;
@@ -190,6 +174,29 @@ main {
 
 .radio-input-container + .radio-input-container {
   margin-left: 10px;
+}
+
+@media screen and (min-width: 620px) and (max-width: 921px) {
+  .quizzes-container {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    /*width: 500px;*/
+    margin: 0 auto;
+  }
+}
+
+
+@media screen and (min-width:922px) {
+  .quizzes-container {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 20px;
+    /*width: 500px;*/
+    margin: 0 auto;
+  }
 }
 
 </style>
