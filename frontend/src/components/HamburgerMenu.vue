@@ -12,18 +12,26 @@ export default {
   name: "HamburgerMenu",
   data: function() {
     return {
-      clicked: false
+      isOpen: false
     }
   },
   methods: {
     onClick() {
-      this.clicked = !this.clicked;
-      if(this.clicked)
+      this.isOpen = !this.isOpen;
+      if(this.isOpen)
         this.$refs.burgerContainerRef.classList.add('clicked');
       else
         this.$refs.burgerContainerRef.classList.remove('clicked');
 
-      this.$emit('hamburgerClick', this.clicked);
+      this.$emit('hamburgerClick', this.isOpen);
+    },
+    setOpen() {
+      this.$refs.burgerContainerRef.classList.add('clicked');
+      this.isOpen = true;
+    },
+    setClosed() {
+      this.$refs.burgerContainerRef.classList.remove('clicked');
+      this.isOpen = false;
     }
   }
 }
@@ -47,7 +55,7 @@ export default {
   background-color: white;
   margin: 4px auto;
 
-  transition: 1s transform, 1s opacity;
+  transition: 0.25s transform, 0.25s opacity;
 }
 
 #hamburger-container div:nth-child(3) {

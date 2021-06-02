@@ -47,29 +47,29 @@
     <div class="hidden-mobile-nav-container" ref="mobileNavContainer">
       <ul ref="navUl">
         <li v-if="user.role === 'student'">
-          <router-link to="/student/home">Home</router-link>
+          <router-link to="/student/home" v-on:click.native="hideBurgerMenu">Home</router-link>
         </li>
         <li v-if="user.role === 'student'">
-          <router-link to="/student/profile">Profile</router-link>
+          <router-link to="/student/profile" v-on:click.native="hideBurgerMenu">Profile</router-link>
         </li>
         <li v-if="user.role === 'student'">
-          <router-link to="/student/results">Results</router-link>
+          <router-link to="/student/results" v-on:click.native="hideBurgerMenu">Results</router-link>
         </li>
         <li v-if="user.role === 'student'">
-          <router-link to="/student/repetition">ReQuiz</router-link>
+          <router-link to="/student/repetition" v-on:click.native="hideBurgerMenu">ReQuiz</router-link>
         </li>
         <li v-if="user.role === 'student'">
-          <router-link to="/student/live">Live Quiz</router-link>
+          <router-link to="/student/live" v-on:click.native="hideBurgerMenu">Live Quiz</router-link>
         </li>
 
         <li v-if="user.role === 'teacher'">
-          <router-link to="/teacher/home">Home</router-link>
+          <router-link to="/teacher/home" v-on:click.native="hideBurgerMenu">Home</router-link>
         </li>
         <li v-if="user.role === 'teacher'">
-          <router-link to="/teacher/create">Create Quiz</router-link>
+          <router-link to="/teacher/create" v-on:click.native="hideBurgerMenu">Create Quiz</router-link>
         </li>
         <li v-if="user.role === 'teacher'">
-          <router-link to="/teacher/live">Live Quiz</router-link>
+          <router-link to="/teacher/live" v-on:click.native="hideBurgerMenu">Live Quiz</router-link>
         </li>
 
         <li>
@@ -132,8 +132,7 @@ export default {
       quizList: [],
       quizCategories: [],
       users: [],
-      singleQuizScore: {},
-      isMobileNavOpen: false
+      singleQuizScore: {}
     }
   },
   methods: {
@@ -204,7 +203,7 @@ export default {
       this.loggedIn = false;
       this.$router.push('/');
       api.logout();
-      this.isMobileNavOpen = false;
+      this.hideBurgerMenu();
     },
     showSingleResult(data) {
       this.singleQuizScore = data;
@@ -253,11 +252,18 @@ export default {
         });
     },
     onBurgerClick(isOpen) {
-      this.isMobileNavOpen = isOpen;
       if(isOpen)
-        this.$refs.mobileNavContainer.classList.add('hidden-mobile-nav-container-open');
+        this.showBurgerMenu();
       else
-        this.$refs.mobileNavContainer.classList.remove('hidden-mobile-nav-container-open');
+        this.hideBurgerMenu();
+    },
+    showBurgerMenu() {
+      this.$refs.mobileNavContainer.classList.add('hidden-mobile-nav-container-open');
+      this.$refs.hamburgerMenu.setOpen();
+    },
+    hideBurgerMenu() {
+      this.$refs.mobileNavContainer.classList.remove('hidden-mobile-nav-container-open');
+      this.$refs.hamburgerMenu.setClosed();
     }
   },
   mounted: function () {
@@ -429,7 +435,7 @@ nav {
 }
 
 .hidden-mobile-nav-container ul li {
-  padding: 10px;
+  /*padding: 10px;*/
   width: 100%;
   text-align: center;
 }
@@ -438,6 +444,8 @@ nav {
   text-decoration: none;
   color: white;
   font-size: 22px;
+  display: block;
+  padding: 10px;
 }
 
 .hidden-mobile-nav-container-open {
