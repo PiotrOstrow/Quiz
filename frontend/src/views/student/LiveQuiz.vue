@@ -141,19 +141,7 @@ export default {
     }
   },
   mounted() {
-    this.state = this.states.Question;
-    for(let i = 0; i < 5; i++) {
-      this.leaderboard.push({
-        name: 'Bob' + i,
-        score: Math.round(Math.random() * 200)
-      })
-    }
-    api.getQuiz(5)
-        .then(response => response.json())
-        .then(json => {
-          this.quiz = json;
-          // setTimeout(() => this.startQuiz(), 1000);
-        });
+    this.state = this.states.liveQuizList;
 
     this.socket = new WebSocket('ws://' + window.location.hostname + ':3000');
 
