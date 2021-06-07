@@ -22,30 +22,14 @@
 
       </div>
 
-      <div class="question-container" v-if="state === states.Question && quiz.questions.length > currentQuestionID - 1">
-        <div class="h2-container">
-          <h2>Question {{currentQuestionID+1}}/{{ quiz.questions.length }}</h2>
-        </div>
-        <h3 class="question-paragraph">{{quiz.questions[currentQuestionID].question}}</h3>
-        <form class="answer-alternatives">
-          <div class="radio-input-container" v-on:click="selectAnswer($event, quiz.questions[currentQuestionID].answers[0])">
-            <input type="radio" name="quiz-name">
-            <label>{{ quiz.questions[currentQuestionID].answers[0] }}</label>
-          </div>
-          <div class="radio-input-container" v-on:click="selectAnswer($event, quiz.questions[currentQuestionID].answers[1])">
-            <input type="radio" name="quiz-name">
-            <label>{{ quiz.questions[currentQuestionID].answers[1] }}</label>
-          </div>
-          <div class="radio-input-container" v-on:click="selectAnswer($event, quiz.questions[currentQuestionID].answers[2])">
-            <input type="radio" name="quiz-name">
-            <label>{{ quiz.questions[currentQuestionID].answers[2] }}</label>
-          </div>
-          <div class="radio-input-container" v-on:click="selectAnswer($event, quiz.questions[currentQuestionID].answers[3])">
-            <input type="radio" name="quiz-name">
-            <label>{{ quiz.questions[currentQuestionID].answers[3] }}</label>
-          </div>
-        </form>
-      </div>
+      <Question
+          ref="question"
+          v-if="state === states.Question && quiz.questions.length > currentQuestionID - 1"
+          :question="quiz.questions[currentQuestionID]"
+          :questionIndex="currentQuestionID"
+          :title="'Question' + (currentQuestionID + 1) + '/' + quiz.questions.length"
+          v-on:selected="selectAnswer"/>
+
       <div id="score-container" v-if="state === states.Leaderboard">
         <h2>Top 5 scores:</h2>
         <table class="blue-table">
@@ -79,11 +63,12 @@
 <script>
 import Timer from '@/components/Timer.vue'
 import FinalLeaderboard from '@/components/FinalLeaderboard.vue'
+import Question from '@/components/Question.vue';
 import api from '@/api.js'
 
 export default {
   name: "LiveQuiz",
-  components: {Timer, FinalLeaderboard},
+  components: { Timer, FinalLeaderboard, Question },
   props: ['user'],
   data: function () {
     return {
@@ -103,7 +88,6 @@ export default {
       code: '',
       socket: undefined,
       participants: [],
-      selectedAnswerTarget: undefined,
       leaderboard: []
     }
   },
@@ -158,6 +142,12 @@ export default {
   },
   mounted() {
     this.state = this.states.liveQuizList;
+    // api.getQuiz(5)
+    //     .then(response => response.json())
+    //     .then(json => {
+    //       this.quiz = json;
+    //       // setTimeout(() => this.startQuiz(), 1000);
+    //     });
 
     this.socket = new WebSocket('ws://' + window.location.hostname + ':3000');
 
@@ -206,11 +196,10 @@ export default {
           break;
         case 'started': this.startQuiz(); break;
         case 'answer':
-          this.selectedAnswerTarget.classList.add(data.correct ? 'right-answer' : 'wrong-answer');
+          this.$refs.question.showAnswerResult(data.correct);
           break;
         case 'leaderboard':
-          this.selectedAnswerTarget.classList.remove('right-answer');
-          this.selectedAnswerTarget.classList.remove('wrong-answer');
+          this.$refs.question.hideAnswerResult();
           this.currentQuestionAnswered = false;
           this.state = this.isQuizOver() ? this.states.Finished : this.states.Leaderboard;
           this.leaderboard = data.leaderboard;
@@ -254,10 +243,9 @@ export default {
       this.state = this.states.Question;
       this.$refs.timer.start(this.timePerQuestion);
     },
-    selectAnswer(event, value) {
+    selectAnswer(id, value) {
       if(!this.currentQuestionAnswered) {
         this.currentQuestionAnswered = true;
-        this.selectedAnswerTarget = event.target;
 
         this.socket.send(JSON.stringify({
           action: 'answer',
@@ -341,14 +329,6 @@ main {
 
 #score-container {
   padding-bottom: 100px;
-}
-
-.wrong-answer, .wrong-answer:hover {
-  background-color: red;
-}
-
-.right-answer, .right-answer:hover {
-  background-color: #0f8e00;
 }
 
 .code-input {

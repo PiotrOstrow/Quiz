@@ -2,37 +2,15 @@
   <div class="quiz-navigation">
     <main>
       <h1>{{ quiz.title }}</h1>
-      <div class="question-container" v-for="(question, index) in quiz.questions" v-bind:key="question.ID">
 
-        <div class="h3-container">
-          <h2>Question {{index+1}}</h2>
-        </div>
-        <h3 class="question-paragraph"> {{ question.question }} </h3>
-        <form v-on:submit.prevent="" v-if="question.answers">
-          <div class="radio-input-container" v-if="question.answers[0]">
-            <input type="radio" v-bind:id="question.ID + '_answer1'" name="quiz-name" v-bind:value="question.answers[0]" v-on:click="selected($event, question.ID)">
-            <label v-bind:for="question.ID + '_answer1'"> {{ question.answers[0] }} </label><br>
-          </div>
+      <Question
+          v-for="(question, index) in quiz.questions"
+          v-bind:key="question.ID"
+          :question="question"
+          :questionIndex="index"
+          :title="'Question' + (index + 1)"
+          v-on:selected="selected"/>
 
-          <div class="radio-input-container" v-if="question.answers[1]">
-            <input type="radio" v-bind:id="question.ID + '_answer2'" name="quiz-name" v-bind:value="question.answers[1]" v-on:click="selected($event, question.ID)">
-            <label v-bind:for="question.ID + '_answer2'"> {{ question.answers[1] }} </label><br>
-          </div>
-
-          <div class="radio-input-container" v-if="question.answers[2]">
-            <input type="radio" v-bind:id="question.ID + '_answer3'" name="quiz-name" v-bind:value="question.answers[2]" v-on:click="selected($event, question.ID)">
-            <label v-bind:for="question.ID + '_answer3'"> {{ question.answers[2] }}</label><br>
-          </div>
-
-          <div class="radio-input-container" v-if="question.answers[3]">
-            <input type="radio" v-bind:id="question.ID + '_answer4'" name="quiz-name" v-bind:value="question.answers[3]" v-on:click="selected($event, question.ID)">
-            <label v-bind:for="question.ID + '_answer4'"> {{ question.answers[3] }} </label><br>
-          </div>
-        </form>
-        <div v-else class="textinput-container">
-          <input placeholder="Enter answer" class="textinput" v-on:input="selected($event, question.ID)">
-        </div>
-      </div>
       <button id="submit-button" @click="submit" :disabled="!submitEnabled">Submit</button>
     </main>
   </div>
@@ -41,9 +19,11 @@
 <script>
 
 import api from '../../api.js';
+import Question from '@/components/Question.vue';
 
 export default {
   name: "Quiz.vue",
+  components: { Question },
   data: function() {
     return {
       quiz: {},
@@ -97,9 +77,10 @@ export default {
           this.$emit('showSingleResult', resultData);
         });
     },
-    selected(event, id) { // used for both radio boxes and text input
-      this.answers.set(id, event.target.value);
-
+    selected(id, value) { // used for both radio boxes and text input
+      // this.answers.set(id, event.target.value);
+      this.answers.set(id, value);
+      console.log('selected answer ' + value + ' for question ID ' + id);
       this.submitEnabled = this.answers.size === this.quiz.questions.length;
     },
     onBeforeUnload(event) {
@@ -167,7 +148,7 @@ h1{
 }
 
 main {
-  width: max-content;
+  width: 90%;
   margin: 0 auto;
 }
 

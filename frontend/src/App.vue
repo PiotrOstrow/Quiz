@@ -571,12 +571,6 @@ input[type="radio"] {
   width: 0;
 }
 
-.radio-input-container label{
-  width: 140px;
-  text-align: center;
-  user-select: none;
-}
-
 .radio-input-container label {
   display: inline-block;
   background-color: rgba(0, 162, 232, 0.8);
