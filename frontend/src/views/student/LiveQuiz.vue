@@ -3,7 +3,13 @@
     <main>
       <div class="live-quiz-list-container" v-if="state === states.liveQuizList">
         <h1>Live quiz</h1>
-        <p>Förklaring för livequiz här...</p>
+        <p>
+          Your teacher will provide you with a code to join a live quiz.
+          Once all students have joined, the quiz will start!
+        </p>
+        <p>
+          Have fun and good luck!
+        </p>
         <input class="code-input" placeholder="Enter code here..." v-model="code"/>
         <button v-on:click="join">Join live quiz</button>
       </div>
@@ -21,7 +27,7 @@
           <h2>Question {{currentQuestionID+1}}/{{ quiz.questions.length }}</h2>
         </div>
         <h3 class="question-paragraph">{{quiz.questions[currentQuestionID].question}}</h3>
-        <form>
+        <form class="answer-alternatives">
           <div class="radio-input-container" v-on:click="selectAnswer($event, quiz.questions[currentQuestionID].answers[0])">
             <input type="radio" name="quiz-name">
             <label>{{ quiz.questions[currentQuestionID].answers[0] }}</label>
@@ -165,7 +171,7 @@ export default {
   },
   methods: {
     onBeforeUnload(event) {
-      if(this.state !== this.states.liveQuizList && this.state !== this.states.Finished)
+      if(this.state === this.states.liveQuizList || this.state === this.states.Finished)
         return;
 
       event.preventDefault()
@@ -280,6 +286,8 @@ main {
   margin: auto;
 }
 
+
+
 .question-container {
   width: 100%;
   background-color: white;
@@ -288,9 +296,12 @@ main {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
-.question-container h2{
+.question-container h2 {
   margin: 0;
-  padding: 5px;
+}
+
+.question-container h3 {
+  margin: 5px;
 }
 
 .h2-container {
@@ -306,15 +317,10 @@ main {
   padding: 15px;
 }
 
-form {
-  display: flex;
-  justify-content: center;
-}
 
 #main-container {
   position: relative;
   min-height: calc(100vh - var(--header-height) - var(--nav-height) - var(--footer-height));
-
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -323,7 +329,7 @@ form {
 #timer {
   position: absolute;
   top: 10px;
-  right: 50px;
+  right: 10px;
 }
 
 main {
@@ -331,9 +337,6 @@ main {
   justify-content: center;
   flex-direction: column;
   height: 100%;
-}
-
-.question-container {
 }
 
 #score-container {
@@ -352,14 +355,25 @@ main {
   padding: 8px;
   font-size: 28px;
   text-align:center;
+  width: 280px;
+  margin: 10px auto;
 }
 
 .live-quiz-list-container {
   padding-bottom: 200px;
+  width: 100%;
 }
 
 .live-quiz-list-container * {
   display: block;
+}
+
+.live-quiz-list-container p {
+  width: 300px;
+  word-wrap: break-word;
+  line-break: normal;
+  margin: 10px auto;
+
 }
 
 .live-quiz-list-container button {
@@ -368,6 +382,34 @@ main {
   width: 200px;
   height: 50px;
   font-size: 24px;
+}
+
+.inner-container p {
+  max-width: 300px;
+}
+
+@media screen and (min-width:670px) {
+  .code-input {
+    padding: 8px;
+    font-size: 28px;
+    text-align:center;
+  }
+
+
+  .live-quiz-list-container p {
+    width: auto;
+    max-width: 500px;
+  }
+
+  .inner-container p {
+    max-width: 500px;
+  }
+
+  #timer {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+  }
 }
 
 </style>

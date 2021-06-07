@@ -82,11 +82,13 @@ export default {
 </script>
 
 <style scoped>
+
+
 /* Sets the containers height and width */
 .base-timer {
   position: relative;
-  height: 200px;
-  width: 200px;
+  height: 150px;
+  width: 150px;
 }
 
 /* Removes SVG styling that would hide the time label */
@@ -105,8 +107,8 @@ export default {
   position: absolute;
 
   /* Size should match the parent container */
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
 
   /* Keep the label aligned to the top */
   top: 0;
@@ -117,7 +119,7 @@ export default {
   justify-content: center;
 
   /* Sort of an arbitrary number; adjust to your liking */
-  font-size: 48px;
+  font-size: 38px;
 }
 
 .base-timer__path-remaining {
