@@ -469,17 +469,7 @@ button:disabled {
   background-color: gray;
 }
 
-button:disabled:hover {
-  background-color:grey;
-  transform: none;
-}
 
-button:hover {
-  cursor: pointer;
-  background-color: rgba(0, 162, 232, 1);
-  transform: scale(1.05);
-
-}
 
 .main {
   grid-area: main;
@@ -507,9 +497,10 @@ button:hover {
 
 .blue-table th,
 .blue-table td {
-  padding: 7px 0px;
+  padding: 7px;
   font-family: Pangolin, sans-serif;
   text-align: center;
+  width: min-content;
 }
 
 .blue-table tbody tr {
@@ -523,11 +514,6 @@ button:hover {
 
 .blue-table tbody tr:last-of-type {
   border-bottom: 2px solid #00a2e8;
-}
-
-.blue-table tbody tr:hover {
-  background-color: #afcce8;
-  color: black;
 }
 
 .blue-table tbody tr.active-row {
@@ -546,11 +532,6 @@ button:hover {
   margin: 2px;
   color: black;
   padding: 4px;
-}
-
-.blue-table tr button:hover {
-  /*background-color: white;*/
-  color: white;
 }
 
 .blue-table button {
@@ -578,11 +559,6 @@ input[type="radio"] {
   transition: transform .2s;
 }
 
-.radio-input-container label:hover {
-  background-color: rgba(0, 162, 232, 1);
-  transform: scale(1.05);
-}
-
 #hamburger-container {
   position: absolute;
   right: 0;
@@ -607,6 +583,33 @@ input[type="radio"] {
 @media screen and (min-width:768px) {
   :root {
     --header-height: 120px;
+  }
+
+  .blue-table tbody tr:hover {
+    background-color: #afcce8;
+    color: black;
+  }
+
+  .radio-input-container label:hover {
+    background-color: rgba(0, 162, 232, 1);
+    transform: scale(1.05);
+  }
+
+  .blue-table tr button:hover {
+    /*background-color: white;*/
+    color: white;
+  }
+
+  button:hover {
+    cursor: pointer;
+    background-color: rgba(0, 162, 232, 1);
+    transform: scale(1.05);
+
+  }
+
+  button:disabled:hover {
+    background-color:grey;
+    transform: none;
   }
 
   #header-container {

@@ -264,6 +264,7 @@ h1, h2, h3, p {
 main {
   width: max-content;
   margin: 0 auto;
+  padding-top: 150px;
 }
 
 .quiz-navigation {

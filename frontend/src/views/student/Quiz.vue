@@ -9,7 +9,7 @@
           :question="question"
           :questionIndex="index"
           :title="'Question ' + (index + 1)"
-          v-on:selected="selected"/>
+          v-on:onSelected="selected"/>
 
       <button id="submit-button" @click="submit" :disabled="!submitEnabled">Submit</button>
     </main>

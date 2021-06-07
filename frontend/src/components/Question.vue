@@ -38,22 +38,31 @@ export default {
   props: ['question', 'questionIndex', 'title'],
   data: function() {
     return {
-      selectedAnswerTarget: undefined
+      selectedAnswerTarget: undefined,
+      locked: false
     }
   },
   methods: {
     selected(event, id) {
       this.selectedAnswerTarget = event.currentTarget;
       if(event.target.value) {
-        this.$emit('onSelected', id, event.target.value);
+        console.log(event.target.value);
+        if(this.locked) {
+          event.preventDefault();
+        } else {
+          this.locked = true;
+          this.$emit('onSelected', id, event.target.value);
+        }
       }
     },
     showAnswerResult(correct) {
       this.selectedAnswerTarget.classList.add(correct ? 'right-answer' : 'wrong-answer');
+      this.locked = true;
     },
     hideAnswerResult() {
       this.selectedAnswerTarget.classList.remove('right-answer');
       this.selectedAnswerTarget.classList.remove('wrong-answer');
+      this.locked = false;
     }
   }
 }
