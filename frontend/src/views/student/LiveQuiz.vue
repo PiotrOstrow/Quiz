@@ -22,13 +22,15 @@
 
       </div>
 
-      <Question
-          ref="question"
-          v-if="state === states.Question && quiz.questions.length > currentQuestionID - 1"
-          :question="quiz.questions[currentQuestionID]"
-          :questionIndex="currentQuestionID"
-          :title="'Question' + (currentQuestionID + 1) + '/' + quiz.questions.length"
-          v-on:selected="selectAnswer"/>
+      <div v-if="state === states.Question && quiz.questions.length > currentQuestionID - 1">
+        <Question
+            ref="question"
+            :question="quiz.questions[currentQuestionID]"
+            :questionIndex="currentQuestionID"
+            :title="'Question ' + (currentQuestionID + 1) + '/' + quiz.questions.length"
+            v-on:onSelected="selectAnswer"
+        />
+      </div>
 
       <div id="score-container" v-if="state === states.Leaderboard">
         <h2>Top 5 scores:</h2>
@@ -141,13 +143,14 @@ export default {
     }
   },
   mounted() {
-    this.state = this.states.liveQuizList;
-    // api.getQuiz(5)
-    //     .then(response => response.json())
-    //     .then(json => {
-    //       this.quiz = json;
-    //       // setTimeout(() => this.startQuiz(), 1000);
-    //     });
+    this.state = this.states.Question;
+    this.currentQuestionID = 1;
+    api.getQuiz(5)
+        .then(response => response.json())
+        .then(json => {
+          this.quiz = json;
+          // setTimeout(() => this.startQuiz(), 1000);
+        });
 
     this.socket = new WebSocket('ws://' + window.location.hostname + ':3000');
 

@@ -168,6 +168,9 @@ class Quiz {
 const liveQuizzes = new Map();
 
 function initQuiz(user, quizID, quizCode) {
+    if(quizCode == null)
+        return;
+
     quizCode = quizCode.toLowerCase();
 
     if(liveQuizzes.has(quizCode)){

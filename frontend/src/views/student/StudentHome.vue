@@ -178,11 +178,6 @@ main {
   color:white;
 }
 
-.radio-input-container input[type="radio"]:checked + label {
-  background-color: #2c3e50;
-  color:white;
-}
-
 .radio-input-container {
   display: inline-block;
 }

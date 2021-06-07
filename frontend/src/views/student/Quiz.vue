@@ -8,7 +8,7 @@
           v-bind:key="question.ID"
           :question="question"
           :questionIndex="index"
-          :title="'Question' + (index + 1)"
+          :title="'Question ' + (index + 1)"
           v-on:selected="selected"/>
 
       <button id="submit-button" @click="submit" :disabled="!submitEnabled">Submit</button>

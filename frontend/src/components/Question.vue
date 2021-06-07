@@ -44,8 +44,9 @@ export default {
   methods: {
     selected(event, id) {
       this.selectedAnswerTarget = event.currentTarget;
-      console.log(event.currentTarget);
-      this.$emit('selected', id, event.target.value);
+      if(event.target.value) {
+        this.$emit('onSelected', id, event.target.value);
+      }
     },
     showAnswerResult(correct) {
       this.selectedAnswerTarget.classList.add(correct ? 'right-answer' : 'wrong-answer');
@@ -119,11 +120,15 @@ section {
   text-align: center;
 }
 
-.wrong-answer label, .wrong-answer:hover label {
+input[type="radio"]:checked + label {
+  background-color: #014055;
+}
+
+.wrong-answer label, .wrong-answer:hover label, .wrong-answer input[type="radio"]:checked + label {
   background-color: red;
 }
 
-.right-answer label, .right-answer:hover label {
+.right-answer label, .right-answer:hover label, .right-answer input[type="radio"]:checked + label {
   background-color: #0f8e00;
 }
 

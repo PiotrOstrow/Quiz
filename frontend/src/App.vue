@@ -561,9 +561,6 @@ button:hover {
   margin: 10px;
 }
 
-input[type="radio"]:checked + label {
-  background-color: #014055;
-}
 
 input[type="radio"] {
   opacity: 0;
