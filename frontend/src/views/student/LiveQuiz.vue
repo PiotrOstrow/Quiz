@@ -1,5 +1,6 @@
 <template>
   <div id="main-container">
+    <timer v-show="state === states.Question || state === states.Leaderboard" ref="timer" id="timer"/>
     <main>
       <div class="live-quiz-list-container" v-if="state === states.liveQuizList">
         <h1>Live quiz</h1>
@@ -56,9 +57,6 @@
         </h3>
       </div>
     </main>
-
-    <timer v-show="state === states.Question || state === states.Leaderboard" ref="timer" id="timer"/>
-
   </div>
 </template>
 
@@ -143,7 +141,19 @@ export default {
     }
   },
   mounted() {
-    this.state = this.states.liveQuizList;
+    this.state = this.states.Question;
+    for(let i = 0; i < 5; i++) {
+      this.leaderboard.push({
+        name: 'Bob' + i,
+        score: Math.round(Math.random() * 200)
+      })
+    }
+    api.getQuiz(5)
+        .then(response => response.json())
+        .then(json => {
+          this.quiz = json;
+          // setTimeout(() => this.startQuiz(), 1000);
+        });
 
     this.socket = new WebSocket('ws://' + window.location.hostname + ':3000');
 
@@ -264,20 +274,17 @@ h1, h2, h3, p {
 main {
   width: max-content;
   margin: 0 auto;
-  padding-top: 150px;
 }
 
 .quiz-navigation {
   margin: auto;
 }
 
-
-
 .question-container {
   width: 100%;
   background-color: white;
   border-radius: 2px;
-  margin: 30px auto;
+  margin: 15px auto;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -312,9 +319,7 @@ main {
 }
 
 #timer {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  margin: 10px auto 0 auto;
 }
 
 main {
@@ -383,9 +388,7 @@ main {
   }
 
   #timer {
-    position: absolute;
-    top: 10px;
-    right: 50px;
+    margin: 0 auto;
   }
 }
 
