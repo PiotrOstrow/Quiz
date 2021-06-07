@@ -56,12 +56,15 @@ export default {
       }
     },
     showAnswerResult(correct) {
-      this.selectedAnswerTarget.classList.add(correct ? 'right-answer' : 'wrong-answer');
+      if(this.selectedAnswerTarget)
+        this.selectedAnswerTarget.classList.add(correct ? 'right-answer' : 'wrong-answer');
       this.locked = true;
     },
     hideAnswerResult() {
-      this.selectedAnswerTarget.classList.remove('right-answer');
-      this.selectedAnswerTarget.classList.remove('wrong-answer');
+      if(this.selectedAnswerTarget) {
+        this.selectedAnswerTarget.classList.remove('right-answer');
+        this.selectedAnswerTarget.classList.remove('wrong-answer');
+      }
       this.locked = false;
     }
   }
