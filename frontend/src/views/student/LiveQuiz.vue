@@ -143,14 +143,7 @@ export default {
     }
   },
   mounted() {
-    this.state = this.states.Question;
-    this.currentQuestionID = 1;
-    api.getQuiz(5)
-        .then(response => response.json())
-        .then(json => {
-          this.quiz = json;
-          // setTimeout(() => this.startQuiz(), 1000);
-        });
+    this.state = this.states.liveQuizList;
 
     this.socket = new WebSocket('ws://' + window.location.hostname + ':3000');
 
