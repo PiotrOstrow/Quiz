@@ -35,6 +35,11 @@ class Quiz {
         this.sendToAllParticipants(data);
     }
 
+    stop() {
+        this.participants.clear();
+        clearTimeout(this.timeoutID);
+    }
+
     sendToAllParticipants(data) {
         for(const participant of this.participants.entries())
             participant[1].ws.send(data);
@@ -259,6 +264,8 @@ function cancelTeachersQuiz(user) {
 
         if (quiz.teacher.ID === user.ID) {
             liveQuizzes.delete(user.code);
+
+            quiz.stop();
 
             if(!quiz.isQuizOver())
                 quiz.sendToAllParticipants(JSON.stringify({reply:'cancelled'}));

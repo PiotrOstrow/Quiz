@@ -2,10 +2,12 @@
   <div id="app">
 
     <header>
-      <img id="logo" alt="Learn4Fun" src="./assets/logo.jpg">
-      <div id="header-container">
-        <h1>Learn for fun!</h1>
-      </div>
+      <router-link :to="user ? user.role === 'student' ? '/student/home' : '/teacher/home' : '/'">
+        <img id="logo" alt="Learn4Fun" src="./assets/logo.jpg">
+        <div id="header-container">
+          <h1>Learn for fun!</h1>
+        </div>
+      </router-link>
     </header>
 
     <nav v-if="loggedIn">
