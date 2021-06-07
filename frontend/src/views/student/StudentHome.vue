@@ -147,9 +147,24 @@ main {
 #category-container {
   margin: 0 auto;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   border-bottom: solid 2px #00a2e8;
-  width: 100%;
+  border-top: solid 2px #00a2e8;
+
+  width: 90%;
+  text-align: center;
+}
+
+#category-container div {
+  /*border-bottom: solid 2px #00a2e8;*/
+  width: max-content;
+  background-color: #00a2e8;
+  margin: 5px auto;
+}
+
+#category-container div label {
+  color: white;
 }
 
 .radio-input-container label {
@@ -176,7 +191,7 @@ main {
   margin-left: 10px;
 }
 
-@media screen and (min-width: 620px) and (max-width: 921px) {
+@media screen and (min-width: 620px) {
   .quizzes-container {
     padding: 20px;
     display: grid;
@@ -185,17 +200,40 @@ main {
     /*width: 500px;*/
     margin: 0 auto;
   }
-}
 
+  #category-container {
+    flex-direction: row;
+
+    border-bottom: solid 2px #00a2e8;
+    /*border-top: solid 2px #00a2e8;*/
+  }
+
+  #category-container div {
+    /*border-bottom: solid 2px #00a2e8;*/
+    /*width: max-content;*/
+    /*background-color: #00a2e8;*/
+    /*margin: 10px auto;*/
+    background-color: transparent;
+
+  }
+
+  #category-container div label {
+    color: black;
+  }
+
+  #category-container input[type="radio"]:checked + label {
+    background-color: #014055;
+    color: white;
+  }
+
+  #category-container input[type="radio"]:hover + label {
+    color: white;
+  }
+}
 
 @media screen and (min-width:922px) {
   .quizzes-container {
-    padding: 20px;
-    display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 20px;
-    /*width: 500px;*/
-    margin: 0 auto;
   }
 }
 
