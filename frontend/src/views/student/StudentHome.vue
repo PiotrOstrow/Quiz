@@ -55,11 +55,14 @@ export default {
       let set = new Set();
 
       for(const quiz of this.quizList)
-        set.add(quiz.categoryID);
+        if(!quiz.isLiveQuiz)
+          set.add(quiz.categoryID);
 
       for(const category of this.quizCategories)
         if (set.has(category.ID))
           filtered.push(category);
+
+
 
       return filtered;
     },

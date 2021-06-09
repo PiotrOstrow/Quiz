@@ -112,6 +112,7 @@ form {
   width: 100%; /*140px*/
   text-align: center;
   user-select: none;
+  line-break: anywhere;
 }
 
 section {

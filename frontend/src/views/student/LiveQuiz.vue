@@ -259,9 +259,8 @@ h1, h2, h3, p {
   text-align: center;
 }
 
-main {
-  width: max-content;
-  margin: 0 auto;
+p {
+  margin: 16px auto;
 }
 
 .quiz-navigation {
@@ -315,6 +314,8 @@ main {
   justify-content: center;
   flex-direction: column;
   height: 100%;
+  width: 90%;
+  margin: 0 auto;
 }
 
 #score-container {
@@ -365,6 +366,9 @@ main {
     text-align:center;
   }
 
+  main {
+    width: auto;
+  }
 
   .live-quiz-list-container p {
     width: auto;
