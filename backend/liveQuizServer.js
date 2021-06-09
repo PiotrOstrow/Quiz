@@ -11,7 +11,7 @@ class Quiz {
         this.answers = new Map();
         this.questionStartTime = 0;
 
-        this.timeForLeaderboard = 10;
+        this.timeForLeaderboard = 7;
         this.timePerQuestion = 20;
 
         this.timeoutID = undefined;
