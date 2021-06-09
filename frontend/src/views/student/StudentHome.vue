@@ -4,7 +4,7 @@
       <h1>My Quizzes</h1>
 
       <div id="category-container">
-        <div class="radio-input-container" v-for="category of quizCategories" v-bind:key="category.ID">
+        <div class="radio-input-container" v-for="category of quizCategoriesFiltered" v-bind:key="category.ID">
           <input type="radio" name="category" v-bind:id="category.ID" v-bind:value="category.ID" v-on:click="setCategory($event, category.ID)">
           <label v-bind:for="category.ID">{{ category.categoryName }}</label>
         </div>
@@ -50,6 +50,19 @@ export default {
     }
   },
   computed: {
+    quizCategoriesFiltered() {
+      let filtered = [];
+      let set = new Set();
+
+      for(const quiz of this.quizList)
+        set.add(quiz.categoryID);
+
+      for(const category of this.quizCategories)
+        if (set.has(category.ID))
+          filtered.push(category);
+
+      return filtered;
+    },
     quizListFiltered() {
       if(this.selectedCategory === 0)
         return this.quizScore;
