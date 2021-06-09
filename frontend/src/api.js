@@ -13,17 +13,17 @@ export default {
     putJson
 }
 
-const hostname = '185.181.10.135';
+const hostname = 'dry-mesa-83249.herokuapp.com';
 
 function deleteRequest(url) {
-    return fetch('http://' + hostname + ':3000' + url, {
+    return fetch('https://' + hostname + url, {
         method: 'DELETE',
         credentials: 'include',
     });
 }
 
 function putJson(url, data) {
-    return fetch('http://' + hostname + ':3000' + url, {
+    return fetch('https://' + hostname + url, {
         method: 'PUT',
         credentials: 'include',
         body: JSON.stringify(data),
@@ -43,7 +43,7 @@ function postForm(url, form) {
 
     formBody = formBody.join("&");
 
-    return fetch('http://' + hostname + ':3000' + url, {
+    return fetch('https://' + hostname + url, {
         method: 'POST',
         credentials: 'include',
         body: formBody,
@@ -54,7 +54,7 @@ function postForm(url, form) {
 }
 
 function postJson(url, data) {
-    return fetch('http://' + hostname + ':3000' + url, {
+    return fetch('https://' + hostname + url, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify(data),
@@ -101,7 +101,7 @@ function logout() {
 }
 
 function get(url) {
-    return fetch('http://' + hostname + ':3000' + url, {
+    return fetch('https://' + hostname + url, {
         method: 'GET',
         credentials: 'include'
     });

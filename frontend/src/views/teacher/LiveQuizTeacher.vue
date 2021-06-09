@@ -148,7 +148,7 @@ export default {
     this.state = this.states.List;
 
     // Create WebSocket connection.
-    this.socket = new WebSocket('ws://185.181.10.135:3000');
+    this.socket = new WebSocket('ws://dry-mesa-83249.herokuapp.com/');
 
     // Connection opened
     // eslint-disable-next-line no-unused-vars
