@@ -143,7 +143,7 @@ export default {
   mounted() {
     this.state = this.states.liveQuizList;
 
-    this.socket = new WebSocket('ws://' + window.location.hostname + ':3000');
+    this.socket = new WebSocket('ws://185.181.10.135:3000');
 
     // Connection opened
     // eslint-disable-next-line no-unused-vars
