@@ -29,6 +29,7 @@
             :question="quiz.questions[currentQuestionID]"
             :questionIndex="currentQuestionID"
             :title="'Question ' + (currentQuestionID + 1) + '/' + quiz.questions.length"
+            :lock-answer="true"
             v-on:onSelected="selectAnswer"
         />
       </div>

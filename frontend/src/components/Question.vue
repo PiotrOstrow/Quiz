@@ -35,7 +35,7 @@
 <script>
 export default {
   name: "Question",
-  props: ['question', 'questionIndex', 'title'],
+  props: ['question', 'questionIndex', 'title', 'lockAnswer'],
   data: function() {
     return {
       selectedAnswerTarget: undefined,
@@ -50,7 +50,8 @@ export default {
         if(this.locked) {
           event.preventDefault();
         } else {
-          this.locked = true;
+          if(this.lockAnswer)
+            this.locked = true;
           this.$emit('onSelected', id, event.target.value);
         }
       }
